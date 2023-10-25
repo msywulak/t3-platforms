@@ -18,8 +18,8 @@ import {
  */
 export const mysqlTable = mysqlTableCreator((name) => `t3-platforms_${name}`);
 
-export const posts = mysqlTable(
-  "post",
+export const postsExample = mysqlTable(
+  "post_example",
   {
     id: bigint("id", { mode: "number" }).primaryKey().autoincrement(),
     name: varchar("name", { length: 256 }),
@@ -30,5 +30,5 @@ export const posts = mysqlTable(
   },
   (example) => ({
     nameIndex: index("name_idx").on(example.name),
-  })
+  }),
 );
