@@ -15,11 +15,13 @@
     "@planetscale/database": "^1.11.0",
     "@t3-oss/env-nextjs": "^0.7.0",
     "@uploadthing/react": "^5.7.0",
+    "clsx": "^2.0.0",
     "drizzle-orm": "^0.28.5",
     "next": "^13.5.4",
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "superjson": "^1.13.1",
+    "tailwind-merge": "^1.14.0",
     "uploadthing": "^5.7.2",
     "zod": "^3.22.4"
   },
