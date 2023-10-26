@@ -49,7 +49,7 @@ export default authMiddleware({
     if (
       hostname === "localhost:3000" ||
       hostname === env.NEXT_PUBLIC_ROOT_DOMAIN ||
-      hostname === `${env.PROJECT_ID_VERCEL}.vercel.app` // vercel domain
+      hostname === "vercel.app" // vercel domain
     ) {
       return NextResponse.rewrite(
         new URL(`/home${path === "/" ? "" : path}`, req.url),
