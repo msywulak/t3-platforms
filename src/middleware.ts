@@ -19,10 +19,12 @@ export default authMiddleware({
       searchParams.length > 0 ? `?${searchParams}` : ""
     }`;
     const pathname = req.nextUrl.pathname;
+    const domain = req.nextUrl.basePath;
 
     console.log(`
     ~~~~ authMiddleware ${generateRandomString(8)} ~~~~
     href: ${url.href}
+    domain: ${domain}
     hostname: ${hostname}
     searchParams: ${searchParams}
     path: ${path}
@@ -49,7 +51,7 @@ export default authMiddleware({
     if (
       hostname === "localhost:3000" ||
       hostname === env.NEXT_PUBLIC_ROOT_DOMAIN ||
-      hostname === "vercel.app" // vercel domain
+      hostname.endsWith(".vercel.app") // vercel domain
     ) {
       return NextResponse.rewrite(
         new URL(`/home${path === "/" ? "" : path}`, req.url),
