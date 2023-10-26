@@ -6,6 +6,7 @@ import {
   bigint,
   boolean,
   index,
+  int,
   mysqlTableCreator,
   text,
   timestamp,
@@ -73,7 +74,7 @@ export const posts = mysqlTable(
     image: text("image").default(
       "https://public.blob.vercel-storage.com/eEZHAoPTOBSYGBE3/hxfcV5V-eInX3jbVUhjAt1suB7zB88uGd1j20b.png",
     ),
-    image_blurhash: text("image_blurhash").default(
+    imageBlurhash: text("image_blurhash").default(
       "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAhCAYAAACbffiEAAAACXBIWXMAABYlAAAWJQFJUiTwAAABfUlEQVR4nN3XyZLDIAwE0Pz/v3q3r55JDlSBplsIEI49h76k4opexCK/juP4eXjOT149f2Tf9ySPgcjCc7kdpBTgDPKByKK2bTPFEdMO0RDrusJ0wLRBGCIuelmWJAjkgPGDSIQEMBDCfA2CEPM80+Qwl0JkNxBimiaYGOTUlXYI60YoehzHJDEm7kxjV3whOQTD3AaCuhGKHoYhyb+CBMwjIAFz647kTqyapdV4enGINuDJMSScPmijSwjCaHeLcT77C7EC0C1ugaCTi2HYfAZANgj6Z9A8xY5eiYghDMNQBJNCWhASot0jGsSCUiHWZcSGQjaWWCDaGMOWnsCcn2QhVkRuxqqNxMSdUSElCDbp1hbNOsa6Ugxh7xXauF4DyM1m5BLtCylBXgaxvPXVwEoOBjeIFVODtW74oj1yBQah3E8tyz3SkpolKS9Geo9YMD1QJR1Go4oJkgO1pgbNZq0AOUPChyjvh7vlXaQa+X1UXwKxgHokB2XPxbX+AnijwIU4ahazAAAAAElFTkSuQmCC",
     ),
     createdAt: timestamp("created_at")
@@ -119,11 +120,11 @@ export const sites = mysqlTable(
     image: text("image").default(
       "https://public.blob.vercel-storage.com/eEZHAoPTOBSYGBE3/hxfcV5V-eInX3jbVUhjAt1suB7zB88uGd1j20b.png",
     ),
-    image_blurhash: text("image_blurhash").default(
+    imageBlurhash: text("image_blurhash").default(
       "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAhCAYAAACbffiEAAAACXBIWXMAABYlAAAWJQFJUiTwAAABfUlEQVR4nN3XyZLDIAwE0Pz/v3q3r55JDlSBplsIEI49h76k4opexCK/juP4eXjOT149f2Tf9ySPgcjCc7kdpBTgDPKByKK2bTPFEdMO0RDrusJ0wLRBGCIuelmWJAjkgPGDSIQEMBDCfA2CEPM80+Qwl0JkNxBimiaYGOTUlXYI60YoehzHJDEm7kxjV3whOQTD3AaCuhGKHoYhyb+CBMwjIAFz647kTqyapdV4enGINuDJMSScPmijSwjCaHeLcT77C7EC0C1ugaCTi2HYfAZANgj6Z9A8xY5eiYghDMNQBJNCWhASot0jGsSCUiHWZcSGQjaWWCDaGMOWnsCcn2QhVkRuxqqNxMSdUSElCDbp1hbNOsa6Ugxh7xXauF4DyM1m5BLtCylBXgaxvPXVwEoOBjeIFVODtW74oj1yBQah3E8tyz3SkpolKS9Geo9YMD1QJR1Go4oJkgO1pgbNZq0AOUPChyjvh7vlXaQa+X1UXwKxgHokB2XPxbX+AnijwIU4ahazAAAAAElFTkSuQmCC",
     ),
     subdomain: varchar("subdomain", { length: 256 }).unique(),
-    custom_domain: varchar("custom_domain", { length: 256 }).unique(),
+    customDomain: varchar("custom_domain", { length: 256 }).unique(),
     message404: text("message404").default(
       "Blimey! You have found a page that does not exist.",
     ),
@@ -143,9 +144,27 @@ export const sites = mysqlTable(
 export type Site = typeof sites.$inferSelect;
 export type NewSite = typeof sites.$inferInsert;
 
-export const siteRelations = relations(sites, ({ one }) => ({
+export const siteRelations = relations(sites, ({ one, many }) => ({
   user: one(users, {
     fields: [sites.id, sites.clerkId],
     references: [users.id, users.clerkId],
   }),
+  posts: many(posts),
 }));
+
+export const examples = mysqlTable("examples", {
+  id: bigint("id", { mode: "number" }).primaryKey().autoincrement(),
+  name: varchar("name", { length: 256 }),
+  description: text("description"),
+  domainCount: int("domain_count"),
+  url: varchar("url", { length: 256 }),
+  image: text("image"),
+  imageBlurhash: text("image_blurhash"),
+  createdAt: timestamp("created_at")
+    .default(sql`CURRENT_TIMESTAMP`)
+    .notNull(),
+  updatedAt: timestamp("updatedAt").onUpdateNow(),
+});
+
+export type Example = typeof examples.$inferSelect;
+export type NewExample = typeof examples.$inferInsert;
