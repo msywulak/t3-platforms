@@ -11,12 +11,12 @@ export default function HomePage() {
         alt="Platforms on Vercel"
         className="w-48"
       />
-      <h1 className="text-white">
+      <div className="font-sans text-white">
         Edit this page on{" "}
         <InlineSnippet className="ml-2 bg-blue-900 text-blue-100">
           app/home/page.tsx
         </InlineSnippet>
-      </h1>
+      </div>
     </div>
   );
 }

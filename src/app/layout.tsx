@@ -1,10 +1,10 @@
 import "@/styles/globals.css";
 
-import { cal, inter } from "@/styles/fonts";
 import { Providers } from "./providers";
 import { type Metadata } from "next";
 import { cn } from "@/lib/utils";
 import { siteConfig } from "@/config/site";
+import { GeistSans, GeistMono } from "geist/font";
 
 export const metadata: Metadata = {
   title: siteConfig.title,
@@ -32,7 +32,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={cn(cal.variable, inter.variable)}>
+      <body className={cn(`${GeistSans.variable} ${GeistMono.variable}`)}>
         <Providers>{children}</Providers>
       </body>
     </html>
