@@ -26,7 +26,7 @@ export default async function Profile() {
           className="h-6 w-6 rounded-full"
         />
         <span className="truncate text-sm font-medium">
-          `${user.firstName} ${user.lastName}`
+          {user.firstName} {user.lastName}
         </span>
       </Link>
       <SignOutButton />

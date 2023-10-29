@@ -7,7 +7,7 @@ await import("./src/env.mjs");
 /** @type {import("next").NextConfig} */
 const config = {
   images: {
-    domains: ["img.clerk.com"],
+    remotePatterns: [{ hostname: "img.clerk.com" }],
   },
   logging: { fetches: { fullUrl: true } },
   // experimental: {

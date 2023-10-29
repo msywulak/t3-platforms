@@ -35,24 +35,22 @@ export default authMiddleware({
     searchParams: ${searchParams}
     path: ${path}
     pathname: ${pathname}
-    auth: ${auth.session ? "true" : "false"}
+    authUser: ${auth.userId}
     ~~~~ authMiddleware ~~~~
     `);
 
     // rewrite for app pages
     if (hostname === `app.${env.NEXT_PUBLIC_ROOT_DOMAIN}`) {
       if (
-        !auth.session &&
+        !auth.userId &&
         pathname !== "/sign-in" &&
         pathname !== "/sign-up" &&
         pathname !== "/sso-callback"
       ) {
         return NextResponse.redirect(new URL("/sign-in", req.url));
       } else if (
-        auth.session &&
-        (pathname === "/sign-in" ??
-          pathname === "/sign-up" ??
-          pathname === "/sso-callback")
+        auth.userId &&
+        (pathname === "/sign-in" ?? pathname === "/sign-up")
       ) {
         console.log("redirecting to /");
         return NextResponse.redirect(new URL("/", req.url));

@@ -4,7 +4,7 @@ import Nav from "@/components/nav";
 
 export default function DashboardLayout({ children }: { children: ReactNode }) {
   return (
-    <div>
+    <div className="font-sans">
       <Nav>
         <Suspense fallback={<div>Loading...</div>}>
           <Profile />
