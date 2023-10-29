@@ -1,10 +1,14 @@
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use server";
 import { db } from "@/db";
-import { posts, sites } from "@/db/schema";
+import { Site, posts, sites, users } from "@/db/schema";
 import { env } from "@/env.mjs";
 import { currentUser } from "@clerk/nextjs";
 import { eq } from "drizzle-orm";
 import { revalidateTag } from "next/cache";
+import { withSiteAuth } from "./auth";
 
 export const getSiteFromPostId = async (postId: number) => {
   const post = await db.query.posts.findFirst({
@@ -46,6 +50,60 @@ export const createSite = async (formData: FormData) => {
     } else {
       return {
         // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-assignment
+        error: error.message,
+      };
+    }
+  }
+};
+
+export const createPost = withSiteAuth(
+  async (_: FormData, site: Site): Promise<string | { error: string }> => {
+    const user = await currentUser();
+    if (!user) {
+      return {
+        error: "Not authenticated",
+      };
+    }
+    const response = await db.insert(posts).values({
+      siteId: site.id,
+      clerkId: user.id,
+    });
+
+    revalidateTag(`${site.subdomain}.${env.NEXT_PUBLIC_ROOT_DOMAIN}-posts`);
+    site.customDomain && revalidateTag(`${site.customDomain}-posts`);
+
+    return response.insertId;
+  },
+);
+
+export const editUser = async (
+  formData: FormData,
+  _id: unknown,
+  key: string,
+) => {
+  const user = await currentUser();
+  if (!user) {
+    return {
+      error: "Not authenticated",
+    };
+  }
+  const value = formData.get(key) as string;
+
+  try {
+    const response = await db
+      .update(users)
+      .set({
+        [key]: value,
+      })
+      .where(eq(users.clerkId, user.id));
+    return response.insertId;
+  } catch (error: any) {
+    if (error.code === "P2002") {
+      return {
+        error: `This ${key} is already in use`,
+      };
+    } else {
+      return {
         error: error.message,
       };
     }

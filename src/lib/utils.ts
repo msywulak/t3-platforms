@@ -9,6 +9,17 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
+export async function fetcher<T = unknown>(
+  input: RequestInfo,
+  init?: RequestInit,
+): Promise<T> {
+  const response = await fetch(input, { ...init, cache: "no-store" });
+  if (!response.ok) {
+    throw new Error("Network response was not ok");
+  }
+  return response.json() as Promise<T>;
+}
+
 export function generateRandomString(length: number) {
   const characters =
     "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
