@@ -3,12 +3,28 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use server";
 import { db } from "@/db";
-import { Site, posts, sites, users } from "@/db/schema";
+import { type Site, posts, sites, users } from "@/db/schema";
 import { env } from "@/env.mjs";
 import { currentUser } from "@clerk/nextjs";
-import { eq } from "drizzle-orm";
+import { eq, or, sql } from "drizzle-orm";
 import { revalidateTag } from "next/cache";
 import { withSiteAuth } from "./auth";
+import {
+  addDomainToVercel,
+  getApexDomain,
+  removeDomainFromVercelProject,
+  removeDomainFromVercelTeam,
+  validDomainRegex,
+} from "./domains";
+import { customAlphabet } from "nanoid";
+import { getBlurDataURL } from "./utils";
+import { type OurFileRouter } from "@/app/api/uploadthing/core";
+import { generateReactHelpers } from "@uploadthing/react/hooks";
+
+const nanoid = customAlphabet(
+  "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz",
+  7,
+); // 7-character random string
 
 export const getSiteFromPostId = async (postId: number) => {
   const post = await db.query.posts.findFirst({
@@ -55,6 +71,135 @@ export const createSite = async (formData: FormData) => {
     }
   }
 };
+
+export const updateSite = withSiteAuth(
+  async (formData: FormData, site: Site, key: string) => {
+    const value = formData.get(key) as string;
+    try {
+      let response;
+
+      if (key === "customDomain") {
+        if (value.includes("vercel.pub")) {
+          return {
+            error: "Cannot use vercel.pub subdomain as your custom domain",
+          };
+        } else if (validDomainRegex.test(value)) {
+          response = await db
+            .update(sites)
+            .set({
+              customDomain: value,
+            })
+            .where(eq(sites.id, site.id));
+          await Promise.all([addDomainToVercel(value)]);
+        } else if (value === "") {
+          response = await db
+            .update(sites)
+            .set({
+              customDomain: null,
+            })
+            .where(eq(sites.id, site.id));
+        }
+      }
+      if (site.customDomain && site.customDomain !== value) {
+        response = await removeDomainFromVercelProject(site.customDomain);
+
+        const apexDomain = getApexDomain(`https://${site.customDomain}`);
+        const domainCount = await db
+          .select({ count: sql<number>`count(*)` })
+          .from(sites)
+          .where(
+            or(
+              eq(sites.customDomain, apexDomain),
+              eq(sites.customDomain, `.${apexDomain}`),
+            ),
+          );
+
+        // if the apex domain is being used by other sites
+        // we should only remove it from our Vercel project
+        if (domainCount === undefined || (domainCount[0]?.count ?? 0) >= 1) {
+          await removeDomainFromVercelProject(site.customDomain);
+        } else {
+          // this is the only site using this apex domain
+          // so we can remove it entirely from our Vercel team
+          await removeDomainFromVercelTeam(site.customDomain);
+        }
+      } else if (key === "image" || key === "logo") {
+        // const file = formData.get(key) as File;
+        const files: File[] = [];
+        formData.forEach((value, _key) => {
+          if (value instanceof File) {
+            files.push(value);
+          }
+        });
+        // const filename = `${nanoid()}.${file.type.split("/")[1]}`;
+        const { useUploadThing } = generateReactHelpers<OurFileRouter>();
+        const upload = await useUploadThing("productImage").startUpload(files);
+        const formattedImages = upload?.map((image) => ({
+          id: image.key,
+          name: image.key.split("_")[1] ?? image.key,
+          url: image.url,
+        }));
+        if (!formattedImages) {
+          return {
+            error: "Something went wrong with the upload",
+          };
+        }
+        const url = formattedImages?.[0]?.url;
+
+        const blurhash = key === "image" ? await getBlurDataURL(url!) : null;
+
+        response = await db
+          .update(sites)
+          .set({
+            [key]: url,
+            imageBlurhash: blurhash,
+          })
+          .where(eq(sites.id, site.id));
+      } else {
+        response = await db
+          .update(sites)
+          .set({
+            [key]: value,
+          })
+          .where(eq(sites.id, site.id));
+      }
+      console.log(
+        "Updated site data! Revalidating tags:",
+        `${site.subdomain}.${env.NEXT_PUBLIC_ROOT_DOMAIN}-metadata`,
+        `${site.customDomain}-metadata`,
+      );
+      revalidateTag(
+        `${site.subdomain}.${env.NEXT_PUBLIC_ROOT_DOMAIN}-metadata`,
+      );
+      site.customDomain && revalidateTag(`${site.customDomain}-metadata`);
+      return response;
+    } catch (error: any) {
+      if (error.code === "P2002") {
+        return {
+          error: `This ${key} is already in use`,
+        };
+      } else {
+        return {
+          error: error.message,
+        };
+      }
+    }
+  },
+);
+
+export const deleteSite = withSiteAuth(async (_: FormData, site: Site) => {
+  try {
+    const response = await db.delete(sites).where(eq(sites.id, site.id));
+
+    revalidateTag(`${site.subdomain}.${env.NEXT_PUBLIC_ROOT_DOMAIN}-metadata`);
+    site.customDomain && revalidateTag(`${site.customDomain}-metadata`);
+    return response;
+  } catch (error: any) {
+    return {
+      error: error.message,
+    };
+  }
+});
 
 export const createPost = withSiteAuth(
   async (_: FormData, site: Site): Promise<string | { error: string }> => {

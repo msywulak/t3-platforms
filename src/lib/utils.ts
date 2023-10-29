@@ -20,6 +20,23 @@ export async function fetcher<T = unknown>(
   return response.json() as Promise<T>;
 }
 
+export const getBlurDataURL = async (url: string | null) => {
+  if (!url) {
+    return "data:image/webp;base64,AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";
+  }
+  try {
+    const response = await fetch(
+      `https://wsrv.nl/?url=${url}&w=50&h=50&blur=5`,
+    );
+    const buffer = await response.arrayBuffer();
+    const base64 = Buffer.from(buffer).toString("base64");
+
+    return `data:image/png;base64,${base64}`;
+  } catch (error) {
+    return "data:image/webp;base64,AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";
+  }
+};
+
 export function generateRandomString(length: number) {
   const characters =
     "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
