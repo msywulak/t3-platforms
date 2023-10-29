@@ -7,12 +7,12 @@ await import("./src/env.mjs");
 /** @type {import("next").NextConfig} */
 const config = {
   images: {
-    remotePatterns: [{ hostname: "img.clerk.com" }],
+    remotePatterns: [
+      { hostname: "img.clerk.com" },
+      { hostname: "public.blob.vercel-storage.com" },
+    ],
   },
   logging: { fetches: { fullUrl: true } },
-  // experimental: {
-  //   serverActions: true,
-  // },
 };
 
 export default config;
