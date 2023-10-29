@@ -7,10 +7,12 @@ export default authMiddleware({
   publicRoutes: [
     "/",
     "/api/uploadthing",
+    "/api/domain(.*)",
     "/sign-in(.*)",
     "/sign-up(.*)",
     "/sso-callback(.*)",
   ],
+  apiRoutes: ["/api(.*)"],
   afterAuth(auth, req) {
     const url = req.nextUrl;
 
@@ -38,6 +40,11 @@ export default authMiddleware({
     authUser: ${auth.userId}
     ~~~~ authMiddleware ~~~~
     `);
+
+    // bypass rewrite for api routes
+    if (pathname.startsWith("/api")) {
+      return NextResponse.next();
+    }
 
     // rewrite for app pages
     if (hostname === `app.${env.NEXT_PUBLIC_ROOT_DOMAIN}`) {

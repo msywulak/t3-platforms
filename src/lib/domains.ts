@@ -58,6 +58,65 @@ export const removeDomainFromVercelTeam = async (domain: string) => {
   ).then((res) => res.json() as Promise<DomainResponse>);
 };
 
+export const getDomainResponse = async (
+  domain: string,
+): Promise<DomainResponse & { error: { code: string; message: string } }> => {
+  return await fetch(
+    `https://api.vercel.com/v9/projects/${
+      process.env.PROJECT_ID_VERCEL
+    }/domains/${domain}${
+      process.env.TEAM_ID_VERCEL ? `?teamId=${process.env.TEAM_ID_VERCEL}` : ""
+    }`,
+    {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${process.env.AUTH_BEARER_TOKEN}`,
+        "Content-Type": "application/json",
+      },
+    },
+  ).then((res) => {
+    return res.json() as Promise<
+      DomainResponse & { error: { code: string; message: string } }
+    >;
+  });
+};
+
+export const getConfigResponse = async (
+  domain: string,
+): Promise<DomainConfigResponse> => {
+  return await fetch(
+    `https://api.vercel.com/v6/domains/${domain}/config${
+      process.env.TEAM_ID_VERCEL ? `?teamId=${process.env.TEAM_ID_VERCEL}` : ""
+    }`,
+    {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${process.env.AUTH_BEARER_TOKEN}`,
+        "Content-Type": "application/json",
+      },
+    },
+  ).then((res) => res.json() as Promise<DomainConfigResponse>);
+};
+
+export const verifyDomain = async (
+  domain: string,
+): Promise<DomainVerificationResponse> => {
+  return await fetch(
+    `https://api.vercel.com/v9/projects/${
+      process.env.PROJECT_ID_VERCEL
+    }/domains/${domain}/verify${
+      process.env.TEAM_ID_VERCEL ? `?teamId=${process.env.TEAM_ID_VERCEL}` : ""
+    }`,
+    {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${process.env.AUTH_BEARER_TOKEN}`,
+        "Content-Type": "application/json",
+      },
+    },
+  ).then((res) => res.json() as Promise<DomainVerificationResponse>);
+};
+
 export const getSubdomain = (name: string, apexName: string) => {
   if (name === apexName) return null;
   return name.slice(0, name.length - apexName.length - 1);
