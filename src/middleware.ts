@@ -6,7 +6,7 @@ import { generateRandomString } from "@/lib/utils";
 export default authMiddleware({
   publicRoutes: [
     "/",
-    "/api/uploadthing",
+    "/api/uploadthing(.*)",
     "/api/domain(.*)",
     "/sign-in(.*)",
     "/sign-up(.*)",
@@ -80,6 +80,7 @@ export default authMiddleware({
     }
 
     // rewrite everything else to `/[domain]/[slug]` dynamic route
+    console.log(`rewriting to /${hostname}${path}`, req.url);
     return NextResponse.rewrite(new URL(`/${hostname}${path}`, req.url));
   },
 });
