@@ -4,6 +4,8 @@ import { db } from "@/db";
 import { examples } from "@/db/schema";
 import type { Example } from "@/db/schema";
 import { eq } from "drizzle-orm";
+import Link from "next/link";
+import { type ReactNode } from "react";
 
 interface TweetLinkNode extends Node {
   url: string;
@@ -23,6 +25,27 @@ interface ExamplesNode extends Node {
     name: string;
     value: string;
   }>;
+}
+
+export function replaceLinks({
+  href,
+  children,
+}: {
+  href?: string;
+  children: ReactNode;
+}) {
+  // this is technically not a remark plugin but it
+  // replaces internal links with <Link /> component
+  // and external links with <a target="_blank" />
+  return href?.startsWith("/") ?? href === "" ? (
+    <Link href={href} className="cursor-pointer">
+      {children}
+    </Link>
+  ) : (
+    <a href={href} target="_blank" rel="noopener noreferrer">
+      {children} ↗
+    </a>
+  );
 }
 
 export function replaceTweets() {

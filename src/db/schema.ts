@@ -43,6 +43,7 @@ export const users = mysqlTable(
     name: varchar("name", { length: 256 }),
     username: varchar("username", { length: 256 }),
     clerkId: varchar("clerk_id", { length: 256 }).unique(),
+    githubId: varchar("github_id", { length: 256 }).unique(),
     email: varchar("email", { length: 256 }).unique(),
     image: text("image"),
     createdAt: timestamp("created_at")
