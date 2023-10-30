@@ -3,7 +3,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use server";
 import { db } from "@/db";
-import { type Site, posts, sites, users, Post } from "@/db/schema";
+import { type Site, posts, sites, users, type Post } from "@/db/schema";
 import { env } from "@/env.mjs";
 import { currentUser } from "@clerk/nextjs";
 import { and, eq, or, sql } from "drizzle-orm";
@@ -90,7 +90,10 @@ export const updateSite = withSiteAuth(
               customDomain: value,
             })
             .where(eq(sites.id, site.id));
-          await Promise.all([addDomainToVercel(value)]);
+          await Promise.all([
+            addDomainToVercel(value),
+            addDomainToVercel(`www.${value}`),
+          ]);
         } else if (value === "") {
           response = await db
             .update(sites)

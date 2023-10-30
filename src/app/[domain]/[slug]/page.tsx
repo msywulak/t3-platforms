@@ -109,31 +109,31 @@ export default async function SitePostPage({
         </div>
         <a
           // if you are using Github OAuth, you can get rid of the Twitter option
-          href={
-            data.site?.user?.username
-              ? `https://twitter.com/${data.site.user.username}`
-              : `https://github.com/${data.site?.user?.githubId}`
-          }
+          // href={
+          //   data.site?.user?.username
+          //     ? `https://twitter.com/${data.site.user.username}`
+          //     : `https://github.com/${data.site?.user?.githubId}`
+          // }
           rel="noreferrer"
           target="_blank"
         >
           <div className="my-8">
             <div className="relative inline-block h-8 w-8 overflow-hidden rounded-full align-middle md:h-12 md:w-12">
-              {data.site?.user?.image ? (
+              {/* {data.site?.user?.image ? (
                 <BlurImage
                   alt={data.site?.user?.name ?? "User Avatar"}
                   height={80}
                   src={data.site.user.image}
                   width={80}
                 />
-              ) : (
-                <div className="absolute flex h-full w-full select-none items-center justify-center bg-stone-100 text-4xl text-stone-500">
-                  ?
-                </div>
-              )}
+              ) : ( */}
+              <div className="absolute flex h-full w-full select-none items-center justify-center bg-stone-100 text-4xl text-stone-500">
+                ?
+              </div>
+              {/* )} */}
             </div>
             <div className="text-md ml-3 inline-block align-middle dark:text-white md:text-lg">
-              by <span className="font-semibold">{data.site?.user?.name}</span>
+              {/* by <span className="font-semibold">{data.site?.user?.name}</span> */}
             </div>
           </div>
         </a>

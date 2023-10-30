@@ -83,13 +83,13 @@ export async function getPostData(domain: string, slug: string) {
           eq(posts.slug, slug),
           eq(posts.published, true),
         ),
-        with: {
-          site: {
-            with: {
-              user: true,
-            },
-          },
-        },
+        // with: {
+        //   site: {
+        //     with: {
+        //       user: true,
+        //     },
+        //   },
+        // },
       });
       if (!data) return null;
 
