@@ -1,24 +1,11 @@
 import { type Node } from "unist";
 import { visit } from "unist-util-visit";
-import { db } from "@/db";
-import { examples } from "@/db/schema";
-import type { Example } from "@/db/schema";
-import { eq } from "drizzle-orm";
 import Link from "next/link";
 import { type ReactNode } from "react";
 
 interface TweetLinkNode extends Node {
   url: string;
   type: string;
-  name: string;
-  attributes?: Array<{
-    type: "mdxJsxAttribute";
-    name: string;
-    value: string;
-  }>;
-}
-
-interface ExamplesNode extends Node {
   name: string;
   attributes?: Array<{
     type: "mdxJsxAttribute";
@@ -96,59 +83,4 @@ export function replaceTweets() {
 
       resolve();
     });
-}
-
-export function replaceExamples() {
-  return async (tree: Node): Promise<void> => {
-    const nodesToChange: Array<{ node: ExamplesNode }> = [];
-
-    visit(tree, "mdxJsxFlowElement", (node: Node) => {
-      const examplesNode = node as ExamplesNode;
-
-      if (examplesNode.name === "Examples") {
-        nodesToChange.push({
-          node: examplesNode,
-        });
-      }
-    });
-
-    for (const { node } of nodesToChange) {
-      try {
-        const data = await getExamples(node);
-        node.attributes = [
-          {
-            type: "mdxJsxAttribute",
-            name: "data",
-            value: data,
-          },
-        ];
-      } catch (e) {
-        throw e;
-      }
-    }
-  };
-}
-async function getExamples(node: ExamplesNode): Promise<string> {
-  if (!node.attributes) throw new Error("Node has no attributes");
-
-  const names = node.attributes[0]?.value.split(",");
-  const data: Example[] = [];
-
-  if (!names) throw new Error("No names found");
-
-  for (const name of names) {
-    const results = await db
-      .select()
-      .from(examples)
-      .where(eq(examples.id, parseInt(name)));
-
-    if (results.length > 0) {
-      const result = results[0];
-      if (result) {
-        data.push(result); // push the first element of the results array
-      }
-    }
-  }
-
-  return JSON.stringify(data);
 }

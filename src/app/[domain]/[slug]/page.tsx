@@ -95,7 +95,6 @@ export default async function SitePostPage({
 
   return (
     <>
-      <div>SitePostPage</div>
       <div className="flex flex-col items-center justify-center">
         <div className="m-auto w-full text-center md:w-7/12">
           <p className="m-auto my-5 w-10/12 text-sm font-light text-stone-500 dark:text-stone-400 md:text-base">

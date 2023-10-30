@@ -17,15 +17,15 @@ import {
   removeDomainFromVercelTeam,
   validDomainRegex,
 } from "./domains";
-import { customAlphabet } from "nanoid";
+// import { customAlphabet } from "nanoid";
 import { getBlurDataURL } from "./utils";
 import { type OurFileRouter } from "@/app/api/uploadthing/core";
 import { generateReactHelpers } from "@uploadthing/react/hooks";
 
-const nanoid = customAlphabet(
-  "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz",
-  7,
-); // 7-character random string
+// const nanoid = customAlphabet(
+//   "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz",
+//   7,
+// ); // 7-character random string
 
 export const getSiteFromPostId = async (postId: number) => {
   const post = await db.query.posts.findFirst({
