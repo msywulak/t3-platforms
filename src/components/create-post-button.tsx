@@ -15,11 +15,14 @@ export default function CreatePostButton() {
     <button
       onClick={() =>
         startTransition(async () => {
-          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-          const post = await createPost(null, id as string, null);
+          const post = await createPost(Number(id as string));
           router.refresh();
-          // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-          router.push(`/post/${post.id}`);
+          if (typeof post === "string") {
+            router.push(`/post/${post}`);
+          } else {
+            console.error(post.error);
+            router.push(`/site/${id as string}`);
+          }
         })
       }
       className={cn(

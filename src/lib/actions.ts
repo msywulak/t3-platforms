@@ -205,25 +205,30 @@ export const deleteSite = withSiteAuth(async (_: FormData, site: Site) => {
   }
 });
 
-export const createPost = withSiteAuth(
-  async (_: FormData, site: Site): Promise<string | { error: string }> => {
-    const user = await currentUser();
-    if (!user) {
-      return {
-        error: "Not authenticated",
-      };
-    }
-    const response = await db.insert(posts).values({
-      siteId: site.id,
-      clerkId: user.id,
-    });
+export const createPost = async (siteId: number) => {
+  const user = await currentUser();
+  if (!user) {
+    return {
+      error: "Not authenticated",
+    };
+  }
+  const site = await db.query.sites.findFirst({
+    where: eq(sites.id, siteId),
+  });
+  if (!site) {
+    return {
+      error: "Site not found",
+    };
+  }
+  const response = await db.insert(posts).values({
+    siteId: siteId,
+    clerkId: user.id,
+  });
+  revalidateTag(`${site.subdomain}.${env.NEXT_PUBLIC_ROOT_DOMAIN}-posts`);
+  site.customDomain && revalidateTag(`${site.customDomain}-posts`);
 
-    revalidateTag(`${site.subdomain}.${env.NEXT_PUBLIC_ROOT_DOMAIN}-posts`);
-    site.customDomain && revalidateTag(`${site.customDomain}-posts`);
-
-    return response.insertId;
-  },
-);
+  return response.insertId;
+};
 
 // creating a separate function for this because we're not using FormData
 export const updatePost = async (data: Post) => {

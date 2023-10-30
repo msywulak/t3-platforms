@@ -70,7 +70,7 @@ export default function Nav({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     const fetchSiteId = async () => {
-      if (segments[0] === "post" && id && siteId === null) {
+      if (segments[0] === "post" && id && siteId === undefined) {
         // Only call the API if siteId is not already set
         try {
           const newSiteId = await getSiteFromPostId(Number(id));
@@ -81,6 +81,7 @@ export default function Nav({ children }: { children: ReactNode }) {
           // Handle the error appropriately
         }
       }
+      console.log("siteId", siteId);
     };
 
     void fetchSiteId();
