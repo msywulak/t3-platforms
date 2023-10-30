@@ -76,7 +76,7 @@ export default async function SiteLayout({
   if (
     domain.endsWith(`.${env.NEXT_PUBLIC_ROOT_DOMAIN}`) &&
     data.customDomain &&
-    process.env.REDIRECT_TO_CUSTOM_DOMAIN_IF_EXISTS === "true"
+    env.REDIRECT_TO_CUSTOM_DOMAIN_IF_EXISTS === "true"
   ) {
     return redirect(`https://${data.customDomain}`);
   }
