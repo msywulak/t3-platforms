@@ -9,76 +9,76 @@ import MDX from "@/components/mdx";
 import { placeholderBlurhash, toDateString } from "@/lib/utils";
 import { env } from "@/env.mjs";
 
-export async function generateMetadata({
-  params,
-}: {
-  params: { domain: string; slug: string };
-}) {
-  const domain = decodeURIComponent(params.domain);
-  const slug = decodeURIComponent(params.slug);
+// export async function generateMetadata({
+//   params,
+// }: {
+//   params: { domain: string; slug: string };
+// }) {
+//   const domain = decodeURIComponent(params.domain);
+//   const slug = decodeURIComponent(params.slug);
 
-  const [data, siteData] = await Promise.all([
-    getPostData(domain, slug),
-    getSiteData(domain),
-  ]);
-  if (!data || !siteData) {
-    return null;
-  }
-  const { title, description } = data;
+//   const [data, siteData] = await Promise.all([
+//     getPostData(domain, slug),
+//     getSiteData(domain),
+//   ]);
+//   if (!data || !siteData) {
+//     return null;
+//   }
+//   const { title, description } = data;
 
-  return {
-    title,
-    description,
-    openGraph: {
-      title,
-      description,
-    },
-    twitter: {
-      card: "summary_large_image",
-      title,
-      description,
-      creator: "@vercel",
-    },
-    // Optional: Set canonical URL to custom domain if it exists
-    // ...(params.domain.endsWith(`.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}`) &&
-    //   siteData.customDomain && {
-    //     alternates: {
-    //       canonical: `https://${siteData.customDomain}/${params.slug}`,
-    //     },
-    //   }),
-  };
-}
+//   return {
+//     title,
+//     description,
+//     openGraph: {
+//       title,
+//       description,
+//     },
+//     twitter: {
+//       card: "summary_large_image",
+//       title,
+//       description,
+//       creator: "@vercel",
+//     },
+//     // Optional: Set canonical URL to custom domain if it exists
+//     // ...(params.domain.endsWith(`.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}`) &&
+//     //   siteData.customDomain && {
+//     //     alternates: {
+//     //       canonical: `https://${siteData.customDomain}/${params.slug}`,
+//     //     },
+//     //   }),
+//   };
+// }
 
-export async function generateStaticParams() {
-  const allPosts = await db.query.posts.findMany({
-    columns: {
-      slug: true,
-    },
-    with: {
-      site: {
-        columns: {
-          subdomain: true,
-          customDomain: true,
-        },
-      },
-    },
-  });
+// export async function generateStaticParams() {
+//   const allPosts = await db.query.posts.findMany({
+//     columns: {
+//       slug: true,
+//     },
+//     with: {
+//       site: {
+//         columns: {
+//           subdomain: true,
+//           customDomain: true,
+//         },
+//       },
+//     },
+//   });
 
-  const allPaths = allPosts
-    .flatMap(({ site, slug }) => [
-      site?.subdomain && {
-        domain: `${site.subdomain}.${env.NEXT_PUBLIC_ROOT_DOMAIN}`,
-        slug,
-      },
-      site?.customDomain && {
-        domain: site.customDomain,
-        slug,
-      },
-    ])
-    .filter(Boolean);
+//   const allPaths = allPosts
+//     .flatMap(({ site, slug }) => [
+//       site?.subdomain && {
+//         domain: `${site.subdomain}.${env.NEXT_PUBLIC_ROOT_DOMAIN}`,
+//         slug,
+//       },
+//       site?.customDomain && {
+//         domain: site.customDomain,
+//         slug,
+//       },
+//     ])
+//     .filter(Boolean);
 
-  return allPaths;
-}
+//   return allPaths;
+// }
 
 export default async function SitePostPage({
   params,
