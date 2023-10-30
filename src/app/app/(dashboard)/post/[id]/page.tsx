@@ -5,10 +5,6 @@ import Editor from "@/components/editor";
 import { posts } from "@/db/schema";
 import { eq } from "drizzle-orm";
 
-// export default function TestPage() {
-//   return <div>PostPage</div>;
-// }
-
 export default async function PostPage({ params }: { params: { id: number } }) {
   const user = await currentUser();
   if (!user) {

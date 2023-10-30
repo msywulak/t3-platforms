@@ -63,17 +63,28 @@ const externalLinks = [
 
 export default function Nav({ children }: { children: ReactNode }) {
   const segments = useSelectedLayoutSegments();
-  const { id } = useParams() as { id?: number };
+  // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
+  const { id } = useParams() as { id?: string };
 
   const [siteId, setSiteId] = useState<number | null>();
 
   useEffect(() => {
-    if (segments[0] === "post" && id) {
-      void getSiteFromPostId(id).then((id) => {
-        setSiteId(id);
-      });
-    }
-  }, [segments, id]);
+    const fetchSiteId = async () => {
+      if (segments[0] === "post" && id && siteId === null) {
+        // Only call the API if siteId is not already set
+        try {
+          const newSiteId = await getSiteFromPostId(Number(id));
+          console.log("siteId", newSiteId);
+          setSiteId(newSiteId);
+        } catch (error) {
+          console.error("Failed to fetch site ID:", error);
+          // Handle the error appropriately
+        }
+      }
+    };
+
+    void fetchSiteId();
+  }, [segments, id, siteId]);
 
   const tabs = useMemo(() => {
     if (segments[0] === "site" && id) {
