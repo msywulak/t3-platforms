@@ -45,7 +45,7 @@ export default function PostCard({
       <div className="absolute bottom-4 flex w-full px-4">
         <a
           href={
-            env.NEXT_PUBLIC_ROOT_DOMAIN
+            process.env.NEXT_PUBLIC_VERCEL_ENV
               ? `https://${url}`
               : `http://${data.site?.subdomain}.localhost:3000/${data.slug}`
           }

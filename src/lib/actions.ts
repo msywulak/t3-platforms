@@ -3,12 +3,12 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use server";
 import { db } from "@/db";
-import { type Site, posts, sites, users } from "@/db/schema";
+import { type Site, posts, sites, users, Post } from "@/db/schema";
 import { env } from "@/env.mjs";
 import { currentUser } from "@clerk/nextjs";
-import { eq, or, sql } from "drizzle-orm";
+import { and, eq, or, sql } from "drizzle-orm";
 import { revalidateTag } from "next/cache";
-import { withSiteAuth } from "./auth";
+import { withPostAuth, withSiteAuth } from "./auth";
 import {
   addDomainToVercel,
   getApexDomain,
@@ -220,6 +220,152 @@ export const createPost = withSiteAuth(
     return response.insertId;
   },
 );
+
+// creating a separate function for this because we're not using FormData
+export const updatePost = async (data: Post) => {
+  const user = await currentUser();
+  if (!user) {
+    return {
+      error: "Not authenticated",
+    };
+  }
+  const post = await db.query.posts.findFirst({
+    where: and(eq(posts.id, data.id), eq(posts.clerkId, user.id)),
+    with: {
+      site: true,
+    },
+  });
+
+  if (!post) {
+    return {
+      error: "Post not found",
+    };
+  }
+  try {
+    const response = await db
+      .update(posts)
+      .set({
+        title: data.title,
+        description: data.description,
+        content: data.content,
+      })
+      .where(eq(posts.id, data.id));
+
+    revalidateTag(
+      `${post.site?.subdomain}.${env.NEXT_PUBLIC_ROOT_DOMAIN}-posts`,
+    );
+    revalidateTag(
+      `${post.site?.subdomain}.${env.NEXT_PUBLIC_ROOT_DOMAIN}-${post.slug}`,
+    );
+
+    // if the site has a custom domain, we need to revalidate those tags too
+    post.site?.customDomain &&
+      (revalidateTag(`${post.site?.customDomain}-posts`),
+      revalidateTag(`${post.site?.customDomain}-${post.slug}`));
+
+    return response;
+  } catch (error: any) {
+    return {
+      error: error.message,
+    };
+  }
+};
+
+export const updatePostMetadata = withPostAuth(
+  async (
+    formData: FormData,
+    post: Post & {
+      site: Site;
+    },
+    key: string,
+  ) => {
+    const value = formData.get(key) as string;
+
+    try {
+      let response;
+      if (key === "image") {
+        // const file = formData.get(key) as File;
+        const files: File[] = [];
+        formData.forEach((value, _key) => {
+          if (value instanceof File) {
+            files.push(value);
+          }
+        });
+        // const filename = `${nanoid()}.${file.type.split("/")[1]}`;
+        const { useUploadThing } = generateReactHelpers<OurFileRouter>();
+        const upload = await useUploadThing("productImage").startUpload(files);
+        const formattedImages = upload?.map((image) => ({
+          id: image.key,
+          name: image.key.split("_")[1] ?? image.key,
+          url: image.url,
+        }));
+        if (!formattedImages) {
+          return {
+            error: "Something went wrong with the upload",
+          };
+        }
+        const url = formattedImages?.[0]?.url;
+
+        const blurhash = await getBlurDataURL(url ?? "");
+
+        response = await db
+          .update(posts)
+          .set({
+            image: url,
+            imageBlurhash: blurhash,
+          })
+          .where(eq(posts.id, post.id));
+      } else {
+        response = await db
+          .update(posts)
+          .set({
+            [key]: key === "published" ? value === "true" : value,
+          })
+          .where(eq(posts.id, post.id));
+      }
+
+      revalidateTag(
+        `${post.site?.subdomain}.${env.NEXT_PUBLIC_ROOT_DOMAIN}-posts`,
+      );
+      revalidateTag(
+        `${post.site?.subdomain}.${env.NEXT_PUBLIC_ROOT_DOMAIN}-${post.slug}`,
+      );
+
+      // if the site has a custom domain, we need to revalidate those tags too
+      post.site?.customDomain &&
+        (revalidateTag(`${post.site?.customDomain}-posts`),
+        revalidateTag(`${post.site?.customDomain}-${post.slug}`));
+
+      return response;
+    } catch (error: any) {
+      if (error.code === "P2002") {
+        return {
+          error: `This slug is already in use`,
+        };
+      } else {
+        return {
+          error: error.message,
+        };
+      }
+    }
+  },
+);
+
+export const deletePost = withPostAuth(async (_: FormData, post: Post) => {
+  try {
+    const deletedPost = await db
+      .select()
+      .from(posts)
+      .where(eq(posts.id, post.id));
+    await db.delete(posts).where(eq(posts.id, post.id));
+
+    return deletedPost;
+  } catch (error: any) {
+    return {
+      error: error.message,
+    };
+  }
+});
 
 export const editUser = async (
   formData: FormData,

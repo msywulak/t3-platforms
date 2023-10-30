@@ -34,7 +34,7 @@ export default function SiteCard({ data }: { data: Site }) {
       <div className="absolute bottom-4 flex w-full justify-between space-x-4 px-4">
         <a
           href={
-            env.NEXT_PUBLIC_ROOT_DOMAIN
+            process.env.NEXT_PUBLIC_VERCEL_ENV
               ? `https://${url}`
               : `http://${data.subdomain}.localhost:3000`
           }

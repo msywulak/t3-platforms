@@ -21,11 +21,6 @@ export default async function SiteAnalyticsLayout({
   const data = await db.query.sites.findFirst({
     where: and(eq(sites.id, Number(params.id)), eq(sites.clerkId, user.id)),
   });
-  //   const data = await prisma.site.findUnique({
-  //     where: {
-  //       id: decodeURIComponent(params.id),
-  //     },
-  //   });
 
   if (!data) {
     notFound();
@@ -41,7 +36,7 @@ export default async function SiteAnalyticsLayout({
         </h1>
         <a
           href={
-            env.NEXT_PUBLIC_ROOT_DOMAIN
+            process.env.NEXT_PUBLIC_VERCEL_ENV
               ? `https://${url}`
               : `http://${data.subdomain}.localhost:3000`
           }

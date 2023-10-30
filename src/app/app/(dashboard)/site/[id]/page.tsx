@@ -4,7 +4,7 @@ import CreatePostButton from "@/components/create-post-button";
 import { currentUser } from "@clerk/nextjs";
 import { db } from "@/db";
 import { sites } from "@/db/schema";
-import { eq } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 import { env } from "@/env.mjs";
 
 export default async function SitePosts({
@@ -17,10 +17,10 @@ export default async function SitePosts({
     redirect("/login");
   }
   const data = await db.query.sites.findFirst({
-    where: eq(sites.id, params.id),
+    where: and(eq(sites.id, params.id), eq(sites.clerkId, user.id)),
   });
 
-  if (!data || data.clerkId !== user.id) {
+  if (!data) {
     notFound();
   }
 
@@ -35,7 +35,7 @@ export default async function SitePosts({
           </h1>
           <a
             href={
-              env.NEXT_PUBLIC_ROOT_DOMAIN
+              process.env.NEXT_PUBLIC_VERCEL_ENV
                 ? `https://${url}`
                 : `http://${data.subdomain}.localhost:3000`
             }
