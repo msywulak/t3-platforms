@@ -73,15 +73,13 @@ export default function Nav({ children }: { children: ReactNode }) {
       if (segments[0] === "post" && id && siteId === undefined) {
         // Only call the API if siteId is not already set
         try {
-          const newSiteId = await getSiteFromPostId(Number(id));
-          console.log("siteId", newSiteId);
-          setSiteId(newSiteId);
+          const newSiteId = await getSiteFromPostId({ postId: Number(id) });
+          setSiteId(newSiteId.data);
         } catch (error) {
           console.error("Failed to fetch site ID:", error);
           // Handle the error appropriately
         }
       }
-      console.log("siteId", siteId);
     };
 
     void fetchSiteId();

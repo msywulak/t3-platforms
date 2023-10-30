@@ -21,21 +21,26 @@ import {
 import { getBlurDataURL } from "./utils";
 import { type OurFileRouter } from "@/app/api/uploadthing/core";
 import { generateReactHelpers } from "@uploadthing/react/hooks";
+import { authAction } from "./safe-action";
+import { z } from "zod";
 
 // const nanoid = customAlphabet(
 //   "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz",
 //   7,
 // ); // 7-character random string
 
-export const getSiteFromPostId = async (postId: number) => {
-  const post = await db.query.posts.findFirst({
-    where: eq(posts.id, postId),
-  });
-  if (!post) {
-    return null;
-  }
-  return post.siteId;
-};
+export const getSiteFromPostId = authAction(
+  z.object({ postId: z.number() }),
+  async (input, { userId }) => {
+    const post = await db.query.posts.findFirst({
+      where: and(eq(posts.id, input.postId), eq(posts.clerkId, userId)),
+    });
+    if (!post) {
+      return null;
+    }
+    return post.siteId;
+  },
+);
 
 export const createSite = async (formData: FormData) => {
   const user = await currentUser();

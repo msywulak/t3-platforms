@@ -1,6 +1,7 @@
 // Example model schema from the Drizzle docs
 // https://orm.drizzle.team/docs/sql-schema-declaration
 
+import { createId } from "@paralleldrive/cuid2";
 import { relations, sql } from "drizzle-orm";
 import {
   bigint,
@@ -71,7 +72,9 @@ export const posts = mysqlTable(
     title: text("title"),
     description: text("description"),
     content: text("content"),
-    slug: varchar("slug", { length: 256 }).unique(),
+    slug: varchar("slug", { length: 256 })
+      .unique()
+      .$defaultFn(() => createId()),
     image: text("image").default(
       "https://public.blob.vercel-storage.com/eEZHAoPTOBSYGBE3/hxfcV5V-eInX3jbVUhjAt1suB7zB88uGd1j20b.png",
     ),
