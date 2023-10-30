@@ -1,3 +1,4 @@
+"use server";
 import { unstable_cache } from "next/cache";
 import { env } from "@/env.mjs";
 import { db } from "@/db";
@@ -69,40 +70,28 @@ export async function getPostsForSite(domain: string) {
 }
 
 export async function getPostData(domain: string, slug: string) {
-  const subdomain = domain.endsWith(`.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}`)
-    ? domain.replace(`.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}`, "")
-    : null;
+  // const subdomain = domain.endsWith(`.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}`)
+  //   ? domain.replace(`.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}`, "")
+  //   : null;
 
   return unstable_cache(
     async () => {
       const data = await db.query.posts.findFirst({
-        where: and(
-          subdomain
-            ? eq(sites.subdomain, subdomain)
-            : eq(sites.customDomain, domain),
-          eq(posts.slug, slug),
-          eq(posts.published, true),
-        ),
-        // with: {
-        //   site: {
-        //     with: {
-        //       user: true,
-        //     },
-        //   },
-        // },
+        where: and(eq(posts.slug, slug), eq(posts.published, true)),
+        with: {
+          site: {
+            with: {
+              user: true,
+            },
+          },
+        },
       });
       if (!data) return null;
 
       const [mdxSource, adjacentPosts] = await Promise.all([
         getMdxSource(data.content!),
         db.query.posts.findMany({
-          where: and(
-            subdomain
-              ? eq(sites.subdomain, subdomain)
-              : eq(sites.customDomain, domain),
-            eq(posts.published, true),
-            eq(posts.id, data.id),
-          ),
+          where: and(eq(posts.published, true), eq(posts.id, data.id)),
           columns: {
             slug: true,
             title: true,

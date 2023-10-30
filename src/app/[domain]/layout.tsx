@@ -73,13 +73,13 @@ export default async function SiteLayout({
   }
 
   // Optional: Redirect to custom domain if it exists
-  if (
-    domain.endsWith(`.${env.NEXT_PUBLIC_ROOT_DOMAIN}`) &&
-    data.customDomain &&
-    env.REDIRECT_TO_CUSTOM_DOMAIN_IF_EXISTS === "true"
-  ) {
-    return redirect(`https://${data.customDomain}`);
-  }
+  // if (
+  //   domain.endsWith(`.${env.NEXT_PUBLIC_ROOT_DOMAIN}`) &&
+  //   data.customDomain &&
+  //   env.REDIRECT_TO_CUSTOM_DOMAIN_IF_EXISTS === "true"
+  // ) {
+  //   return redirect(`https://${data.customDomain}`);
+  // }
 
   return (
     <div className={fontMapper[data.font ?? "font-sans"]}>

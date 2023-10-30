@@ -9,76 +9,76 @@ import MDX from "@/components/mdx";
 import { placeholderBlurhash, toDateString } from "@/lib/utils";
 import { env } from "@/env.mjs";
 
-// export async function generateMetadata({
-//   params,
-// }: {
-//   params: { domain: string; slug: string };
-// }) {
-//   const domain = decodeURIComponent(params.domain);
-//   const slug = decodeURIComponent(params.slug);
+export async function generateMetadata({
+  params,
+}: {
+  params: { domain: string; slug: string };
+}) {
+  const domain = decodeURIComponent(params.domain);
+  const slug = decodeURIComponent(params.slug);
 
-//   const [data, siteData] = await Promise.all([
-//     getPostData(domain, slug),
-//     getSiteData(domain),
-//   ]);
-//   if (!data || !siteData) {
-//     return null;
-//   }
-//   const { title, description } = data;
+  const [data, siteData] = await Promise.all([
+    getPostData(domain, slug),
+    getSiteData(domain),
+  ]);
+  if (!data || !siteData) {
+    return null;
+  }
+  const { title, description } = data;
 
-//   return {
-//     title,
-//     description,
-//     openGraph: {
-//       title,
-//       description,
-//     },
-//     twitter: {
-//       card: "summary_large_image",
-//       title,
-//       description,
-//       creator: "@vercel",
-//     },
-//     // Optional: Set canonical URL to custom domain if it exists
-//     // ...(params.domain.endsWith(`.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}`) &&
-//     //   siteData.customDomain && {
-//     //     alternates: {
-//     //       canonical: `https://${siteData.customDomain}/${params.slug}`,
-//     //     },
-//     //   }),
-//   };
-// }
+  return {
+    title,
+    description,
+    openGraph: {
+      title,
+      description,
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      creator: "@vercel",
+    },
+    // Optional: Set canonical URL to custom domain if it exists
+    ...(params.domain.endsWith(`.${env.NEXT_PUBLIC_ROOT_DOMAIN}`) &&
+      siteData.customDomain && {
+        alternates: {
+          canonical: `https://${siteData.customDomain}/${params.slug}`,
+        },
+      }),
+  };
+}
 
-// export async function generateStaticParams() {
-//   const allPosts = await db.query.posts.findMany({
-//     columns: {
-//       slug: true,
-//     },
-//     with: {
-//       site: {
-//         columns: {
-//           subdomain: true,
-//           customDomain: true,
-//         },
-//       },
-//     },
-//   });
+export async function generateStaticParams() {
+  const allPosts = await db.query.posts.findMany({
+    columns: {
+      slug: true,
+    },
+    with: {
+      site: {
+        columns: {
+          subdomain: true,
+          customDomain: true,
+        },
+      },
+    },
+  });
 
-//   const allPaths = allPosts
-//     .flatMap(({ site, slug }) => [
-//       site?.subdomain && {
-//         domain: `${site.subdomain}.${env.NEXT_PUBLIC_ROOT_DOMAIN}`,
-//         slug,
-//       },
-//       site?.customDomain && {
-//         domain: site.customDomain,
-//         slug,
-//       },
-//     ])
-//     .filter(Boolean);
+  const allPaths = allPosts
+    .flatMap(({ site, slug }) => [
+      site?.subdomain && {
+        domain: `${site.subdomain}.${env.NEXT_PUBLIC_ROOT_DOMAIN}`,
+        slug,
+      },
+      site?.customDomain && {
+        domain: site.customDomain,
+        slug,
+      },
+    ])
+    .filter(Boolean);
 
-//   return allPaths;
-// }
+  return allPaths;
+}
 
 export default async function SitePostPage({
   params,
@@ -95,6 +95,7 @@ export default async function SitePostPage({
 
   return (
     <>
+      <div>SitePostPage</div>
       <div className="flex flex-col items-center justify-center">
         <div className="m-auto w-full text-center md:w-7/12">
           <p className="m-auto my-5 w-10/12 text-sm font-light text-stone-500 dark:text-stone-400 md:text-base">
@@ -109,31 +110,31 @@ export default async function SitePostPage({
         </div>
         <a
           // if you are using Github OAuth, you can get rid of the Twitter option
-          // href={
-          //   data.site?.user?.username
-          //     ? `https://twitter.com/${data.site.user.username}`
-          //     : `https://github.com/${data.site?.user?.githubId}`
-          // }
+          href={
+            data.site?.user?.username
+              ? `https://twitter.com/${data.site.user.username}`
+              : `https://github.com/${data.site?.user?.githubId}`
+          }
           rel="noreferrer"
           target="_blank"
         >
           <div className="my-8">
             <div className="relative inline-block h-8 w-8 overflow-hidden rounded-full align-middle md:h-12 md:w-12">
-              {/* {data.site?.user?.image ? (
+              {data.site?.user?.image ? (
                 <BlurImage
                   alt={data.site?.user?.name ?? "User Avatar"}
                   height={80}
                   src={data.site.user.image}
                   width={80}
                 />
-              ) : ( */}
-              <div className="absolute flex h-full w-full select-none items-center justify-center bg-stone-100 text-4xl text-stone-500">
-                ?
-              </div>
-              {/* )} */}
+              ) : (
+                <div className="absolute flex h-full w-full select-none items-center justify-center bg-stone-100 text-4xl text-stone-500">
+                  ?
+                </div>
+              )}
             </div>
             <div className="text-md ml-3 inline-block align-middle dark:text-white md:text-lg">
-              {/* by <span className="font-semibold">{data.site?.user?.name}</span> */}
+              by <span className="font-semibold">{data.site?.user?.name}</span>
             </div>
           </div>
         </a>

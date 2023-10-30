@@ -2,6 +2,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use server";
+
 import { db } from "@/db";
 import { type Site, posts, sites, users, type Post } from "@/db/schema";
 import { env } from "@/env.mjs";
