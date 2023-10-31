@@ -47,6 +47,8 @@
   },
   "devDependencies": {
     "@hookform/resolvers": "^3.3.2",
+    "@tailwindcss/forms": "^0.5.6",
+    "@tailwindcss/typography": "^0.5.10",
     "@types/eslint": "^8.44.6",
     "@types/node": "^20.8.9",
     "@types/react": "^18.2.33",
@@ -63,6 +65,7 @@
     "prettier": "^3.0.3",
     "prettier-plugin-tailwindcss": "^0.5.6",
     "tailwindcss": "^3.3.5",
+    "tailwindcss-animate": "^1.0.7",
     "typescript": "^5.2.2"
   },
   "ct3aMetadata": {
