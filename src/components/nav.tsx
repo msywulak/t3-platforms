@@ -22,6 +22,7 @@ import { type ReactNode, useEffect, useMemo, useState } from "react";
 import { getSiteFromPostId } from "@/lib/actions";
 import Image from "next/image";
 import { FileCode, Github } from "lucide-react";
+import { ModeToggle } from "./theme-toggle";
 
 const externalLinks = [
   {
@@ -216,6 +217,8 @@ export default function Nav({ children }: { children: ReactNode }) {
                 className="dark:scale-110 dark:rounded-full dark:border dark:border-stone-400"
               />
             </Link>
+            <div className="h-6 rotate-[30deg] border-l border-stone-400 dark:border-stone-500" />
+            <ModeToggle />
           </div>
           <div className="grid gap-1">
             {tabs.map(({ name, href, isActive, icon }) => (

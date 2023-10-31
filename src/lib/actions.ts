@@ -136,7 +136,8 @@ export const updateSite = withSiteAuth(
         });
         // const filename = `${nanoid()}.${file.type.split("/")[1]}`;
         const { useUploadThing } = generateReactHelpers<OurFileRouter>();
-        const upload = await useUploadThing("productImage").startUpload(files);
+        const upload =
+          await useUploadThing("thumbnailAndLogo").startUpload(files);
         const formattedImages = upload?.map((image) => ({
           id: image.key,
           name: image.key.split("_")[1] ?? image.key,
@@ -319,7 +320,8 @@ export const updatePostMetadata = withPostAuth(
         });
         // const filename = `${nanoid()}.${file.type.split("/")[1]}`;
         const { useUploadThing } = generateReactHelpers<OurFileRouter>();
-        const upload = await useUploadThing("productImage").startUpload(files);
+        const upload =
+          await useUploadThing("thumbnailAndLogo").startUpload(files);
         const formattedImages = upload?.map((image) => ({
           id: image.key,
           name: image.key.split("_")[1] ?? image.key,
