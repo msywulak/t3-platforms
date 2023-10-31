@@ -181,7 +181,7 @@ export default function Nav({ children }: { children: ReactNode }) {
       <div
         className={`transform ${
           showSidebar ? "w-full translate-x-0" : "-translate-x-full"
-        } fixed z-10 flex h-full flex-col justify-between border-r border-stone-200 bg-stone-100 p-4 transition-all dark:border-stone-700 dark:bg-stone-900 sm:w-60 sm:translate-x-0`}
+        } fixed z-10 flex h-full flex-col justify-between border-r border-secondary p-4 transition-all sm:w-60 sm:translate-x-0`}
       >
         <div className="grid gap-2">
           <div className="flex items-center space-x-2 rounded-lg px-2 py-1.5">
@@ -189,7 +189,7 @@ export default function Nav({ children }: { children: ReactNode }) {
               href="https://vercel.com/templates/next.js/platforms-starter-kit"
               target="_blank"
               rel="noopener noreferrer"
-              className="rounded-lg p-1.5 hover:bg-stone-200 dark:hover:bg-stone-700"
+              className="rounded-lg p-1.5 hover:bg-secondary"
             >
               <svg
                 width="26"
@@ -204,20 +204,17 @@ export default function Nav({ children }: { children: ReactNode }) {
                 />
               </svg>
             </a>
-            <div className="h-6 rotate-[30deg] border-l border-stone-400 dark:border-stone-500" />
-            <Link
-              href="/"
-              className="rounded-lg p-2 hover:bg-stone-200 dark:hover:bg-stone-700"
-            >
+            <div className="h-6 rotate-[30deg] border-l border-secondary-foreground" />
+            <Link href="/" className="rounded-lg p-2 hover:bg-secondary">
               <Image
                 src="/logo.png"
                 width={24}
                 height={24}
                 alt="Logo"
-                className="dark:scale-110 dark:rounded-full dark:border dark:border-stone-400"
+                className="dark:scale-110 dark:rounded-full dark:border"
               />
             </Link>
-            <div className="h-6 rotate-[30deg] border-l border-stone-400 dark:border-stone-500" />
+            <div className="h-6 rotate-[30deg] border-l border-secondary-foreground" />
             <ModeToggle />
           </div>
           <div className="grid gap-1">
@@ -226,8 +223,8 @@ export default function Nav({ children }: { children: ReactNode }) {
                 key={name}
                 href={href}
                 className={`flex items-center space-x-3 ${
-                  isActive ? "bg-stone-200 text-black dark:bg-stone-700" : ""
-                } rounded-lg px-2 py-1.5 transition-all duration-150 ease-in-out hover:bg-stone-200 active:bg-stone-300 dark:text-white dark:hover:bg-stone-700 dark:active:bg-stone-800`}
+                  isActive ? "bg-secondary" : ""
+                } rounded-lg px-2 py-1.5 transition-all duration-150 ease-in-out hover:bg-secondary active:bg-secondary`}
               >
                 {icon}
                 <span className="text-sm font-medium">{name}</span>
@@ -243,7 +240,7 @@ export default function Nav({ children }: { children: ReactNode }) {
                 href={href}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center justify-between rounded-lg px-2 py-1.5 transition-all duration-150 ease-in-out hover:bg-stone-200 active:bg-stone-300 dark:text-white dark:hover:bg-stone-700 dark:active:bg-stone-800"
+                className="flex items-center justify-between rounded-lg px-2 py-1.5 transition-all duration-150 ease-in-out hover:bg-secondary active:bg-secondary"
               >
                 <div className="flex items-center space-x-3">
                   {icon}
@@ -253,7 +250,7 @@ export default function Nav({ children }: { children: ReactNode }) {
               </a>
             ))}
           </div>
-          <div className="my-2 border-t border-stone-200 dark:border-stone-700" />
+          <div className="my-2 border-t border-secondary" />
           {children}
         </div>
       </div>
