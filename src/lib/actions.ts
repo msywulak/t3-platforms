@@ -24,6 +24,7 @@ import { type OurFileRouter } from "@/app/api/uploadthing/core";
 import { generateReactHelpers } from "@uploadthing/react/hooks";
 import { authAction, siteAuthAction } from "./safe-action";
 import { z } from "zod";
+import { updateSiteSchema } from "./validations/site";
 
 // const nanoid = customAlphabet(
 //   "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz",
@@ -71,42 +72,54 @@ export const createSite = authAction(
   },
 );
 
-// TODO: move this to next-safe-action
-export const updateSite = withSiteAuth(
-  async (formData: FormData, site: Site, key: string) => {
-    const value = formData.get(key) as string;
+export const updateSite = siteAuthAction(
+  z.object({
+    rawInput: updateSiteSchema,
+    key: z.enum(["general", "subdomain", "customDomain"]),
+  }),
+  async ({ rawInput, key }, { allSites }) => {
+    // Find the site with the matching id
+    const foundSite = allSites.find((s) => s.id === rawInput.id);
+
+    // Check if the site was found
+    if (!foundSite) {
+      throw new Error("Site not found");
+    }
     try {
       let response;
 
-      if (key === "customDomain") {
-        if (value.includes("vercel.pub")) {
-          return {
-            error: "Cannot use vercel.pub subdomain as your custom domain",
-          };
-        } else if (validDomainRegex.test(value)) {
+      if (key === "customDomain" || key === "subdomain") {
+        if (rawInput.customDomain!.includes("vercel.pub")) {
+          throw new Error(
+            "Cannot use vercel.pub subdomain as your custom domain",
+          );
+        } else if (validDomainRegex.test(rawInput.customDomain!)) {
           response = await db
             .update(sites)
             .set({
-              customDomain: value,
+              customDomain: rawInput.customDomain,
             })
-            .where(eq(sites.id, site.id));
+            .where(eq(sites.id, rawInput.id!));
           await Promise.all([
-            addDomainToVercel(value),
-            addDomainToVercel(`www.${value}`),
+            addDomainToVercel(rawInput.customDomain!),
+            addDomainToVercel(`www.${rawInput.customDomain}`),
           ]);
-        } else if (value === "") {
+        } else if (rawInput.customDomain === "") {
           response = await db
             .update(sites)
             .set({
               customDomain: null,
             })
-            .where(eq(sites.id, site.id));
+            .where(eq(sites.id, rawInput.id!));
         }
       }
-      if (site.customDomain && site.customDomain !== value) {
-        response = await removeDomainFromVercelProject(site.customDomain);
+      if (
+        foundSite.customDomain &&
+        foundSite.customDomain !== rawInput.customDomain
+      ) {
+        response = await removeDomainFromVercelProject(foundSite.customDomain);
 
-        const apexDomain = getApexDomain(`https://${site.customDomain}`);
+        const apexDomain = getApexDomain(`https://${foundSite.customDomain}`);
         const domainCount = await db
           .select({ count: sql<number>`count(*)` })
           .from(sites)
@@ -120,62 +133,37 @@ export const updateSite = withSiteAuth(
         // if the apex domain is being used by other sites
         // we should only remove it from our Vercel project
         if (domainCount === undefined || (domainCount[0]?.count ?? 0) >= 1) {
-          await removeDomainFromVercelProject(site.customDomain);
+          await removeDomainFromVercelProject(foundSite.customDomain);
         } else {
           // this is the only site using this apex domain
           // so we can remove it entirely from our Vercel team
-          await removeDomainFromVercelTeam(site.customDomain);
+          await removeDomainFromVercelTeam(foundSite.customDomain);
         }
-      } else if (key === "image" || key === "logo") {
-        // const file = formData.get(key) as File;
-        const files: File[] = [];
-        formData.forEach((value, _key) => {
-          if (value instanceof File) {
-            files.push(value);
+      }
+      if (key === "general") {
+        try {
+          await db
+            .update(sites)
+            .set(rawInput)
+            .where(eq(sites.id, rawInput.id!));
+        } catch (error: any) {
+          if (error.code === "P2002") {
+            throw new Error(`This subdomain is already in use`);
+          } else {
+            throw new Error(error.message);
           }
-        });
-        // const filename = `${nanoid()}.${file.type.split("/")[1]}`;
-        const { useUploadThing } = generateReactHelpers<OurFileRouter>();
-        const upload =
-          await useUploadThing("thumbnailAndLogo").startUpload(files);
-        const formattedImages = upload?.map((image) => ({
-          id: image.key,
-          name: image.key.split("_")[1] ?? image.key,
-          url: image.url,
-        }));
-        if (!formattedImages) {
-          return {
-            error: "Something went wrong with the upload",
-          };
         }
-        const url = formattedImages?.[0]?.url;
-
-        const blurhash = key === "image" ? await getBlurDataURL(url!) : null;
-
-        response = await db
-          .update(sites)
-          .set({
-            [key]: url,
-            imageBlurhash: blurhash,
-          })
-          .where(eq(sites.id, site.id));
-      } else {
-        response = await db
-          .update(sites)
-          .set({
-            [key]: value,
-          })
-          .where(eq(sites.id, site.id));
       }
       console.log(
         "Updated site data! Revalidating tags:",
-        `${site.subdomain}.${env.NEXT_PUBLIC_ROOT_DOMAIN}-metadata`,
-        `${site.customDomain}-metadata`,
+        `${foundSite.subdomain}.${env.NEXT_PUBLIC_ROOT_DOMAIN}-metadata`,
+        `${foundSite.customDomain}-metadata`,
       );
       revalidateTag(
-        `${site.subdomain}.${env.NEXT_PUBLIC_ROOT_DOMAIN}-metadata`,
+        `${foundSite.subdomain}.${env.NEXT_PUBLIC_ROOT_DOMAIN}-metadata`,
       );
-      site.customDomain && revalidateTag(`${site.customDomain}-metadata`);
+      foundSite.customDomain &&
+        revalidateTag(`${foundSite.customDomain}-metadata`);
       return response;
     } catch (error: any) {
       if (error.code === "P2002") {
@@ -190,6 +178,9 @@ export const updateSite = withSiteAuth(
     }
   },
 );
+
+// TODO: Implement an image/logo upload
+// export const updateSiteImage = siteAuthAction(
 
 export const deleteSite = siteAuthAction(
   z.object({
@@ -207,6 +198,8 @@ export const deleteSite = siteAuthAction(
       const response = await db
         .delete(sites)
         .where(and(eq(sites.id, siteId), eq(sites.clerkId, userId)));
+
+      await db.delete(posts).where(eq(posts.siteId, siteId));
 
       revalidateTag(
         `${foundSite.subdomain}.${env.NEXT_PUBLIC_ROOT_DOMAIN}-metadata`,

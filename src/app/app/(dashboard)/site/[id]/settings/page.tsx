@@ -1,53 +1,74 @@
 import { db } from "@/db";
-import Form from "@/components/form";
-import { updateSite } from "@/lib/actions";
-import DeleteSiteForm from "@/components/form/delete-site-form";
 import { eq } from "drizzle-orm";
-import { sites } from "@/db/schema";
+import { posts, sites } from "@/db/schema";
+import { notFound, redirect } from "next/navigation";
+import { revalidatePath, revalidateTag } from "next/cache";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { UpdateSiteForm } from "@/components/form/update-site-form";
 
 export default async function SiteSettingsIndex({
   params,
 }: {
   params: { id: string };
 }) {
-  const data = await db.query.sites.findFirst({
-    where: eq(sites.id, Number(params.id)),
+  const siteId = Number(params.id);
+
+  async function updateSite(fd: FormData) {
+    "use server";
+
+    const name = fd.get("name") as string;
+    const description = fd.get("description") as string;
+
+    await db
+      .update(sites)
+      .set({ name, description })
+      .where(eq(sites.id, siteId));
+
+    revalidateTag(`/site/${siteId}/settings`);
+  }
+
+  async function deleteSite() {
+    "use server";
+
+    await db.delete(sites).where(eq(sites.id, siteId));
+    await db.delete(posts).where(eq(posts.siteId, siteId));
+
+    const path = `/sites`;
+    revalidatePath(path);
+    redirect(path);
+  }
+
+  const site = await db.query.sites.findFirst({
+    where: eq(sites.id, siteId),
   });
 
-  if (!data) {
-    return <div>Site not found.</div>;
+  if (!site) {
+    notFound();
   }
 
   return (
-    <div className="flex flex-col space-y-6">
-      <Form
-        title="Name"
-        description="The name of your site. This will be used as the meta title on Google as well."
-        helpText="Please use 32 characters maximum."
-        inputAttrs={{
-          name: "name",
-          type: "text",
-          defaultValue: data.name!,
-          placeholder: "My Awesome Site",
-          maxLength: 32,
-        }}
-        handleSubmit={updateSite}
-      />
-
-      <Form
-        title="Description"
-        description="The description of your site. This will be used as the meta description on Google as well."
-        helpText="Include SEO-optimized keywords that you want to rank for."
-        inputAttrs={{
-          name: "description",
-          type: "text",
-          defaultValue: data.description!,
-          placeholder: "A blog about really interesting things.",
-        }}
-        handleSubmit={updateSite}
-      />
-
-      <DeleteSiteForm siteName={data.name!} />
+    <div className="space-y-6">
+      <Card
+        // as="section"
+        id="update-store"
+        aria-labelledby="update-store-heading"
+      >
+        <CardHeader className="space-y-1">
+          <CardTitle className="text-2xl">Update your site</CardTitle>
+          <CardDescription>
+            Update your site name and description
+          </CardDescription>
+        </CardHeader>
+      </Card>
+      <CardContent>
+        <UpdateSiteForm site={site} />
+      </CardContent>
     </div>
   );
 }
