@@ -10,7 +10,7 @@ import { env } from "@/env.mjs";
 import { currentUser } from "@clerk/nextjs";
 import { and, eq, or, sql } from "drizzle-orm";
 import { revalidateTag } from "next/cache";
-import { withPostAuth, withSiteAuth } from "./auth";
+import { withPostAuth } from "./auth";
 import {
   addDomainToVercel,
   getApexDomain,
