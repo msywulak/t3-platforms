@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-explicit-any */
@@ -21,7 +22,7 @@ import {
 import { getBlurDataURL } from "./utils";
 import { type OurFileRouter } from "@/app/api/uploadthing/core";
 import { generateReactHelpers } from "@uploadthing/react/hooks";
-import { authAction } from "./safe-action";
+import { authAction, siteAuthAction } from "./safe-action";
 import { z } from "zod";
 
 // const nanoid = customAlphabet(
@@ -42,42 +43,35 @@ export const getSiteFromPostId = authAction(
   },
 );
 
-export const createSite = async (formData: FormData) => {
-  const user = await currentUser();
-  if (!user) {
-    return {
-      error: "Not authenticated",
-    };
-  }
-  const name = formData.get("name") as string;
-  const description = formData.get("description") as string;
-  const subdomain = formData.get("subdomain") as string;
-
-  try {
-    const response = await db.insert(sites).values({
-      name,
-      description,
-      subdomain,
-      clerkId: user.id,
-    });
-    revalidateTag(`${subdomain}.${env.NEXT_PUBLIC_ROOT_DOMAIN}-metadata`);
-    return response.insertId;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  } catch (error: any) {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-    if (error.code === "P2002") {
-      return {
-        error: `This subdomain is already taken`,
-      };
-    } else {
-      return {
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-assignment
-        error: error.message,
-      };
+export const createSite = authAction(
+  z.object({
+    name: z.string(),
+    description: z.string(),
+    subdomain: z.string(),
+  }),
+  async ({ name, description, subdomain }, { userId }) => {
+    try {
+      const response = await db.insert(sites).values({
+        name,
+        description,
+        subdomain,
+        clerkId: userId,
+      });
+      revalidateTag(`${subdomain}.${env.NEXT_PUBLIC_ROOT_DOMAIN}-metadata`);
+      return response.insertId;
+    } catch (error: any) {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+      if (error.code === "P2002") {
+        throw new Error(`This subdomain is already in use`);
+      } else {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-argument
+        throw new Error(error.message);
+      }
     }
-  }
-};
+  },
+);
 
+// TODO: move this to next-safe-action
 export const updateSite = withSiteAuth(
   async (formData: FormData, site: Site, key: string) => {
     const value = formData.get(key) as string;
@@ -196,19 +190,34 @@ export const updateSite = withSiteAuth(
   },
 );
 
-export const deleteSite = withSiteAuth(async (_: FormData, site: Site) => {
-  try {
-    const response = await db.delete(sites).where(eq(sites.id, site.id));
+export const deleteSite = siteAuthAction(
+  z.object({
+    siteId: z.number(),
+  }),
+  async ({ siteId }, { userId, allSites }) => {
+    // Find the site with the matching id
+    const foundSite = allSites.find((s) => s.id === siteId);
 
-    revalidateTag(`${site.subdomain}.${env.NEXT_PUBLIC_ROOT_DOMAIN}-metadata`);
-    site.customDomain && revalidateTag(`${site.customDomain}-metadata`);
-    return response;
-  } catch (error: any) {
-    return {
-      error: error.message,
-    };
-  }
-});
+    // Check if the site was found
+    if (!foundSite) {
+      throw new Error("Site not found");
+    }
+    try {
+      const response = await db
+        .delete(sites)
+        .where(and(eq(sites.id, siteId), eq(sites.clerkId, userId)));
+
+      revalidateTag(
+        `${foundSite.subdomain}.${env.NEXT_PUBLIC_ROOT_DOMAIN}-metadata`,
+      );
+      foundSite.customDomain &&
+        revalidateTag(`${foundSite.customDomain}-metadata`);
+      return response;
+    } catch (error: any) {
+      throw new Error(error.message);
+    }
+  },
+);
 
 export const createPost = async (siteId: number) => {
   const user = await currentUser();

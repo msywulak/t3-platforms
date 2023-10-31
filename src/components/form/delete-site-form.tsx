@@ -1,6 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unnecessary-type-assertion */
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/no-unsafe-argument */
 "use client";
 
 import LoadingDots from "@/components/icons/loading-dots";
@@ -11,16 +8,16 @@ import { toast } from "sonner";
 import { deleteSite } from "@/lib/actions";
 
 export default function DeleteSiteForm({ siteName }: { siteName: string }) {
-  const { id } = useParams() as { id: string };
+  const { id } = useParams();
   const router = useRouter();
   return (
     <form
-      action={async (data: FormData) =>
+      action={async () =>
         window.confirm("Are you sure you want to delete your site?") &&
-        deleteSite(data, id, "delete")
+        deleteSite({ siteId: Number(id) })
           .then((res) => {
-            if (res.error) {
-              toast.error(res.error);
+            if (typeof res === "object" && "error" in res) {
+              toast.error(res.error as string);
             } else {
               router.refresh();
               router.push("/sites");

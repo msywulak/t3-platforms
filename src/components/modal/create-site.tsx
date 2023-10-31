@@ -31,19 +31,20 @@ export default function CreateSiteModal() {
 
   return (
     <form
-      action={async (data: FormData) =>
-        createSite(data).then((res) => {
+      action={async (data: FormData) => {
+        const name = data.get("name") as string;
+        const description = data.get("description") as string;
+        const subdomain = data.get("subdomain") as string;
+        await createSite({ name, description, subdomain }).then((res) => {
           if (typeof res === "object" && "error" in res) {
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-explicit-any
-            toast.error((res as { error: any }).error);
+            toast.error(res.error as string);
           } else {
-            const id = res;
-            router.push(`/site/${id}`);
+            router.push(`/site/${res.data}`);
             modal?.hide();
             toast.success("Site created successfully!");
           }
-        })
-      }
+        });
+      }}
       className="w-full rounded-md bg-white dark:bg-black md:max-w-md md:border md:border-stone-200 md:shadow dark:md:border-stone-700"
     >
       <div className="relative flex flex-col space-y-4 p-5 md:p-10">
