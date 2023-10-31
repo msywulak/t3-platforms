@@ -15,13 +15,13 @@ export default function CreatePostButton() {
     <button
       onClick={() =>
         startTransition(async () => {
-          const post = await createPost(Number(id as string));
+          const post = await createPost({ siteId: Number(id) });
           router.refresh();
-          if (typeof post === "string") {
-            router.push(`/post/${post}`);
-          } else {
+          if (typeof post === "object" && "error" in post) {
             console.error(post.error);
             router.push(`/site/${id as string}`);
+          } else {
+            router.push(`/post/${post.data}`);
           }
         })
       }

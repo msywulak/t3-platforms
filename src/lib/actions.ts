@@ -219,30 +219,57 @@ export const deleteSite = siteAuthAction(
   },
 );
 
-export const createPost = async (siteId: number) => {
-  const user = await currentUser();
-  if (!user) {
-    return {
-      error: "Not authenticated",
-    };
-  }
-  const site = await db.query.sites.findFirst({
-    where: eq(sites.id, siteId),
-  });
-  if (!site) {
-    return {
-      error: "Site not found",
-    };
-  }
-  const response = await db.insert(posts).values({
-    siteId: siteId,
-    clerkId: user.id,
-  });
-  revalidateTag(`${site.subdomain}.${env.NEXT_PUBLIC_ROOT_DOMAIN}-posts`);
-  site.customDomain && revalidateTag(`${site.customDomain}-posts`);
+export const createPost = siteAuthAction(
+  z.object({ siteId: z.number() }),
+  async ({ siteId }, { userId, allSites }) => {
+    // Find the site with the matching id
+    const foundSite = allSites.find((s) => s.id === siteId);
 
-  return response.insertId;
-};
+    // Check if the site was found
+    if (!foundSite) {
+      throw new Error("Site not found");
+    }
+    try {
+      const response = await db.insert(posts).values({
+        siteId: siteId,
+        clerkId: userId,
+      });
+      revalidateTag(
+        `${foundSite.subdomain}.${env.NEXT_PUBLIC_ROOT_DOMAIN}-posts`,
+      );
+      foundSite.customDomain &&
+        revalidateTag(`${foundSite.customDomain}-posts`);
+      return response.insertId;
+    } catch (error: any) {
+      throw new Error(error.message);
+    }
+  },
+);
+
+// export const createPost = async (siteId: number) => {
+//   const user = await currentUser();
+//   if (!user) {
+//     return {
+//       error: "Not authenticated",
+//     };
+//   }
+//   const site = await db.query.sites.findFirst({
+//     where: eq(sites.id, siteId),
+//   });
+//   if (!site) {
+//     return {
+//       error: "Site not found",
+//     };
+//   }
+//   const response = await db.insert(posts).values({
+//     siteId: siteId,
+//     clerkId: user.id,
+//   });
+//   revalidateTag(`${site.subdomain}.${env.NEXT_PUBLIC_ROOT_DOMAIN}-posts`);
+//   site.customDomain && revalidateTag(`${site.customDomain}-posts`);
+
+//   return response.insertId;
+// };
 
 // creating a separate function for this because we're not using FormData
 export const updatePost = async (data: Post) => {
