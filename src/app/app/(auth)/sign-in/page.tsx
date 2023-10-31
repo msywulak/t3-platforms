@@ -39,6 +39,9 @@ export default async function SignInPage() {
             Read the announcement.
           </a>
         </p>
+        <p className="mt-2 text-center text-sm text-stone-600 dark:text-stone-400">
+          Sign In with
+        </p>
         <div className="mx-auto mt-4 w-11/12 max-w-sm sm:w-full">
           <Suspense
             fallback={
