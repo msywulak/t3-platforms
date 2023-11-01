@@ -33,4 +33,7 @@ export const siteAuthAction = createSafeActionClient({
     }
     return { userId: user.id, allSites };
   },
+  handleReturnedServerError(e) {
+    return { serverError: e.message };
+  },
 });
