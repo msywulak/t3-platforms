@@ -44,14 +44,21 @@ export function CreateSiteButton() {
   });
 
   useEffect(() => {
+    const subdomain = data.name
+      .toLowerCase()
+      .trim()
+      .replace(/[\W_]+/g, "-");
+
     setData((prev) => ({
       ...prev,
-      subdomain: prev.name
-        .toLowerCase()
-        .trim()
-        .replace(/[\W_]+/g, "-"),
+      subdomain,
     }));
-  }, [data.name]);
+
+    form.setValue("subdomain", subdomain, {
+      shouldValidate: true,
+      shouldDirty: true,
+    });
+  }, [data.name, form]);
 
   function onSubmit(data: Inputs) {
     console.log(data);
