@@ -155,14 +155,7 @@ export function CreateSiteButton() {
               </div>
             </div>
             <DialogFooter>
-              <Button
-                type="submit"
-                onClick={() => {
-                  setOpen(false);
-                }}
-              >
-                Save changes
-              </Button>
+              <Button type="submit">Save changes</Button>
             </DialogFooter>
           </form>
         </Form>

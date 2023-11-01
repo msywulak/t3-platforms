@@ -80,6 +80,12 @@ export default function OverviewStats() {
                   r: 8,
                   style: { fill: "hsl(var(--primary))" },
                 }}
+                dot={{
+                  r: 4,
+                  fill: "hsl(var(--primary))",
+                  stroke: "hsl(var(--primary))",
+                  strokeWidth: 2,
+                }}
                 style={
                   {
                     stroke: "hsl(var(--primary))",
