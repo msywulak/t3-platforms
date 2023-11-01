@@ -1,8 +1,7 @@
 import { db } from "@/db";
 import { eq } from "drizzle-orm";
-import { posts, sites } from "@/db/schema";
-import { notFound, redirect } from "next/navigation";
-import { revalidatePath, revalidateTag } from "next/cache";
+import { sites } from "@/db/schema";
+import { notFound } from "next/navigation";
 import {
   Card,
   CardContent,
@@ -18,31 +17,6 @@ export default async function SiteSettingsIndex({
   params: { id: string };
 }) {
   const siteId = Number(params.id);
-
-  async function updateSite(fd: FormData) {
-    "use server";
-
-    const name = fd.get("name") as string;
-    const description = fd.get("description") as string;
-
-    await db
-      .update(sites)
-      .set({ name, description })
-      .where(eq(sites.id, siteId));
-
-    revalidateTag(`/site/${siteId}/settings`);
-  }
-
-  async function deleteSite() {
-    "use server";
-
-    await db.delete(sites).where(eq(sites.id, siteId));
-    await db.delete(posts).where(eq(posts.siteId, siteId));
-
-    const path = `/sites`;
-    revalidatePath(path);
-    redirect(path);
-  }
 
   const site = await db.query.sites.findFirst({
     where: eq(sites.id, siteId),

@@ -59,25 +59,8 @@ module.exports = {
         sm: "calc(var(--radius) - 4px)",
       },
       fontFamily: {
-        default: ["var(--font-geist-sans)", ...fontFamily.sans],
+        sans: ["var(--font-geist-sans)", ...fontFamily.sans],
         mono: ["var(--font-geist-mono)", ...fontFamily.mono],
-      },
-      typography: {
-        DEFAULT: {
-          css: {
-            h1: {
-              fontFamily: "Geist Sans",
-            },
-            h2: {
-              fontFamily: "Geist Sans",
-            },
-            h3: {
-              fontFamily: "Geist Sans",
-            },
-            "blockquote p:first-of-type::before": { content: "none" },
-            "blockquote p:first-of-type::after": { content: "none" },
-          },
-        },
       },
       keyframes: {
         "accordion-down": {

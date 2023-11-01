@@ -17,7 +17,7 @@ export default function Editor({ post }: { post: PostWithSite }) {
   const [isPendingSaving, startTransitionSaving] = useTransition();
   const [isPendingPublishing, startTransitionPublishing] = useTransition();
   const [data, setData] = useState<PostWithSite>(post);
-  const [hydrated, setHydrated] = useState(false);
+  // const [hydrated, setHydrated] = useState(false);
 
   const url = process.env.NEXT_PUBLIC_VERCEL_ENV
     ? `https://${data.site?.subdomain}.${env.NEXT_PUBLIC_ROOT_DOMAIN}/${data.slug}`

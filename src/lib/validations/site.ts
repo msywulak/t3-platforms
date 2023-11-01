@@ -31,6 +31,12 @@ export const siteSchema = z.object({
   clerkId: z.string().optional(),
 });
 
+export const createSiteSchema = z.object({
+  name: z.string(),
+  description: z.string(),
+  subdomain: z.string(),
+});
+
 export const updateSiteSchema = z.object({
   id: z.number().optional(),
   name: z.string().optional(),

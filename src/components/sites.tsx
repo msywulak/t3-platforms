@@ -24,7 +24,7 @@ export default async function Sites({ limit }: { limit?: number }) {
     </div>
   ) : (
     <div className="mt-20 flex flex-col items-center space-x-4">
-      <h1 className="font-cal text-4xl">No Sites Yet</h1>
+      <h1 className="text-4xl">No Sites Yet</h1>
       <Image
         alt="missing site"
         src="https://illustrations.popsy.co/gray/web-design.svg"

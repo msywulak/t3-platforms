@@ -52,6 +52,13 @@ export const createSite = authAction(
   }),
   async ({ name, description, subdomain }, { userId }) => {
     try {
+      const exists = await db.query.sites.findFirst({
+        where: eq(sites.subdomain, subdomain),
+      });
+      console.log("exists", exists);
+      if (exists) {
+        throw new Error("This subdomain is already in use");
+      }
       const response = await db.insert(sites).values({
         name,
         description,
@@ -62,12 +69,7 @@ export const createSite = authAction(
       return response.insertId;
     } catch (error: any) {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-      if (error.code === "P2002") {
-        throw new Error(`This subdomain is already in use`);
-      } else {
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-argument
-        throw new Error(error.message);
-      }
+      throw new Error(error.message);
     }
   },
 );

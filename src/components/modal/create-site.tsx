@@ -39,7 +39,7 @@ export default function CreateSiteModal() {
           if (typeof res === "object" && "error" in res) {
             toast.error(res.error as string);
           } else {
-            router.push(`/site/${res.data}`);
+            router.push(`/site/${res.data as string}`);
             modal?.hide();
             toast.success("Site created successfully!");
           }

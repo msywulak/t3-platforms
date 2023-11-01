@@ -9,6 +9,17 @@ import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 
 import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import {
   Form,
   FormControl,
   FormItem,
@@ -105,30 +116,45 @@ export function UpdateSiteForm({ site }: UpdateSiteFormProps) {
             Update Site
             <span className="sr-only">Update Site</span>
           </Button>
-          <Button
-            variant="destructive"
-            onClick={() => {
-              startTransition(async () => {
-                void form.trigger(["name", "description"]);
-                await deleteSite({ siteId: site.id });
-                // await deleteProductAction({
-                //   storeId: product.storeId,
-                //   id: product.id,
-                // });
-                router.push(`/sites`);
-              });
-            }}
-            disabled={isPending}
-          >
-            {isPending && (
-              <Icons.spinner
-                className="mr-2 h-4 w-4 animate-spin"
-                aria-hidden="true"
-              />
-            )}
-            Delete Site
-            <span className="sr-only">Delete Site</span>
-          </Button>
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+              <Button variant="destructive">
+                {" "}
+                {isPending && (
+                  <Icons.spinner
+                    className="mr-2 h-4 w-4 animate-spin"
+                    aria-hidden="true"
+                  />
+                )}
+                Delete Site
+              </Button>
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                <AlertDialogDescription>
+                  This action cannot be undone. This will permanently delete
+                  your site and all post from our servers.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                <AlertDialogAction
+                  onClick={() => {
+                    startTransition(async () => {
+                      void form.trigger(["name", "description"]);
+                      await deleteSite({ siteId: site.id });
+                      router.push(`/sites`);
+                    });
+                  }}
+                  disabled={isPending}
+                >
+                  Delete Site
+                  <span className="sr-only">Delete Site</span>
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
         </div>
       </form>
     </Form>

@@ -1,6 +1,5 @@
 import { db } from "@/db";
-import CreateSiteButton from "./create-site-button";
-import CreateSiteModal from "./modal/create-site";
+import { CreateSiteButton } from "./create-site-button";
 import Link from "next/link";
 import { currentUser } from "@clerk/nextjs";
 import { sites } from "@/db/schema";
@@ -17,9 +16,7 @@ export default async function OverviewSitesCTA() {
     .where(eq(sites.clerkId, user.id));
 
   return allSites === undefined ?? (allSites[0]?.count ?? 0) <= 0 ? (
-    <CreateSiteButton>
-      <CreateSiteModal />
-    </CreateSiteButton>
+    <CreateSiteButton />
   ) : (
     <Link
       href="/sites"
