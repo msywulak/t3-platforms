@@ -1,4 +1,3 @@
-import { InlineSnippet } from "@/components/form/domain-configuration";
 import Image from "next/image";
 import { buttonVariants } from "@/components/ui/button";
 import Link from "next/link";
@@ -19,18 +18,12 @@ export default function HomePage() {
         className={buttonVariants({ variant: "default" })}
         href={
           process.env.NEXT_PUBLIC_VERCEL_ENV
-            ? `https://app.${env.NEXT_PUBLIC_ROOT_DOMAIN}}`
+            ? `https://app.${env.NEXT_PUBLIC_ROOT_DOMAIN}`
             : `http://app.localhost:3000`
         }
       >
-        Click here
+        Click here to get started
       </Link>
-      <div className="font-sans">
-        Edit this page on{" "}
-        <InlineSnippet className="ml-2 bg-blue-900 text-blue-100">
-          app/home/page.tsx
-        </InlineSnippet>
-      </div>
     </div>
   );
 }
