@@ -5,10 +5,11 @@ import Image from "next/image";
 
 export default async function NotFound() {
   const headersList = headers();
-  const domain = headersList
-    .get("host")
-    ?.replace(".localhost:3000", `.${env.NEXT_PUBLIC_ROOT_DOMAIN}`);
-  const data = await getSiteData(domain!);
+  const host = headersList.get("host");
+  const domain = host
+    ? host.replace(".localhost:3000", `.${env.NEXT_PUBLIC_ROOT_DOMAIN}`)
+    : null;
+  const data = domain ? await getSiteData(domain) : null;
 
   return (
     <div className="flex flex-col items-center justify-center">
