@@ -1,5 +1,5 @@
 import "@/styles/globals.css";
-
+import { Analytics } from "@vercel/analytics/react";
 import { Providers } from "./providers";
 import { type Metadata } from "next";
 import { cn } from "@/lib/utils";
@@ -33,7 +33,10 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={cn(`${GeistSans.variable} ${GeistMono.variable}`)}>
-        <Providers>{children}</Providers>
+        <Providers>
+          {children}
+          <Analytics />
+        </Providers>
       </body>
     </html>
   );

@@ -4,8 +4,7 @@ import { headers } from "next/headers";
 import Image from "next/image";
 
 export default async function NotFound() {
-  const headersList = headers();
-  const host = headersList.get("host");
+  const host = headers().get("host");
   const domain = host
     ? host.replace(".localhost:3000", `.${env.NEXT_PUBLIC_ROOT_DOMAIN}`)
     : null;
