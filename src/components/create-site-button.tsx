@@ -7,6 +7,7 @@ import { toast } from "sonner";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { type z } from "zod";
+import va from "@vercel/analytics";
 
 import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
@@ -74,6 +75,7 @@ export function CreateSiteButton() {
           toast.error(res.serverError);
           return;
         } else if (typeof res.data === "string") {
+          va.track("Created Site");
           void router.push(`/site/${res.data}`);
           toast.success("Site Updated Successfully");
         } else {

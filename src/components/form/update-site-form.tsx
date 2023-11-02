@@ -33,6 +33,7 @@ import { deleteSite, updateSite } from "@/lib/actions";
 import { catchClerkError } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Icons } from "@/components/icons";
+import va from "@vercel/analytics";
 
 interface UpdateSiteFormProps {
   site: Site;
@@ -143,6 +144,7 @@ export function UpdateSiteForm({ site }: UpdateSiteFormProps) {
                   onClick={() => {
                     startTransition(async () => {
                       void form.trigger(["name", "description"]);
+                      va.track("Deleted Site");
                       await deleteSite({ siteId: site.id });
                       router.push(`/sites`);
                     });

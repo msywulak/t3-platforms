@@ -8,6 +8,7 @@ import { toast } from "sonner";
 import DomainStatus from "./domain-status";
 import DomainConfiguration from "./domain-configuration";
 import Uploader from "./uploader";
+import va from "@vercel/analytics";
 
 export default function Form({
   title,
@@ -52,6 +53,7 @@ export default function Form({
             // eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-member-access
             toast.error(res.error);
           } else {
+            va.track(`Updated ${inputAttrs.name}`);
             if (id) {
               router.refresh();
             } else {

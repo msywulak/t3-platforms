@@ -6,6 +6,7 @@ import { useParams } from "next/navigation";
 import { useState } from "react";
 import { useFormStatus } from "react-dom";
 import LoadingDots from "./icons/loading-dots";
+import va from "@vercel/analytics";
 import { toast } from "sonner";
 
 export default function ReportAbuse() {
@@ -24,7 +25,9 @@ export default function ReportAbuse() {
       </button>
       {open && (
         <form
-          action={async () => {
+          action={async (formData) => {
+            const url = formData.get("url") as string;
+            va.track("Reported Abuse", { url });
             // artificial 1s delay
             await new Promise((resolve) => setTimeout(resolve, 1000));
             setOpen(false);
@@ -32,7 +35,7 @@ export default function ReportAbuse() {
               "Successfully reported abuse – thank you for helping us keep the internet safe!",
             );
           }}
-          className="animate-in slide-in-from-bottom-5 absolute bottom-20 right-2 flex w-96 flex-col space-y-6 rounded-lg border border-stone-200 bg-white p-8 shadow-lg"
+          className="absolute bottom-20 right-2 flex w-96 flex-col space-y-6 rounded-lg border border-stone-200 bg-white p-8 shadow-lg animate-in slide-in-from-bottom-5"
         >
           <div>
             <h2 className="font-cal text-xl leading-7 text-stone-900">

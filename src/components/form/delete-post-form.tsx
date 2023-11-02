@@ -8,6 +8,7 @@ import { useParams, useRouter } from "next/navigation";
 import { useFormStatus } from "react-dom";
 import { toast } from "sonner";
 import { deletePost } from "@/lib/actions";
+import va from "@vercel/analytics";
 
 export default function DeletePostForm({ postName }: { postName: string }) {
   // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
@@ -21,6 +22,7 @@ export default function DeletePostForm({ postName }: { postName: string }) {
           if (res.error) {
             toast.error(res.error);
           } else {
+            va.track("Deleted Post");
             router.refresh();
             router.push(`/site/${res.siteId}`);
             toast.success(`Successfully deleted post!`);

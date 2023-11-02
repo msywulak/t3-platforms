@@ -6,6 +6,7 @@ import { cn } from "@/lib/utils";
 import { useParams, useRouter } from "next/navigation";
 import LoadingDots from "@/components/icons/loading-dots";
 import { Button } from "@/components/ui/button";
+import va from "@vercel/analytics";
 
 export default function CreatePostButton() {
   const router = useRouter();
@@ -22,6 +23,7 @@ export default function CreatePostButton() {
             console.error(post.error);
             router.push(`/site/${id as string}`);
           } else {
+            va.track("Created Post");
             router.push(`/post/${post.data}`);
           }
         })
