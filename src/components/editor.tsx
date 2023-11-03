@@ -8,7 +8,6 @@ import { cn } from "@/lib/utils";
 import LoadingDots from "./icons/loading-dots";
 import { ExternalLink } from "lucide-react";
 import { toast } from "sonner";
-import type { Post } from "@/db/schema";
 import { env } from "@/env.mjs";
 import { type postEditorSchema } from "@/lib/validations/post";
 import { type z } from "zod";

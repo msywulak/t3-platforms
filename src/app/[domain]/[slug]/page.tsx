@@ -113,8 +113,8 @@ export default async function SitePostPage({
           // if you are using Github OAuth, you can get rid of the Twitter option
           href={
             data.site?.user?.username
-              ? `https://twitter.com/${data.site.user.username}`
-              : `https://github.com/${data.site?.user?.githubId}`
+              ? `https://twitter.com/${data.site.user.clerkId}`
+              : `https://github.com/${data.site?.user?.clerkId}`
           }
           rel="noreferrer"
           target="_blank"

@@ -1,7 +1,7 @@
 import { authMiddleware } from "@clerk/nextjs";
 import { env } from "@/env.mjs";
 import { NextResponse } from "next/server";
-import { generateRandomString } from "@/lib/utils";
+// import { generateRandomString } from "@/lib/utils";
 
 export default authMiddleware({
   publicRoutes: [
@@ -27,19 +27,19 @@ export default authMiddleware({
       searchParams.length > 0 ? `?${searchParams}` : ""
     }`;
     const pathname = req.nextUrl.pathname;
-    const domain = req.nextUrl.basePath;
+    // const domain = req.nextUrl.basePath;
 
-    console.log(`
-    ~~~~ authMiddleware ${generateRandomString(8)} ~~~~
-    href: ${url.href}
-    domain: ${domain}
-    hostname: ${hostname}
-    searchParams: ${searchParams}
-    path: ${path}
-    pathname: ${pathname}
-    authUser: ${auth.userId}
-    ~~~~ authMiddleware ~~~~
-    `);
+    // console.log(`
+    // ~~~~ authMiddleware ${generateRandomString(8)} ~~~~
+    // href: ${url.href}
+    // domain: ${domain}
+    // hostname: ${hostname}
+    // searchParams: ${searchParams}
+    // path: ${path}
+    // pathname: ${pathname}
+    // authUser: ${auth.userId}
+    // ~~~~ authMiddleware ~~~~
+    // `);
 
     // bypass rewrite for api routes
     if (pathname.startsWith("/api")) {
