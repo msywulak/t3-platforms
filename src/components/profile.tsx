@@ -1,7 +1,8 @@
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
-import { SignOutButton, currentUser } from "@clerk/nextjs";
+import { currentUser } from "@clerk/nextjs";
+import { LogOutButtons } from "@/components/auth/logout-buttons";
 
 export default async function Profile() {
   const user = await currentUser();
@@ -29,7 +30,7 @@ export default async function Profile() {
           {user.firstName} {user.lastName}
         </span>
       </Link>
-      <SignOutButton />
+      <LogOutButtons />
     </div>
   );
 }

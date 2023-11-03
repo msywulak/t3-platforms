@@ -71,9 +71,6 @@ dependencies:
   geist:
     specifier: ^1.0.0
     version: 1.0.0
-  lucide-react:
-    specifier: ^0.290.0
-    version: 0.290.0(react@18.2.0)
   nanoid:
     specifier: ^5.0.2
     version: 5.0.2
@@ -5893,14 +5890,6 @@ packages:
 
   /lucide-react@0.244.0(react@18.2.0):
     resolution: {integrity: sha512-PeDVbx5PlIRrVvdxiuSxPfBo7sK5qrL3LbvvRoGVNiHYRAkBm/48lKqoioxcmp0bgsyJs9lMw7CdtGFvnMJbVg==}
-    peerDependencies:
-      react: ^16.5.1 || ^17.0.0 || ^18.0.0
-    dependencies:
-      react: 18.2.0
-    dev: false
-
-  /lucide-react@0.290.0(react@18.2.0):
-    resolution: {integrity: sha512-CBDPRLOPjdo+bVlxhaa7FVWaB8OrZZQ34mwm0Fsz9ut6JltN/Td55640ur8bRWSJuz6+nX2klKrpBpV7ktwD3Q==}
     peerDependencies:
       react: ^16.5.1 || ^17.0.0 || ^18.0.0
     dependencies:
