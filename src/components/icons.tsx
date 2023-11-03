@@ -15,6 +15,15 @@ import {
   GearIcon,
   RocketIcon,
   Link1Icon,
+  MoonIcon,
+  SunIcon,
+  CrossCircledIcon,
+  ExclamationTriangleIcon,
+  CheckCircledIcon,
+  Cross1Icon,
+  CircleIcon,
+  ChevronRightIcon,
+  CheckIcon,
 } from "@radix-ui/react-icons";
 
 type IconProps = React.HTMLAttributes<SVGElement>;
@@ -83,4 +92,13 @@ export const Icons = {
   gear: GearIcon,
   rocket: RocketIcon,
   link1: Link1Icon,
+  moon: MoonIcon,
+  sun: SunIcon,
+  crossCircled: CrossCircledIcon,
+  exclamationTriangle: ExclamationTriangleIcon,
+  checkCircled: CheckCircledIcon,
+  cross1: Cross1Icon,
+  circle: CircleIcon,
+  chevronRight: ChevronRightIcon,
+  check: CheckIcon,
 };

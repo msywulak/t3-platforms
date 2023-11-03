@@ -1,13 +1,13 @@
 "use client";
 
 import { cn } from "@/lib/utils";
-import { AlertTriangle } from "lucide-react";
 import { useParams } from "next/navigation";
 import { useState } from "react";
 import { useFormStatus } from "react-dom";
 import LoadingDots from "./icons/loading-dots";
 import va from "@vercel/analytics";
 import { toast } from "sonner";
+import { Icons } from "./icons";
 
 export default function ReportAbuse() {
   const [open, setOpen] = useState(false);
@@ -21,7 +21,7 @@ export default function ReportAbuse() {
         className="rounded-full bg-black p-4 text-white shadow-lg transition-all hover:-translate-y-1 hover:shadow-2xl active:translate-y-0 active:shadow-sm"
         onClick={() => setOpen(!open)}
       >
-        <AlertTriangle size={24} />
+        <Icons.exclamationTriangle width={24} />
       </button>
       {open && (
         <form

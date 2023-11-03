@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useDomainStatus } from "./use-domain-status";
 import { getSubdomain } from "@/lib/domains";
-import { AlertCircle, XCircle } from "lucide-react";
+import { Icons } from "@/components/icons";
 import { cn } from "@/lib/utils";
 
 export const InlineSnippet = ({
@@ -44,13 +44,13 @@ export default function DomainConfiguration({ domain }: { domain: string }) {
     <div className="border-t border-stone-200 px-10 pb-5 pt-7 dark:border-stone-700">
       <div className="mb-4 flex items-center space-x-2">
         {status === "Pending Verification" ? (
-          <AlertCircle
+          <Icons.exclamationTriangle
             fill="#FBBF24"
             stroke="currentColor"
             className="text-white dark:text-black"
           />
         ) : (
-          <XCircle
+          <Icons.crossCircled
             fill="#DC2626"
             stroke="currentColor"
             className="text-white dark:text-black"
