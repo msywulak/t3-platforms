@@ -3,8 +3,6 @@ import SSOCallback from "@/components/auth/sso-callback";
 import { Shell } from "@/components/shells/shell";
 import { type Metadata } from "next";
 
-export const runtime = "edge";
-
 export const metadata: Metadata = {
   title: "SSO-Callback | Platforms Starter Kit",
 };

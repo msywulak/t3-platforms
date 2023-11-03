@@ -49,6 +49,7 @@ export function UpdateSiteForm({ site }: UpdateSiteFormProps) {
   const form = useForm<Inputs>({
     resolver: zodResolver(updateSiteSchema),
     defaultValues: {
+      id: site.id,
       name: site.name!,
       description: site.description ?? "",
     },

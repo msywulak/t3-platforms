@@ -25,6 +25,7 @@ import { generateReactHelpers } from "@uploadthing/react/hooks";
 import { authAction, siteAuthAction } from "./safe-action";
 import { z } from "zod";
 import { updateSiteSchema } from "./validations/site";
+import { postEditorSchema } from "./validations/post";
 
 // const nanoid = customAlphabet(
 //   "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz",
@@ -173,9 +174,7 @@ export const updateSite = siteAuthAction(
           error: `This ${key} is already in use`,
         };
       } else {
-        return {
-          error: error.message,
-        };
+        throw new Error(error.message);
       }
     }
   },
@@ -242,58 +241,101 @@ export const createPost = siteAuthAction(
   },
 );
 
-//TODO: move this to next-safe-action
-export const updatePost = async (data: Post) => {
-  const user = await currentUser();
-  if (!user) {
-    return {
-      error: "Not authenticated",
-    };
-  }
-  const post = await db.query.posts.findFirst({
-    where: and(eq(posts.id, data.id), eq(posts.clerkId, user.id)),
-    with: {
-      site: true,
-    },
-  });
+export const updatePost = authAction(
+  z.object({ post: postEditorSchema }),
+  async ({ post }, { userId }) => {
+    const updatedPost = await db.query.posts.findFirst({
+      where: and(eq(posts.id, post.id), eq(posts.clerkId, userId)),
+      with: {
+        site: true,
+      },
+    });
 
-  if (!post) {
-    return {
-      error: "Post not found",
-    };
-  }
-  try {
-    const response = await db
-      .update(posts)
-      .set({
-        title: data.title,
-        description: data.description,
-        content: data.content,
-      })
-      .where(eq(posts.id, data.id));
+    if (!updatedPost) {
+      throw new Error("Post not found");
+    }
+    try {
+      const response = await db
+        .update(posts)
+        .set({
+          title: post.title,
+          description: post.description,
+          content: post.content,
+        })
+        .where(eq(posts.id, post.id));
 
-    revalidateTag(
-      `${post.site?.subdomain}.${env.NEXT_PUBLIC_ROOT_DOMAIN}-posts`,
-    );
-    revalidateTag(
-      `${post.site?.subdomain}.${env.NEXT_PUBLIC_ROOT_DOMAIN}-${post.slug}`,
-    );
+      revalidateTag(
+        `${updatedPost.site?.subdomain}.${env.NEXT_PUBLIC_ROOT_DOMAIN}-posts`,
+      );
+      revalidateTag(
+        `${updatedPost.site?.subdomain}.${env.NEXT_PUBLIC_ROOT_DOMAIN}-${updatedPost.slug}`,
+      );
 
-    // if the site has a custom domain, we need to revalidate those tags too
-    post.site?.customDomain &&
-      (revalidateTag(`${post.site?.customDomain}-posts`),
-      revalidateTag(`${post.site?.customDomain}-${post.slug}`));
+      // if the site has a custom domain, we need to revalidate those tags too
+      updatedPost.site?.customDomain &&
+        (revalidateTag(`${updatedPost.site?.customDomain}-posts`),
+        revalidateTag(`${updatedPost.site?.customDomain}-${updatedPost.slug}`));
 
-    return response;
-  } catch (error: any) {
-    return {
-      error: error.message,
-    };
-  }
-};
+      return response;
+    } catch (error: any) {
+      return new Error(error.message);
+    }
+  },
+);
 
 //TODO: move this to next-safe-action
-export const updatePostMetadata = withPostAuth(
+export const updatePostMetadata = authAction(
+  z.object({
+    formData: z.instanceof(FormData),
+    siteId: z.number(),
+    postId: z.number(),
+    key: z.string(),
+  }),
+  async (input, { userId }) => {
+    const value = input.formData.get(input.key) as string;
+    try {
+      const post = await db.query.posts.findFirst({
+        where: and(
+          eq(posts.id, input.postId),
+          eq(posts.siteId, input.siteId),
+          eq(posts.clerkId, userId),
+        ),
+        with: {
+          site: true,
+        },
+      });
+
+      if (!post) {
+        throw new Error("Post not found");
+      }
+
+      const response = await db
+        .update(posts)
+        .set({
+          [input.key]: input.key === "published" ? value === "true" : value,
+        })
+        .where(eq(posts.id, post.id));
+
+      revalidateTag(
+        `${post.site?.subdomain}.${env.NEXT_PUBLIC_ROOT_DOMAIN}-posts`,
+      );
+      revalidateTag(
+        `${post.site?.subdomain}.${env.NEXT_PUBLIC_ROOT_DOMAIN}-${post.slug}`,
+      );
+
+      // if the site has a custom domain, we need to revalidate those tags too
+      post.site?.customDomain &&
+        (revalidateTag(`${post.site?.customDomain}-posts`),
+        revalidateTag(`${post.site?.customDomain}-${post.slug}`));
+
+      return response;
+    } catch (error: any) {
+      throw new Error(error.message);
+    }
+  },
+);
+
+export const updatePostMetadataA = withPostAuth(
   async (
     formData: FormData,
     post: Post & {
@@ -374,6 +416,7 @@ export const updatePostMetadata = withPostAuth(
   },
 );
 
+//TODO: move this to next-safe-action
 export const deletePost = withPostAuth(async (_: FormData, post: Post) => {
   try {
     const deletedPost = await db
@@ -390,6 +433,7 @@ export const deletePost = withPostAuth(async (_: FormData, post: Post) => {
   }
 });
 
+//TODO: move this to next-safe-action
 export const editUser = async (
   formData: FormData,
   _id: unknown,

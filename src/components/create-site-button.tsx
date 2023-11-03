@@ -77,7 +77,7 @@ export function CreateSiteButton() {
         } else if (typeof res.data === "string") {
           va.track("Created Site");
           void router.push(`/site/${res.data}`);
-          toast.success("Site Updated Successfully");
+          toast.success("Site Created Successfully");
         } else {
           toast.error("Something went wrong");
         }

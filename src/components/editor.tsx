@@ -10,8 +10,10 @@ import { ExternalLink } from "lucide-react";
 import { toast } from "sonner";
 import type { Post } from "@/db/schema";
 import { env } from "@/env.mjs";
+import { type postEditorSchema } from "@/lib/validations/post";
+import { type z } from "zod";
 
-type PostWithSite = Post & { site: { subdomain: string | null } | null };
+type PostWithSite = z.infer<typeof postEditorSchema>;
 
 export default function Editor({ post }: { post: PostWithSite }) {
   const [isPendingSaving, startTransitionSaving] = useTransition();
@@ -29,7 +31,7 @@ export default function Editor({ post }: { post: PostWithSite }) {
       if (e.metaKey && e.key === "s") {
         e.preventDefault();
         startTransitionSaving(async () => {
-          await updatePost(data);
+          await updatePost({ post: data });
         });
       }
     };
@@ -61,16 +63,19 @@ export default function Editor({ post }: { post: PostWithSite }) {
             console.log(data.published, typeof data.published);
             formData.append("published", String(!data.published));
             startTransitionPublishing(async () => {
-              await updatePostMetadata(formData, post.id, "published").then(
-                () => {
-                  toast.success(
-                    `Successfully ${
-                      data.published ? "unpublished" : "published"
-                    } your post.`,
-                  );
-                  setData((prev) => ({ ...prev, published: !prev.published }));
-                },
-              );
+              await updatePostMetadata({
+                postId: data.id,
+                siteId: data.siteId!,
+                formData,
+                key: "published",
+              }).then(() => {
+                toast.success(
+                  `Successfully ${
+                    data.published ? "unpublished" : "published"
+                  } your post.`,
+                );
+                setData((prev) => ({ ...prev, published: !prev.published }));
+              });
             });
           }}
           className={cn(
@@ -123,7 +128,7 @@ export default function Editor({ post }: { post: PostWithSite }) {
             return;
           }
           startTransitionSaving(async () => {
-            await updatePost(data);
+            await updatePost({ post: data });
           });
         }}
       />
