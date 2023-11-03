@@ -168,7 +168,9 @@ export default function Nav({ children }: { children: ReactNode }) {
       </button>
       <div
         className={`transform ${
-          showSidebar ? "w-full translate-x-0" : "-translate-x-full"
+          showSidebar
+            ? "w-full translate-x-0 bg-background"
+            : "-translate-x-full"
         } fixed z-10 flex h-full flex-col justify-between border-r border-secondary p-4 transition-all sm:w-60 sm:translate-x-0`}
       >
         <div className="grid gap-2">

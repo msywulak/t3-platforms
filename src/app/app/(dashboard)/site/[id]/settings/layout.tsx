@@ -6,6 +6,10 @@ import SiteSettingsNav from "./nav";
 import { and, eq } from "drizzle-orm";
 import { sites } from "@/db/schema";
 import { env } from "@/env.mjs";
+import Link from "next/link";
+import { cn } from "@/lib/utils";
+import { Icons } from "@/components/icons";
+import { buttonVariants } from "@/components/ui/button";
 
 export default async function SiteAnalyticsLayout({
   params,
@@ -34,7 +38,7 @@ export default async function SiteAnalyticsLayout({
         <h1 className="font-cal text-xl font-bold sm:text-3xl">
           Settings for {data.name}
         </h1>
-        <a
+        <Link
           href={
             process.env.NEXT_PUBLIC_VERCEL_ENV
               ? `https://${url}`
@@ -42,10 +46,14 @@ export default async function SiteAnalyticsLayout({
           }
           target="_blank"
           rel="noreferrer"
-          className="truncate rounded-md px-2 py-1 text-sm font-medium  transition-colors hover:bg-secondary"
+          className={cn(
+            buttonVariants({ variant: "secondary" }),
+            "flex h-7 w-auto items-center justify-center space-x-2 rounded-lg text-sm transition-all focus:outline-none",
+          )}
         >
-          {url} ↗
-        </a>
+          {url}
+          <Icons.link1 width={18} className="ml-1" />
+        </Link>
       </div>
       <SiteSettingsNav />
       {children}
