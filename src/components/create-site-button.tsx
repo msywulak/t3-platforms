@@ -90,7 +90,12 @@ export function CreateSiteButton() {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant="default">Create Site</Button>
+        <Button
+          variant="default"
+          className="flex h-7 w-24 items-center justify-center space-x-2 rounded-lg text-sm transition-all focus:outline-none"
+        >
+          Create Site
+        </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>

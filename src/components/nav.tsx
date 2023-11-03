@@ -1,18 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import {
-  ArrowLeft,
-  BarChart3,
-  Edit3,
-  Globe,
-  Layout,
-  LayoutDashboard,
-  Megaphone,
-  Menu,
-  Newspaper,
-  Settings,
-} from "lucide-react";
+import { Menu } from "lucide-react";
 import {
   useParams,
   usePathname,
@@ -21,29 +10,29 @@ import {
 import { type ReactNode, useEffect, useMemo, useState } from "react";
 import { getSiteFromPostId } from "@/lib/actions";
 import Image from "next/image";
-import { FileCode, Github } from "lucide-react";
 import { ModeToggle } from "./theme-toggle";
+import { Icons } from "@/components/icons";
 
 const externalLinks = [
   {
     name: "Read announcement",
     href: "https://vercel.com/blog/platforms-starter-kit",
-    icon: <Megaphone width={18} />,
+    icon: <Icons.rocket width={18} />,
   },
   {
     name: "Star on GitHub",
     href: "https://github.com/vercel/platforms",
-    icon: <Github width={18} />,
+    icon: <Icons.githubLogo width={18} />,
   },
   {
     name: "Read the guide",
     href: "https://vercel.com/guides/nextjs-multi-tenant-application",
-    icon: <FileCode width={18} />,
+    icon: <Icons.file width={18} />,
   },
   {
     name: "View demo site",
     href: "https://demo.vercel.pub",
-    icon: <Layout width={18} />,
+    icon: <Icons.layout width={18} />,
   },
   {
     name: "Deploy your own",
@@ -92,25 +81,25 @@ export default function Nav({ children }: { children: ReactNode }) {
         {
           name: "Back to All Sites",
           href: "/sites",
-          icon: <ArrowLeft width={18} />,
+          icon: <Icons.arrowLeft width={18} />,
         },
         {
           name: "Posts",
           href: `/site/${id}`,
           isActive: segments.length === 2,
-          icon: <Newspaper width={18} />,
+          icon: <Icons.reader width={18} />,
         },
         {
           name: "Analytics",
           href: `/site/${id}/analytics`,
           isActive: segments.includes("analytics"),
-          icon: <BarChart3 width={18} />,
+          icon: <Icons.barChart width={18} />,
         },
         {
           name: "Settings",
           href: `/site/${id}/settings`,
           isActive: segments.includes("settings"),
-          icon: <Settings width={18} />,
+          icon: <Icons.gear width={18} />,
         },
       ];
     } else if (segments[0] === "post" && id) {
@@ -118,19 +107,19 @@ export default function Nav({ children }: { children: ReactNode }) {
         {
           name: "Back to All Posts",
           href: siteId ? `/site/${siteId}` : "/sites",
-          icon: <ArrowLeft width={18} />,
+          icon: <Icons.arrowLeft width={18} />,
         },
         {
           name: "Editor",
           href: `/post/${id}`,
           isActive: segments.length === 2,
-          icon: <Edit3 width={18} />,
+          icon: <Icons.pencil1 width={18} />,
         },
         {
           name: "Settings",
           href: `/post/${id}/settings`,
           isActive: segments.includes("settings"),
-          icon: <Settings width={18} />,
+          icon: <Icons.gear width={18} />,
         },
       ];
     }
@@ -139,19 +128,19 @@ export default function Nav({ children }: { children: ReactNode }) {
         name: "Overview",
         href: "/",
         isActive: segments.length === 0,
-        icon: <LayoutDashboard width={18} />,
+        icon: <Icons.dashboard width={18} />,
       },
       {
         name: "Sites",
         href: "/sites",
         isActive: segments[0] === "sites",
-        icon: <Globe width={18} />,
+        icon: <Icons.globe width={18} />,
       },
       {
         name: "Settings",
         href: "/settings",
         isActive: segments[0] === "settings",
-        icon: <Settings width={18} />,
+        icon: <Icons.gear width={18} />,
       },
     ];
   }, [segments, id, siteId]);
@@ -176,7 +165,7 @@ export default function Nav({ children }: { children: ReactNode }) {
         } sm:hidden`}
         onClick={() => setShowSidebar(!showSidebar)}
       >
-        <Menu width={20} />
+        <Icons.hamburgerMenu width={20} />
       </button>
       <div
         className={`transform ${

@@ -29,7 +29,7 @@ export default function CreatePostButton() {
         })
       }
       className={cn(
-        "flex h-8 w-36 items-center justify-center space-x-2 rounded-lg border text-sm transition-all focus:outline-none sm:h-9",
+        "flex h-7 w-32 items-center justify-center space-x-2 rounded-lg text-sm transition-all focus:outline-none",
         isPending ? "cursor-not-allowed" : "cursor-pointer",
       )}
       disabled={isPending}

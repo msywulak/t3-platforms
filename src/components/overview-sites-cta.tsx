@@ -5,6 +5,7 @@ import { currentUser } from "@clerk/nextjs";
 import { sites } from "@/db/schema";
 import { eq, sql } from "drizzle-orm";
 import { buttonVariants } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 
 export default async function OverviewSitesCTA() {
   const user = await currentUser();
@@ -19,7 +20,13 @@ export default async function OverviewSitesCTA() {
   return allSites === undefined ?? (allSites[0]?.count ?? 0) <= 0 ? (
     <CreateSiteButton />
   ) : (
-    <Link href="/sites" className={buttonVariants({ variant: "default" })}>
+    <Link
+      href="/sites"
+      className={cn(
+        buttonVariants({ variant: "default" }),
+        "flex h-7 w-28 items-center justify-center space-x-2 rounded-lg text-sm transition-all focus:outline-none",
+      )}
+    >
       View All Sites
     </Link>
   );

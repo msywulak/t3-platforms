@@ -1,4 +1,21 @@
-import { AvatarIcon, ImageIcon, ExternalLinkIcon } from "@radix-ui/react-icons";
+import {
+  ExternalLinkIcon,
+  ArrowLeftIcon,
+  BarChartIcon,
+  GlobeIcon,
+  LayoutIcon,
+  DashboardIcon,
+  HamburgerMenuIcon,
+  GitHubLogoIcon,
+  FileIcon,
+  CodeIcon,
+  ReaderIcon,
+  MixerHorizontalIcon,
+  Pencil1Icon,
+  GearIcon,
+  RocketIcon,
+  Link1Icon,
+} from "@radix-ui/react-icons";
 
 type IconProps = React.HTMLAttributes<SVGElement>;
 
@@ -50,7 +67,20 @@ export const Icons = {
       />
     </svg>
   ),
-  avatar: AvatarIcon,
-  placeholder: ImageIcon,
   externalLink: ExternalLinkIcon,
+  arrowLeft: ArrowLeftIcon,
+  barChart: BarChartIcon,
+  globe: GlobeIcon,
+  layout: LayoutIcon,
+  dashboard: DashboardIcon,
+  hamburgerMenu: HamburgerMenuIcon,
+  githubLogo: GitHubLogoIcon,
+  file: FileIcon,
+  code: CodeIcon,
+  reader: ReaderIcon,
+  mixerHorizontal: MixerHorizontalIcon,
+  pencil1: Pencil1Icon,
+  gear: GearIcon,
+  rocket: RocketIcon,
+  link1: Link1Icon,
 };

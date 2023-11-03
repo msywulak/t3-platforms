@@ -9,6 +9,7 @@ import { sites } from "@/db/schema";
 import { and, eq } from "drizzle-orm";
 import { env } from "@/env.mjs";
 import { buttonVariants } from "@/components/ui/button";
+import { Icons } from "@/components/icons";
 
 export default async function SitePosts({
   params,
@@ -44,9 +45,13 @@ export default async function SitePosts({
             }
             target="_blank"
             rel="noreferrer"
-            className={cn(buttonVariants({ variant: "secondary" }))}
+            className={cn(
+              buttonVariants({ variant: "secondary" }),
+              "flex h-7 w-auto items-center justify-center space-x-2 rounded-lg text-sm transition-all focus:outline-none",
+            )}
           >
-            {url} ↗
+            {url}
+            <Icons.link1 width={18} className="ml-1" />
           </Link>
         </div>
         <CreatePostButton />
