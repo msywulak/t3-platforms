@@ -6,11 +6,12 @@ import { Editor as NovelEditor } from "novel";
 import TextareaAutosize from "react-textarea-autosize";
 import { cn } from "@/lib/utils";
 import LoadingDots from "./icons/loading-dots";
-import { ExternalLink } from "lucide-react";
 import { toast } from "sonner";
 import { env } from "@/env.mjs";
 import { type postEditorSchema } from "@/lib/validations/post";
 import { type z } from "zod";
+import { Button } from "@/components/ui/button";
+import { Icons } from "@/components/icons";
 
 type PostWithSite = z.infer<typeof postEditorSchema>;
 
@@ -50,13 +51,17 @@ export default function Editor({ post }: { post: PostWithSite }) {
             rel="noopener noreferrer"
             className="flex items-center space-x-1 text-sm text-stone-400 hover:text-stone-500"
           >
-            <ExternalLink className="h-4 w-4" />
+            <Icons.externalLink className="h-4 w-4" />
           </a>
         )}
-        <div className="rounded-lg bg-stone-100 px-2 py-1 text-sm text-stone-400 dark:bg-stone-800 dark:text-stone-500">
+        <Button
+          variant="secondary"
+          disabled={true}
+          className="flex h-7 w-16 items-center justify-center space-x-2 rounded-lg text-sm transition-all focus:outline-none"
+        >
           {isPendingSaving ? "Saving..." : "Saved"}
-        </div>
-        <button
+        </Button>
+        <Button
           onClick={() => {
             const formData = new FormData();
             console.log(data.published, typeof data.published);
@@ -78,10 +83,8 @@ export default function Editor({ post }: { post: PostWithSite }) {
             });
           }}
           className={cn(
-            "flex h-7 w-24 items-center justify-center space-x-2 rounded-lg border text-sm transition-all focus:outline-none",
-            isPendingPublishing
-              ? "cursor-not-allowed border-stone-200 bg-stone-100 text-stone-400 dark:border-stone-700 dark:bg-stone-800 dark:text-stone-300"
-              : "border border-black bg-black text-white hover:bg-white hover:text-black active:bg-stone-100 dark:border-stone-700 dark:hover:border-stone-200 dark:hover:bg-black dark:hover:text-white dark:active:bg-stone-800",
+            "flex h-7 w-24 items-center justify-center space-x-2 rounded-lg text-sm transition-all focus:outline-none",
+            isPendingPublishing ? "cursor-not-allowed" : "cursor-pointer",
           )}
           disabled={isPendingPublishing}
         >
@@ -90,7 +93,7 @@ export default function Editor({ post }: { post: PostWithSite }) {
           ) : (
             <p>{data.published ? "Unpublish" : "Publish"}</p>
           )}
-        </button>
+        </Button>
       </div>
       <div className="mb-5 flex flex-col space-y-3 border-b border-stone-200 pb-5 dark:border-stone-700">
         <input

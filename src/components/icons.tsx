@@ -1,3 +1,5 @@
+import { AvatarIcon, ImageIcon, ExternalLinkIcon } from "@radix-ui/react-icons";
+
 type IconProps = React.HTMLAttributes<SVGElement>;
 
 export const Icons = {
@@ -48,4 +50,7 @@ export const Icons = {
       />
     </svg>
   ),
+  avatar: AvatarIcon,
+  placeholder: ImageIcon,
+  externalLink: ExternalLinkIcon,
 };

@@ -59,10 +59,10 @@ export default authMiddleware({
         auth.userId &&
         (pathname === "/sign-in" ?? pathname === "/sign-up")
       ) {
-        console.log("redirecting to /");
+        // console.log("redirecting to /");
         return NextResponse.redirect(new URL("/", req.url));
       }
-      console.log(`rewriting to /app${path === "/" ? "" : path}`);
+      // console.log(`rewriting to /app${path === "/" ? "" : path}`);
       return NextResponse.rewrite(
         new URL(`/app${path === "/" ? "" : path}`, req.url),
       );
@@ -80,7 +80,7 @@ export default authMiddleware({
     }
 
     // rewrite everything else to `/[domain]/[slug]` dynamic route
-    console.log(`rewriting to /${hostname}${path}`, req.url);
+    // console.log(`rewriting to /${hostname}${path}`, req.url);
     return NextResponse.rewrite(new URL(`/${hostname}${path}`, req.url));
   },
 });
