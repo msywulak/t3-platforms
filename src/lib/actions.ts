@@ -18,7 +18,6 @@ import {
   removeDomainFromVercelTeam,
   validDomainRegex,
 } from "./domains";
-// import { customAlphabet } from "nanoid";
 import { getBlurDataURL } from "./utils";
 import { type OurFileRouter } from "@/app/api/uploadthing/core";
 import { generateReactHelpers } from "@uploadthing/react/hooks";
@@ -26,11 +25,6 @@ import { authAction, siteAuthAction } from "./safe-action";
 import { z } from "zod";
 import { updateSiteSchema } from "./validations/site";
 import { postEditorSchema } from "./validations/post";
-
-// const nanoid = customAlphabet(
-//   "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz",
-//   7,
-// ); // 7-character random string
 
 export const getSiteFromPostId = authAction(
   z.object({ postId: z.number() }),
@@ -56,7 +50,6 @@ export const createSite = authAction(
       const exists = await db.query.sites.findFirst({
         where: eq(sites.subdomain, subdomain),
       });
-      console.log("exists", exists);
       if (exists) {
         throw new Error("This subdomain is already in use");
       }
@@ -283,7 +276,6 @@ export const updatePost = authAction(
   },
 );
 
-//TODO: move this to next-safe-action
 export const updatePostMetadata = authAction(
   z.object({
     formData: z.instanceof(FormData),

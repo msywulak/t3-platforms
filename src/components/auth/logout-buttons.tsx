@@ -26,7 +26,7 @@ export function LogOutButtons() {
           }
         >
           <Button
-            variant="ghost"
+            variant="default"
             aria-label="Log out"
             size="sm"
             className="w-full"
@@ -48,7 +48,7 @@ export function LogOutButtons() {
           Log out
         </Skeleton>
       )}
-      {/* <Button
+      <Button
         aria-label="Go back to the previous page"
         variant="outline"
         size="sm"
@@ -57,7 +57,7 @@ export function LogOutButtons() {
         disabled={isPending}
       >
         Go back
-      </Button> */}
+      </Button>
     </div>
   );
 }

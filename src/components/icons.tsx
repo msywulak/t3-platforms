@@ -24,6 +24,8 @@ import {
   CircleIcon,
   ChevronRightIcon,
   CheckIcon,
+  ExitIcon,
+  AvatarIcon,
 } from "@radix-ui/react-icons";
 
 type IconProps = React.HTMLAttributes<SVGElement>;
@@ -101,4 +103,6 @@ export const Icons = {
   circle: CircleIcon,
   chevronRight: ChevronRightIcon,
   check: CheckIcon,
+  exit: ExitIcon,
+  avatar: AvatarIcon,
 };
