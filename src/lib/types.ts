@@ -1,3 +1,5 @@
+import { type FileWithPath } from "react-dropzone";
+
 export type DomainVerificationStatusProps =
   | "Valid Configuration"
   | "Invalid Configuration"
@@ -55,4 +57,14 @@ export interface DomainVerificationResponse {
     value: string;
     reason: string;
   }[];
+}
+
+export type FileWithPreview = FileWithPath & {
+  preview: string;
+};
+
+export interface StoredFile {
+  id: string;
+  name: string;
+  url: string;
 }

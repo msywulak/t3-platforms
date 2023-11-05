@@ -17,7 +17,9 @@ export default async function OverviewSitesCTA() {
     .from(sites)
     .where(eq(sites.clerkId, user.id));
 
-  return allSites === undefined ?? (allSites[0]?.count ?? 0) <= 0 ? (
+  console.log(allSites);
+
+  return allSites === undefined || (allSites[0]?.count ?? 0) <= 0 ? (
     <CreateSiteButton />
   ) : (
     <Link
