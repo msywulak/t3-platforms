@@ -45,8 +45,9 @@ export function UpdateSiteAppearanceForm({
   const form = useForm<Inputs>({
     resolver: zodResolver(updateSiteSchema),
     defaultValues: {
-      image: [],
-      logo: [],
+      image: "",
+      logo: "",
+      images: [],
     },
   });
 
@@ -55,19 +56,19 @@ export function UpdateSiteAppearanceForm({
     startTransition(() => {
       try {
         console.log(data);
-        if (isArrayOfFile(data.image)) {
+        if (isArrayOfFile(data.images)) {
           toast.promise(
-            startUpload(data.image)
+            startUpload(data.images)
               .then((res) => {
-                const formattedImage = res?.map((im) => ({
-                  id: im.key,
-                  name: im.name,
-                  url: im.url,
+                const formattedImage = res?.map((image) => ({
+                  id: image.key,
+                  name: image.name,
+                  url: image.url,
                 }));
                 return formattedImage ?? null;
               })
-              .then((image) => {
-                console.log(image);
+              .then((images) => {
+                console.log(images);
               }),
             {
               loading: "Uploading Image...",

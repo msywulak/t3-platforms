@@ -4,13 +4,18 @@ export const siteSchema = z.object({
   id: z.number(),
   name: z.string(),
   description: z.string(),
-  logo: z.unknown().refine((val) => {
-    if (!Array.isArray(val)) return false;
-    if (val.some((file) => !(file instanceof File))) return false;
-    return true;
-  }, "Must be an array of File"),
+  logo: z
+    .string()
+    .default(
+      "https://public.blob.vercel-storage.com/eEZHAoPTOBSYGBE3/JRajRyC-PhBHEinQkupt02jqfKacBVHLWJq7Iy.png",
+    ),
   font: z.string().default("font-sans"),
-  image: z.unknown().refine((val) => {
+  image: z
+    .string()
+    .default(
+      "https://public.blob.vercel-storage.com/eEZHAoPTOBSYGBE3/hxfcV5V-eInX3jbVUhjAt1suB7zB88uGd1j20b.png",
+    ),
+  images: z.unknown().refine((val) => {
     if (!Array.isArray(val)) return false;
     if (val.some((file) => !(file instanceof File))) return false;
     return true;
@@ -41,17 +46,18 @@ export const updateSiteSchema = z.object({
   id: z.number().optional(),
   name: z.string().optional(),
   description: z.string().optional(),
-  logo: z.unknown().refine((val) => {
-    if (!Array.isArray(val)) return false;
-    if (val.some((file) => !(file instanceof File))) return false;
-    return true;
-  }, "Must be an array of File"),
+  logo: z.string().optional(),
   font: z.string().optional(),
-  image: z.unknown().refine((val) => {
-    if (!Array.isArray(val)) return false;
-    if (val.some((file) => !(file instanceof File))) return false;
-    return true;
-  }, "Must be an array of File"),
+  image: z.string().optional(),
+  images: z
+    .unknown()
+    .refine((val) => {
+      if (!Array.isArray(val)) return false;
+      if (val.some((file) => !(file instanceof File))) return false;
+      return true;
+    }, "Must be an array of File")
+    .nullable()
+    .optional(),
   imageBlurhash: z.string().optional(),
   subdomain: z.string().optional(),
   customDomain: z.string().optional(),

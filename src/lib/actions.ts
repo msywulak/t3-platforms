@@ -25,6 +25,7 @@ import { authAction, siteAuthAction } from "./safe-action";
 import { z } from "zod";
 import { updateSiteSchema } from "./validations/site";
 import { postEditorSchema } from "./validations/post";
+import { type StoredFile } from "@/lib/types";
 
 export const getSiteFromPostId = authAction(
   z.object({ postId: z.number() }),
@@ -140,7 +141,10 @@ export const updateSite = siteAuthAction(
         try {
           await db
             .update(sites)
-            .set(rawInput)
+            .set({
+              ...rawInput,
+              images: rawInput.images as StoredFile[] | null,
+            })
             .where(eq(sites.id, rawInput.id!));
         } catch (error: any) {
           if (error.code === "P2002") {
