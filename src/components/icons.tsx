@@ -26,6 +26,7 @@ import {
   CheckIcon,
   ExitIcon,
   AvatarIcon,
+  ImageIcon,
 } from "@radix-ui/react-icons";
 
 type IconProps = React.HTMLAttributes<SVGElement>;
@@ -105,4 +106,5 @@ export const Icons = {
   check: CheckIcon,
   exit: ExitIcon,
   avatar: AvatarIcon,
+  placeholder: ImageIcon,
 };

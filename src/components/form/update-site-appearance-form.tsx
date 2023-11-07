@@ -121,7 +121,7 @@ export function UpdateSiteAppearanceForm({
               <FileDialog
                 setValue={form.setValue}
                 name="images"
-                maxFiles={1}
+                maxFiles={2}
                 maxSize={1024 * 1024 * 64}
                 files={images}
                 setFiles={setImages}

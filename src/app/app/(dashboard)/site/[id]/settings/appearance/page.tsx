@@ -1,3 +1,5 @@
+import { db } from "@/db";
+
 import {
   Card,
   CardContent,
@@ -7,7 +9,10 @@ import {
 } from "@/components/ui/card";
 import { UpdateSiteAppearanceForm } from "@/components/form/update-site-appearance-form";
 import { currentUser } from "@clerk/nextjs";
-import { redirect } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
+import { ThumbnailCard } from "@/components/thumbnail-card";
+import { eq } from "drizzle-orm";
+import { sites } from "@/db/schema";
 
 export default async function SiteSettingsAppearance({
   params,
@@ -20,6 +25,14 @@ export default async function SiteSettingsAppearance({
     redirect("/sig-in");
   }
 
+  const site = await db.query.sites.findFirst({
+    where: eq(sites.id, Number(params.id)),
+  });
+
+  if (!site) {
+    notFound();
+  }
+
   return (
     <Card>
       <CardHeader>
@@ -30,6 +43,7 @@ export default async function SiteSettingsAppearance({
       </CardHeader>
       <CardContent>
         <UpdateSiteAppearanceForm siteId={Number(params.id)} />
+        <ThumbnailCard site={site} className="mt-8" />
       </CardContent>
     </Card>
   );

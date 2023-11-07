@@ -190,20 +190,13 @@ export const updateSiteImages = siteAuthAction(
     input: extendedSiteSchema,
   }),
   async ({ input }, { allSites }) => {
-    console.log("updateSiteImages called with input:", input);
-
     // Find the site with the matching id
     const foundSite = allSites.find((s) => s.id === input.siteId);
-    console.log("Found site:", foundSite);
-
     // Check if the site was found
     if (!foundSite) {
-      console.error("Site not found for id:", input.siteId);
       throw new Error("Site not found");
     }
-
     try {
-      console.log("Updating images for site ID:", input.siteId);
       const response = await db
         .update(sites)
         .set({
@@ -211,20 +204,14 @@ export const updateSiteImages = siteAuthAction(
         })
         .where(eq(sites.id, input.siteId));
 
-      console.log("Revalidating metadata for subdomain:", foundSite.subdomain);
       revalidateTag(
         `${foundSite.subdomain}.${env.NEXT_PUBLIC_ROOT_DOMAIN}-metadata`,
       );
 
       if (foundSite.customDomain) {
-        console.log(
-          "Revalidating metadata for custom domain:",
-          foundSite.customDomain,
-        );
         revalidateTag(`${foundSite.customDomain}-metadata`);
       }
 
-      console.log("Update response:", response);
       return response;
     } catch (error: any) {
       console.error("Error updating site images:", error.message);

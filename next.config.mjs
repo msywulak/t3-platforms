@@ -18,6 +18,7 @@ const config = {
       { hostname: "avatars.githubusercontent.com" },
       { hostname: "flag.vercel.app" },
       { hostname: "illustrations.popsy.co" },
+      { hostname: "utfs.io" },
     ],
   },
   logging: { fetches: { fullUrl: true } },
