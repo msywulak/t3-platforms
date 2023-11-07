@@ -10,7 +10,6 @@ import {
 import { UpdateSiteAppearanceForm } from "@/components/forms/site/update-site-appearance-form";
 import { currentUser } from "@clerk/nextjs";
 import { notFound, redirect } from "next/navigation";
-import { ThumbnailCard } from "@/components/thumbnail-card";
 import { eq } from "drizzle-orm";
 import { sites } from "@/db/schema";
 
@@ -42,8 +41,7 @@ export default async function SiteSettingsAppearance({
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <UpdateSiteAppearanceForm siteId={Number(params.id)} />
-        <ThumbnailCard site={site} className="mt-8" />
+        <UpdateSiteAppearanceForm site={site} />
       </CardContent>
     </Card>
   );

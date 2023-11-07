@@ -23,15 +23,18 @@ import { Button } from "@/components/ui/button";
 import { isArrayOfFile } from "@/lib/utils";
 import { useUploadThing } from "@/lib/uploadthing";
 import { updateSiteImages } from "@/lib/actions";
+import { type Site } from "@/db/schema";
+import { AppearanceCard } from "@/components/appearance-card";
 
-interface UpdateSiteAppearanceFormProps {
-  siteId: number;
+interface UpdateSiteAppearanceFormProps
+  extends React.HTMLAttributes<HTMLDivElement> {
+  site: Pick<Site, "id" | "name" | "image" | "logo">;
 }
 
 type Inputs = z.infer<typeof updateSiteSchema>;
 
 export function UpdateSiteAppearanceForm({
-  siteId,
+  site,
 }: UpdateSiteAppearanceFormProps) {
   const [logo, setLogo] = React.useState<FileWithPreview[] | null>(null);
   const [image, setImage] = React.useState<FileWithPreview[] | null>(null);
@@ -65,7 +68,7 @@ export function UpdateSiteAppearanceForm({
               .then((image) => {
                 console.log(image);
                 const upload = updateSiteImages({
-                  input: { ...data, image, logo: undefined, siteId },
+                  input: { ...data, image, logo: undefined, siteId: site.id },
                 });
                 return upload;
               }),
@@ -92,7 +95,7 @@ export function UpdateSiteAppearanceForm({
               .then((logo) => {
                 console.log(logo);
                 const upload = updateSiteImages({
-                  input: { ...data, image: undefined, logo, siteId },
+                  input: { ...data, image: undefined, logo, siteId: site.id },
                 });
                 return upload;
               }),
@@ -122,12 +125,13 @@ export function UpdateSiteAppearanceForm({
           onSubmit={form.handleSubmit(onSubmit)}
         >
           <FormItem className="flex w-full flex-col gap-1.5">
-            <FormLabel>Images</FormLabel>
+            <FormLabel>Thumbnail Image</FormLabel>
             <FormDescription>
               Max file size 64MB.
               <br />
               Recommended size 1200x630 for thumbnail.
             </FormDescription>
+            <AppearanceCard site={site} type="image" />
             {image?.length ? (
               <div className="flex items-center gap-2">
                 {image.map((file, i) => (
@@ -166,6 +170,7 @@ export function UpdateSiteAppearanceForm({
               <br />
               Recommended size 400x400 for logo.
             </FormDescription>
+            <AppearanceCard site={site} type="logo" />
             {logo?.length ? (
               <div className="flex items-center gap-2">
                 {logo.map((file, i) => (

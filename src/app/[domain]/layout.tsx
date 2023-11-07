@@ -8,7 +8,7 @@ import { getSiteData } from "@/lib/fetchers";
 import { fontMapper } from "@/styles/fonts";
 import { type Metadata } from "next";
 import { env } from "@/env.mjs";
-import { StoredFile } from "@/lib/types";
+import { type StoredFile } from "@/lib/types";
 
 export async function generateMetadata({
   params,
