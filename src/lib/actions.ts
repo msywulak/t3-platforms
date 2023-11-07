@@ -64,6 +64,7 @@ export const createSite = authAction(
       return response.insertId;
     } catch (error: any) {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+      console.log("This is the error!");
       throw new Error(error.message);
     }
   },
@@ -177,8 +178,60 @@ export const updateSite = siteAuthAction(
   },
 );
 
-// TODO: Implement an image/logo upload
-// export const updateSiteImage = siteAuthAction(
+const extendedSiteSchema = updateSiteSchema.extend({
+  siteId: z.number(),
+  images: z
+    .array(z.object({ id: z.string(), name: z.string(), url: z.string() }))
+    .nullable(),
+});
+
+export const updateSiteImages = siteAuthAction(
+  z.object({
+    input: extendedSiteSchema,
+  }),
+  async ({ input }, { allSites }) => {
+    console.log("updateSiteImages called with input:", input);
+
+    // Find the site with the matching id
+    const foundSite = allSites.find((s) => s.id === input.siteId);
+    console.log("Found site:", foundSite);
+
+    // Check if the site was found
+    if (!foundSite) {
+      console.error("Site not found for id:", input.siteId);
+      throw new Error("Site not found");
+    }
+
+    try {
+      console.log("Updating images for site ID:", input.siteId);
+      const response = await db
+        .update(sites)
+        .set({
+          images: input.images,
+        })
+        .where(eq(sites.id, input.siteId));
+
+      console.log("Revalidating metadata for subdomain:", foundSite.subdomain);
+      revalidateTag(
+        `${foundSite.subdomain}.${env.NEXT_PUBLIC_ROOT_DOMAIN}-metadata`,
+      );
+
+      if (foundSite.customDomain) {
+        console.log(
+          "Revalidating metadata for custom domain:",
+          foundSite.customDomain,
+        );
+        revalidateTag(`${foundSite.customDomain}-metadata`);
+      }
+
+      console.log("Update response:", response);
+      return response;
+    } catch (error: any) {
+      console.error("Error updating site images:", error.message);
+      throw new Error(error.message);
+    }
+  },
+);
 
 export const deleteSite = siteAuthAction(
   z.object({

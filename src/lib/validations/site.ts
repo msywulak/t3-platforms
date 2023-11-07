@@ -15,11 +15,16 @@ export const siteSchema = z.object({
     .default(
       "https://public.blob.vercel-storage.com/eEZHAoPTOBSYGBE3/hxfcV5V-eInX3jbVUhjAt1suB7zB88uGd1j20b.png",
     ),
-  images: z.unknown().refine((val) => {
-    if (!Array.isArray(val)) return false;
-    if (val.some((file) => !(file instanceof File))) return false;
-    return true;
-  }, "Must be an array of File"),
+  images: z
+    .unknown()
+    .refine((val) => {
+      if (!Array.isArray(val)) return false;
+      if (val.some((file) => !(file instanceof File))) return false;
+      return true;
+    }, "Must be an array of File")
+    .nullable()
+    .optional()
+    .default(null),
   imageBlurhash: z
     .string()
     .default(
@@ -57,7 +62,8 @@ export const updateSiteSchema = z.object({
       return true;
     }, "Must be an array of File")
     .nullable()
-    .optional(),
+    .optional()
+    .default(null),
   imageBlurhash: z.string().optional(),
   subdomain: z.string().optional(),
   customDomain: z.string().optional(),

@@ -4,7 +4,7 @@ import { createUploadthing, type FileRouter } from "uploadthing/next";
 const f = createUploadthing();
 
 export const ourFileRouter = {
-  thumbnailAndLogo: f({ image: { maxFileSize: "64MB" } })
+  images: f({ image: { maxFileSize: "64MB" } })
     .middleware(async (_req) => {
       const user = await currentUser();
       if (!user) throw new Error("Unauthorized");

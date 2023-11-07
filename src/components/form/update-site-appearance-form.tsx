@@ -12,10 +12,8 @@ import {
   Form,
   FormControl,
   FormDescription,
-  FormField,
   FormItem,
   FormLabel,
-  FormMessage,
   UncontrolledFormMessage,
 } from "@/components/ui/form";
 import { Icons } from "@/components/icons";
@@ -23,8 +21,8 @@ import { Zoom } from "@/components/zoom-image";
 import { FileDialog } from "@/components/file-dialog";
 import { Button } from "@/components/ui/button";
 import { isArrayOfFile } from "@/lib/utils";
-import { Input } from "@/components/ui/input";
 import { useUploadThing } from "@/lib/uploadthing";
+import { updateSiteImages } from "@/lib/actions";
 
 interface UpdateSiteAppearanceFormProps {
   siteId: number;
@@ -35,18 +33,14 @@ type Inputs = z.infer<typeof updateSiteSchema>;
 export function UpdateSiteAppearanceForm({
   siteId,
 }: UpdateSiteAppearanceFormProps) {
-  const [thumbnail, setThumbnail] = React.useState<FileWithPreview[] | null>(
-    null,
-  );
-  const [logo, setLogo] = React.useState<FileWithPreview[] | null>(null);
+  const [images, setImages] = React.useState<FileWithPreview[] | null>(null);
+  // const [logo, setLogo] = React.useState<FileWithPreview[] | null>(null);
   const [isPending, startTransition] = React.useTransition();
-  const { isUploading, startUpload } = useUploadThing("thumbnailAndLogo");
+  const { isUploading, startUpload } = useUploadThing("images");
 
   const form = useForm<Inputs>({
     resolver: zodResolver(updateSiteSchema),
     defaultValues: {
-      image: "",
-      logo: "",
       images: [],
     },
   });
@@ -69,6 +63,10 @@ export function UpdateSiteAppearanceForm({
               })
               .then((images) => {
                 console.log(images);
+                const upload = updateSiteImages({
+                  input: { ...data, images, siteId },
+                });
+                return upload;
               }),
             {
               loading: "Uploading Image...",
@@ -80,8 +78,8 @@ export function UpdateSiteAppearanceForm({
           console.log("not an array");
         }
         form.reset();
-        setThumbnail(null);
-        setLogo(null);
+        setImages(null);
+        // setLogo(null);
       } catch (error) {
         console.error(error);
       }
@@ -96,13 +94,17 @@ export function UpdateSiteAppearanceForm({
           onSubmit={form.handleSubmit(onSubmit)}
         >
           <FormItem className="flex w-full flex-col gap-1.5">
-            <FormLabel>Thumbnail Image</FormLabel>
+            <FormLabel>Images</FormLabel>
             <FormDescription>
-              Max file size 64MB. Recommended size 1200x630.
+              Upload images to use for your thumbnail and logo.
+              <br />
+              Max file size 64MB.
+              <br />
+              Recommended size 1200x630 for thumbnail and 400x400 for logo.
             </FormDescription>
-            {thumbnail?.length ? (
+            {images?.length ? (
               <div className="flex items-center gap-2">
-                {thumbnail.map((file, i) => (
+                {images.map((file, i) => (
                   <Zoom key={i}>
                     <Image
                       src={file.preview}
@@ -118,53 +120,17 @@ export function UpdateSiteAppearanceForm({
             <FormControl>
               <FileDialog
                 setValue={form.setValue}
-                name="image"
+                name="images"
                 maxFiles={1}
                 maxSize={1024 * 1024 * 64}
-                files={thumbnail}
-                setFiles={setThumbnail}
+                files={images}
+                setFiles={setImages}
                 isUploading={isUploading}
                 disabled={isPending}
               />
             </FormControl>
             <UncontrolledFormMessage
               message={form.formState.errors.image?.message}
-            />
-          </FormItem>
-          <FormItem className="flex w-full flex-col gap-1.5">
-            <FormLabel>Logo</FormLabel>
-            <FormDescription>
-              Max file size 64MB. Recommended size 400x400.
-            </FormDescription>
-            {logo?.length ? (
-              <div className="flex items-center gap-2">
-                {logo.map((file, i) => (
-                  <Zoom key={i}>
-                    <Image
-                      src={file.preview}
-                      alt={file.name}
-                      className="h-20 w-20 shrink-0 rounded-md object-cover object-center"
-                      width={80}
-                      height={80}
-                    />
-                  </Zoom>
-                ))}
-              </div>
-            ) : null}
-            <FormControl>
-              <FileDialog
-                setValue={form.setValue}
-                name="logo"
-                maxFiles={1}
-                maxSize={1024 * 1024 * 64}
-                files={logo}
-                setFiles={setLogo}
-                isUploading={isUploading}
-                disabled={isPending}
-              />
-            </FormControl>
-            <UncontrolledFormMessage
-              message={form.formState.errors.logo?.message}
             />
           </FormItem>
           <Button className="w-fit" disabled={isPending}>

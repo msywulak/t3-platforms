@@ -12,7 +12,7 @@ import { redirect } from "next/navigation";
 export default async function SiteSettingsAppearance({
   params,
 }: {
-  params: { id: number };
+  params: { id: string };
 }) {
   const user = await currentUser();
 
@@ -29,7 +29,7 @@ export default async function SiteSettingsAppearance({
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <UpdateSiteAppearanceForm siteId={params.id} />
+        <UpdateSiteAppearanceForm siteId={Number(params.id)} />
       </CardContent>
     </Card>
   );
