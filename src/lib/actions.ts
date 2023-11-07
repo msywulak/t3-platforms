@@ -406,8 +406,7 @@ export const updatePostMetadataA = withPostAuth(
         });
         // const filename = `${nanoid()}.${file.type.split("/")[1]}`;
         const { useUploadThing } = generateReactHelpers<OurFileRouter>();
-        const upload =
-          await useUploadThing("thumbnailAndLogo").startUpload(files);
+        const upload = await useUploadThing("images").startUpload(files);
         const formattedImages = upload?.map((image) => ({
           id: image.key,
           name: image.key.split("_")[1] ?? image.key,
