@@ -8,6 +8,7 @@ import { getSiteData } from "@/lib/fetchers";
 import { fontMapper } from "@/styles/fonts";
 import { type Metadata } from "next";
 import { env } from "@/env.mjs";
+import { StoredFile } from "@/lib/types";
 
 export async function generateMetadata({
   params,
@@ -27,8 +28,8 @@ export async function generateMetadata({
   } = data as {
     name: string;
     description: string;
-    image: string;
-    logo: string;
+    image: StoredFile[];
+    logo: StoredFile[];
   };
 
   return {
@@ -37,16 +38,16 @@ export async function generateMetadata({
     openGraph: {
       title,
       description,
-      images: [image],
+      images: [image[0]?.url ?? ""],
     },
     twitter: {
       card: "summary_large_image",
       title,
       description,
-      images: [image],
+      images: [image[0]?.url ?? ""],
       creator: "@vercel",
     },
-    icons: [logo],
+    icons: [logo[0]?.url ?? ""],
     metadataBase: new URL(`https://${domain}`),
     // Optional: Set canonical URL to custom domain if it exists
     ...(params.domain.endsWith(`.${env.NEXT_PUBLIC_ROOT_DOMAIN}`) &&
@@ -90,7 +91,7 @@ export default async function SiteLayout({
               <Image
                 alt={data.name ?? ""}
                 height={40}
-                src={data.logo ?? ""}
+                src={data.logo?.[0]?.url ?? ""}
                 width={40}
               />
             </div>
