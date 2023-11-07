@@ -26,6 +26,7 @@ import { z } from "zod";
 import { updateSiteSchema } from "./validations/site";
 import { postEditorSchema } from "./validations/post";
 import { type StoredFile } from "@/lib/types";
+import { utapi } from "./utapi";
 
 export const getSiteFromPostId = authAction(
   z.object({ postId: z.number() }),
@@ -144,7 +145,8 @@ export const updateSite = siteAuthAction(
             .update(sites)
             .set({
               ...rawInput,
-              images: rawInput.images as StoredFile[] | null,
+              logo: rawInput.logo as StoredFile[] | null,
+              image: rawInput.image as StoredFile[] | null,
             })
             .where(eq(sites.id, rawInput.id!));
         } catch (error: any) {
@@ -178,12 +180,19 @@ export const updateSite = siteAuthAction(
   },
 );
 
-const extendedSiteSchema = updateSiteSchema.extend({
+const extendedSiteSchema = z.object({
   siteId: z.number(),
-  images: z
+  logo: z
     .array(z.object({ id: z.string(), name: z.string(), url: z.string() }))
-    .nullable(),
+    .nullable()
+    .optional(),
+  image: z
+    .array(z.object({ id: z.string(), name: z.string(), url: z.string() }))
+    .nullable()
+    .optional(),
 });
+
+type ExtendedSiteSchemaType = z.infer<typeof extendedSiteSchema>;
 
 export const updateSiteImages = siteAuthAction(
   z.object({
@@ -197,15 +206,29 @@ export const updateSiteImages = siteAuthAction(
       throw new Error("Site not found");
     }
     try {
+      const updateData: Partial<ExtendedSiteSchemaType> = {
+        ...(input.logo !== undefined && { logo: input.logo }),
+        ...(input.image !== undefined && { image: input.image }),
+      };
+      // Make sure updateData is not empty
+      if (Object.keys(updateData).length === 0) {
+        throw new Error("No update data provided");
+      }
       const response = await db
         .update(sites)
-        .set({
-          images: input.images,
-        })
+        .set(updateData)
         .where(eq(sites.id, input.siteId));
 
+      if (input.image !== undefined && foundSite.image !== null) {
+        await utapi.deleteFiles([foundSite.image[0]?.id ?? ""]);
+      }
+
+      if (input.logo !== undefined && foundSite.logo !== null) {
+        await utapi.deleteFiles([foundSite.logo[0]?.id ?? ""]);
+      }
+
       revalidateTag(
-        `${foundSite.subdomain}.${env.NEXT_PUBLIC_ROOT_DOMAIN}-metadata`,
+        `${foundSite.subdomain}.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}-metadata`,
       );
 
       if (foundSite.customDomain) {
@@ -393,7 +416,7 @@ export const updatePostMetadataA = withPostAuth(
         });
         // const filename = `${nanoid()}.${file.type.split("/")[1]}`;
         const { useUploadThing } = generateReactHelpers<OurFileRouter>();
-        const upload = await useUploadThing("images").startUpload(files);
+        const upload = await useUploadThing("image").startUpload(files);
         const formattedImages = upload?.map((image) => ({
           id: image.key,
           name: image.key.split("_")[1] ?? image.key,

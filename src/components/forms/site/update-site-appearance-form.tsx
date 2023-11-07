@@ -33,15 +33,16 @@ type Inputs = z.infer<typeof updateSiteSchema>;
 export function UpdateSiteAppearanceForm({
   siteId,
 }: UpdateSiteAppearanceFormProps) {
-  const [images, setImages] = React.useState<FileWithPreview[] | null>(null);
-  // const [logo, setLogo] = React.useState<FileWithPreview[] | null>(null);
+  const [logo, setLogo] = React.useState<FileWithPreview[] | null>(null);
+  const [image, setImage] = React.useState<FileWithPreview[] | null>(null);
   const [isPending, startTransition] = React.useTransition();
-  const { isUploading, startUpload } = useUploadThing("images");
+  const { isUploading, startUpload } = useUploadThing("image");
 
   const form = useForm<Inputs>({
     resolver: zodResolver(updateSiteSchema),
     defaultValues: {
-      images: [],
+      logo: [],
+      image: [],
     },
   });
 
@@ -50,21 +51,21 @@ export function UpdateSiteAppearanceForm({
     startTransition(() => {
       try {
         console.log(data);
-        if (isArrayOfFile(data.images)) {
+        if (isArrayOfFile(data.image)) {
           toast.promise(
-            startUpload(data.images)
+            startUpload(data.image)
               .then((res) => {
-                const formattedImage = res?.map((image) => ({
-                  id: image.key,
-                  name: image.name,
-                  url: image.url,
+                const formattedImage = res?.map((im) => ({
+                  id: im.key,
+                  name: im.name,
+                  url: im.url,
                 }));
                 return formattedImage ?? null;
               })
-              .then((images) => {
-                console.log(images);
+              .then((image) => {
+                console.log(image);
                 const upload = updateSiteImages({
-                  input: { ...data, images, siteId },
+                  input: { ...data, image, logo: undefined, siteId },
                 });
                 return upload;
               }),
@@ -77,9 +78,36 @@ export function UpdateSiteAppearanceForm({
         } else {
           console.log("not an array");
         }
+        if (isArrayOfFile(data.logo)) {
+          toast.promise(
+            startUpload(data.logo)
+              .then((res) => {
+                const formattedLogo = res?.map((im) => ({
+                  id: im.key,
+                  name: im.name,
+                  url: im.url,
+                }));
+                return formattedLogo ?? null;
+              })
+              .then((logo) => {
+                console.log(logo);
+                const upload = updateSiteImages({
+                  input: { ...data, image: undefined, logo, siteId },
+                });
+                return upload;
+              }),
+            {
+              loading: "Uploading Logo...",
+              success: "Logo Uploaded!",
+              error: "Error Uploading Logo",
+            },
+          );
+        } else {
+          console.log("not an array");
+        }
         form.reset();
-        setImages(null);
-        // setLogo(null);
+        setLogo(null);
+        setImage(null);
       } catch (error) {
         console.error(error);
       }
@@ -96,15 +124,13 @@ export function UpdateSiteAppearanceForm({
           <FormItem className="flex w-full flex-col gap-1.5">
             <FormLabel>Images</FormLabel>
             <FormDescription>
-              Upload images to use for your thumbnail and logo.
-              <br />
               Max file size 64MB.
               <br />
-              Recommended size 1200x630 for thumbnail and 400x400 for logo.
+              Recommended size 1200x630 for thumbnail.
             </FormDescription>
-            {images?.length ? (
+            {image?.length ? (
               <div className="flex items-center gap-2">
-                {images.map((file, i) => (
+                {image.map((file, i) => (
                   <Zoom key={i}>
                     <Image
                       src={file.preview}
@@ -120,17 +146,55 @@ export function UpdateSiteAppearanceForm({
             <FormControl>
               <FileDialog
                 setValue={form.setValue}
-                name="images"
-                maxFiles={2}
+                name="image"
+                maxFiles={1}
                 maxSize={1024 * 1024 * 64}
-                files={images}
-                setFiles={setImages}
+                files={image}
+                setFiles={setImage}
                 isUploading={isUploading}
                 disabled={isPending}
               />
             </FormControl>
             <UncontrolledFormMessage
               message={form.formState.errors.image?.message}
+            />
+          </FormItem>
+          <FormItem className="flex w-full flex-col gap-1.5">
+            <FormLabel>Logo</FormLabel>
+            <FormDescription>
+              Max file size 64MB.
+              <br />
+              Recommended size 400x400 for logo.
+            </FormDescription>
+            {logo?.length ? (
+              <div className="flex items-center gap-2">
+                {logo.map((file, i) => (
+                  <Zoom key={i}>
+                    <Image
+                      src={file.preview}
+                      alt={file.name}
+                      className="h-20 w-20 shrink-0 rounded-md object-cover object-center"
+                      width={80}
+                      height={80}
+                    />
+                  </Zoom>
+                ))}
+              </div>
+            ) : null}
+            <FormControl>
+              <FileDialog
+                setValue={form.setValue}
+                name="logo"
+                maxFiles={1}
+                maxSize={1024 * 1024 * 64}
+                files={logo}
+                setFiles={setLogo}
+                isUploading={isUploading}
+                disabled={isPending}
+              />
+            </FormControl>
+            <UncontrolledFormMessage
+              message={form.formState.errors.logo?.message}
             />
           </FormItem>
           <Button className="w-fit" disabled={isPending}>
@@ -140,8 +204,8 @@ export function UpdateSiteAppearanceForm({
                 aria-hidden="true"
               />
             )}
-            Add Images
-            <span className="sr-only">Add Images</span>
+            Update Appearance
+            <span className="sr-only">Add Image</span>
           </Button>
         </form>
       </Form>

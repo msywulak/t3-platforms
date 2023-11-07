@@ -8,7 +8,7 @@ import { Card, CardHeader } from "@/components/ui/card";
 import { Icons } from "@/components/icons";
 
 interface SiteCardProps extends React.HTMLAttributes<HTMLDivElement> {
-  site: Pick<Site, "id" | "name" | "images" | "image" | "logo">;
+  site: Pick<Site, "id" | "name" | "image" | "logo">;
 }
 
 export function ThumbnailCard({ site, className, ...props }: SiteCardProps) {
@@ -19,10 +19,10 @@ export function ThumbnailCard({ site, className, ...props }: SiteCardProps) {
     >
       <CardHeader className="border-b p-0">
         <AspectRatio ratio={40 / 21}>
-          {site?.images?.length ? (
+          {site?.image?.length ? (
             <Image
-              src={site.images[0]?.url ?? "/placeholder.png"}
-              alt={site.images[0]?.name ?? site.name ?? "Placeholder"}
+              src={site.image[0]?.url ?? "/placeholder.png"}
+              alt={site.image[0]?.name ?? site.name ?? "Placeholder"}
               className="object-cover"
               sizes="100%"
               fill

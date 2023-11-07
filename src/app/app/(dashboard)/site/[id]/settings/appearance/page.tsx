@@ -7,7 +7,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { UpdateSiteAppearanceForm } from "@/components/form/update-site-appearance-form";
+import { UpdateSiteAppearanceForm } from "@/components/forms/site/update-site-appearance-form";
 import { currentUser } from "@clerk/nextjs";
 import { notFound, redirect } from "next/navigation";
 import { ThumbnailCard } from "@/components/thumbnail-card";

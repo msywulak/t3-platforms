@@ -35,13 +35,13 @@ import { Button } from "@/components/ui/button";
 import { Icons } from "@/components/icons";
 import va from "@vercel/analytics";
 
-interface UpdateSiteFormProps {
+interface UpdateSiteGeneralFormProps {
   site: Site;
 }
 
 type Inputs = z.infer<typeof updateSiteSchema>;
 
-export function UpdateSiteForm({ site }: UpdateSiteFormProps) {
+export function UpdateSiteGeneralForm({ site }: UpdateSiteGeneralFormProps) {
   const router = useRouter();
   const [isPending, startTransition] = React.useTransition();
 

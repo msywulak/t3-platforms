@@ -1,9 +1,9 @@
 import { currentUser } from "@clerk/nextjs";
 import { db } from "@/db";
 import { notFound, redirect } from "next/navigation";
-import Form from "@/components/form";
+import Form from "@/components/forms";
 import { updatePostMetadata } from "@/lib/actions";
-import DeletePostForm from "@/components/form/delete-post-form";
+import DeletePostForm from "@/components/forms/delete-post-form";
 import { posts } from "@/db/schema";
 import { eq } from "drizzle-orm";
 

@@ -24,8 +24,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
          */
         routerConfig={extractRouterConfig(ourFileRouter)}
       />
-      <Toaster className="dark:hidden" />
-      <Toaster theme="dark" className="hidden dark:block" />
+      <Toaster expand={true} richColors />
       <ModalProvider>{children}</ModalProvider>
     </ThemeProvider>
   );

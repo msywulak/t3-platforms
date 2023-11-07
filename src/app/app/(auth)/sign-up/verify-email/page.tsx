@@ -1,6 +1,6 @@
 import { type Metadata } from "next";
 import { Shell } from "@/components/shells/shell";
-import { VerifyEmailForm } from "@/components/form/verify-email-form";
+import { VerifyEmailForm } from "@/components/forms/verify-email-form";
 
 // import { SignInForm } from "@/components/form/signin-form";
 

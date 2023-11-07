@@ -9,7 +9,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { UpdateSiteForm } from "@/components/form/update-site-form";
+import { UpdateSiteGeneralForm } from "@/components/forms/site/update-site-general-form";
 
 export default async function SiteSettingsIndex({
   params,
@@ -41,7 +41,7 @@ export default async function SiteSettingsIndex({
         </CardHeader>
       </Card>
       <CardContent>
-        <UpdateSiteForm site={site} />
+        <UpdateSiteGeneralForm site={site} />
       </CardContent>
     </div>
   );

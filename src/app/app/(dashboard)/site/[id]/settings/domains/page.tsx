@@ -1,5 +1,5 @@
 import { db } from "@/db";
-import Form from "@/components/form";
+import Form from "@/components/forms";
 import { updateSite } from "@/lib/actions";
 import { sites } from "@/db/schema";
 import { eq } from "drizzle-orm";
