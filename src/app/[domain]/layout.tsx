@@ -32,22 +32,36 @@ export async function generateMetadata({
     logo: StoredFile[];
   };
 
+  let ogImage: string;
+  let logoImage: string;
+
+  if (image?.[0]?.url) {
+    ogImage = image[0].url;
+  } else {
+    ogImage = "/og-image.png";
+  }
+  if (logo?.[0]?.url) {
+    logoImage = logo[0].url;
+  } else {
+    logoImage = "/logo.png";
+  }
+
   return {
     title,
     description,
     openGraph: {
       title,
       description,
-      images: [image[0]?.url ?? ""],
+      images: [ogImage],
     },
     twitter: {
       card: "summary_large_image",
       title,
       description,
-      images: [image[0]?.url ?? ""],
+      images: [ogImage],
       creator: "@vercel",
     },
-    icons: [logo[0]?.url ?? ""],
+    icons: [logoImage],
     metadataBase: new URL(`https://${domain}`),
     // Optional: Set canonical URL to custom domain if it exists
     ...(params.domain.endsWith(`.${env.NEXT_PUBLIC_ROOT_DOMAIN}`) &&
