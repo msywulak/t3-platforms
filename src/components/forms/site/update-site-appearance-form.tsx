@@ -26,6 +26,8 @@ import { updateSiteImages } from "@/lib/actions";
 import { type Site } from "@/db/schema";
 import { AppearanceCard } from "@/components/appearance-card";
 
+//TODO: maybe lift the dropzone out of the file dialog button
+
 interface UpdateSiteAppearanceFormProps
   extends React.HTMLAttributes<HTMLDivElement> {
   site: Pick<Site, "id" | "name" | "image" | "logo">;

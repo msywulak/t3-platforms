@@ -219,13 +219,14 @@ export const updateSiteImages = siteAuthAction(
         .set(updateData)
         .where(eq(sites.id, input.siteId));
 
+      // TODO: handle this delete better
       if (input.image !== undefined && foundSite.image !== null) {
         await utapi.deleteFiles([foundSite.image[0]?.id ?? ""]);
       }
-
       if (input.logo !== undefined && foundSite.logo !== null) {
         await utapi.deleteFiles([foundSite.logo[0]?.id ?? ""]);
       }
+      // TODO: handle this delete better
 
       revalidateTag(
         `${foundSite.subdomain}.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}-metadata`,
