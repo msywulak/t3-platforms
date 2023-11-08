@@ -10,8 +10,6 @@ import { getPostsForSite, getSiteData } from "@/lib/fetchers";
 import Image from "next/image";
 import { env } from "@/env.mjs";
 
-export const dynamic = "force-static";
-
 export async function generateStaticParams() {
   const allSites = await db.query.sites.findMany({
     columns: {

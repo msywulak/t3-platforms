@@ -9,8 +9,6 @@ import MDX from "@/components/mdx";
 import { placeholderBlurhash, toDateString } from "@/lib/utils";
 import { env } from "@/env.mjs";
 
-export const dynamic = "force-static";
-
 export async function generateMetadata({
   params,
 }: {
