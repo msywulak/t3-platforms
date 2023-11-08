@@ -10,22 +10,10 @@ export default function DomainStatus({ domain }: { domain: string }) {
   return loading ? (
     <LoadingSpinner />
   ) : status === "Valid Configuration" ? (
-    <Icons.checkCircled
-      fill="#2563EB"
-      stroke="currentColor"
-      className="text-white dark:text-black"
-    />
+    <Icons.checkCircled fill="#2563EB" stroke="currentColor" />
   ) : status === "Pending Verification" ? (
-    <Icons.exclamationTriangle
-      fill="#FBBF24"
-      stroke="currentColor"
-      className="text-white dark:text-black"
-    />
+    <Icons.exclamationTriangle fill="#FBBF24" stroke="currentColor" />
   ) : (
-    <Icons.crossCircled
-      fill="#DC2626"
-      stroke="currentColor"
-      className="text-white dark:text-black"
-    />
+    <Icons.crossCircled fill="#DC2626" stroke="currentColor" />
   );
 }

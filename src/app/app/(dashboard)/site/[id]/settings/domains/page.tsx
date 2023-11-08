@@ -1,47 +1,57 @@
 import { db } from "@/db";
-import Form from "@/components/forms";
-import { updateSite } from "@/lib/actions";
-import { sites } from "@/db/schema";
+
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { currentUser } from "@clerk/nextjs";
+import { notFound, redirect } from "next/navigation";
 import { eq } from "drizzle-orm";
+import { sites } from "@/db/schema";
+import { UpdateSiteDomainForm } from "@/components/forms/site/update-site-domains-form";
 
 export default async function SiteSettingsDomains({
   params,
 }: {
-  params: { id: number };
+  params: { id: string };
 }) {
-  const data = await db.query.sites.findFirst({
-    where: eq(sites.id, params.id),
+  const user = await currentUser();
+
+  if (!user) {
+    redirect("/sig-in");
+  }
+
+  const site = await db.query.sites.findFirst({
+    where: eq(sites.id, Number(params.id)),
   });
 
+  if (!site) {
+    notFound();
+  }
+
   return (
-    <div className="flex flex-col space-y-6">
-      <Form
-        title="Subdomain"
-        description="The subdomain for your site."
-        helpText="Please use 32 characters maximum."
-        inputAttrs={{
-          name: "subdomain",
-          type: "text",
-          defaultValue: data?.subdomain ?? "",
-          placeholder: "subdomain",
-          maxLength: 32,
-        }}
-        handleSubmit={updateSite}
-      />
-      <Form
-        title="Custom Domain"
-        description="The custom domain for your site."
-        helpText="Please enter a valid domain."
-        inputAttrs={{
-          name: "customDomain",
-          type: "text",
-          defaultValue: data?.customDomain ?? "",
-          placeholder: "yourdomain.com",
-          maxLength: 64,
-          pattern: "^[a-z0-9]+([\\-\\.]{1}[a-z0-9]+)*\\.[a-z]{2,5}$",
-        }}
-        handleSubmit={updateSite}
-      />
-    </div>
+    <>
+      <Card className="w-full">
+        <CardHeader>
+          <CardTitle>Subdomain</CardTitle>
+          <CardDescription>Customize your site subdomain.</CardDescription>
+        </CardHeader>
+        <CardContent className="flex flex-col space-y-4">
+          <UpdateSiteDomainForm site={site} type="subdomain" />
+        </CardContent>
+      </Card>
+      <Card className="w-full">
+        <CardHeader>
+          <CardTitle>Custom Domain</CardTitle>
+          <CardDescription>Customize your sites custom domain.</CardDescription>
+        </CardHeader>
+        <CardContent className="flex flex-col space-y-4">
+          <UpdateSiteDomainForm site={site} type="domain" />
+        </CardContent>
+      </Card>
+    </>
   );
 }
