@@ -49,7 +49,10 @@ export function UpdateSiteDomainForm({
     console.log(data);
     startTransition(async () => {
       try {
-        await updateSite({ rawInput: data, key: "general" });
+        await updateSite({
+          rawInput: { ...data, id: site.id },
+          key: "customDomain",
+        });
         toast.success("Site Updated Successfully");
       } catch (err) {
         catchClerkError(err);

@@ -37,11 +37,15 @@ import va from "@vercel/analytics";
 
 interface UpdateSiteGeneralFormProps {
   site: Site;
+  type: "general" | "delete";
 }
 
 type Inputs = z.infer<typeof updateSiteSchema>;
 
-export function UpdateSiteGeneralForm({ site }: UpdateSiteGeneralFormProps) {
+export function UpdateSiteGeneralForm({
+  site,
+  type,
+}: UpdateSiteGeneralFormProps) {
   const router = useRouter();
   const [isPending, startTransition] = React.useTransition();
 
@@ -59,7 +63,10 @@ export function UpdateSiteGeneralForm({ site }: UpdateSiteGeneralFormProps) {
     console.log(data);
     startTransition(async () => {
       try {
-        await updateSite({ rawInput: data, key: "general" });
+        await updateSite({
+          rawInput: { ...data, id: site.id },
+          key: "general",
+        });
         toast.success("Site Updated Successfully");
       } catch (err) {
         catchClerkError(err);
@@ -73,92 +80,99 @@ export function UpdateSiteGeneralForm({ site }: UpdateSiteGeneralFormProps) {
         className="grid w-full max-w-2xl gap-5"
         onSubmit={(...args) => void form.handleSubmit(onSubmit)(...args)}
       >
-        <FormItem>
-          <FormLabel>Site Name</FormLabel>
-          <FormControl>
-            <Input
-              id="update-site-name"
-              aria-invalid={!!form.formState.errors.name}
-              aria-describedby="update-site-name-text"
-              {...form.register("name")}
-              name="name"
-              type="text"
-              defaultValue={site.name!}
-              placeholder="Type site name here"
-              minLength={3}
-              maxLength={32}
-              required={true}
-            />
-          </FormControl>
-          <UncontrolledFormMessage
-            message={form.formState.errors.name?.message}
-          />
-        </FormItem>
-        <FormItem>
-          <FormLabel>Description</FormLabel>
-          <FormControl>
-            <Textarea
-              placeholder="Type site description here."
-              {...form.register("description")}
-              defaultValue={site.description ?? ""}
-            />
-          </FormControl>
-          <UncontrolledFormMessage
-            message={form.formState.errors.description?.message}
-          />
-        </FormItem>
-        <div className="flex space-x-2">
-          <Button disabled={isPending}>
-            {isPending && (
-              <Icons.spinner
-                className="mr-2 h-4 w-4 animate-spin"
-                aria-hidden="true"
+        {type === "general" ? (
+          <>
+            <FormItem>
+              <FormLabel>Site Name</FormLabel>
+              <FormControl>
+                <Input
+                  id="update-site-name"
+                  aria-invalid={!!form.formState.errors.name}
+                  aria-describedby="update-site-name-text"
+                  {...form.register("name")}
+                  name="name"
+                  type="text"
+                  defaultValue={site.name!}
+                  placeholder="Type site name here"
+                  minLength={3}
+                  maxLength={32}
+                  required={true}
+                />
+              </FormControl>
+              <UncontrolledFormMessage
+                message={form.formState.errors.name?.message}
               />
-            )}
-            Update Site
-            <span className="sr-only">Update Site</span>
-          </Button>
-          <AlertDialog>
-            <AlertDialogTrigger asChild>
-              <Button variant="destructive">
-                {" "}
+            </FormItem>
+            <FormItem>
+              <FormLabel>Description</FormLabel>
+              <FormControl>
+                <Textarea
+                  placeholder="Type site description here."
+                  {...form.register("description")}
+                  defaultValue={site.description ?? ""}
+                />
+              </FormControl>
+              <UncontrolledFormMessage
+                message={form.formState.errors.description?.message}
+              />
+            </FormItem>
+            <div className="ml-auto flex space-x-2">
+              <Button disabled={isPending}>
                 {isPending && (
                   <Icons.spinner
                     className="mr-2 h-4 w-4 animate-spin"
                     aria-hidden="true"
                   />
                 )}
-                Delete Site
+                Update Site
+                <span className="sr-only">Update Site</span>
               </Button>
-            </AlertDialogTrigger>
-            <AlertDialogContent>
-              <AlertDialogHeader>
-                <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
-                <AlertDialogDescription>
-                  This action cannot be undone. This will permanently delete
-                  your site and all post from our servers.
-                </AlertDialogDescription>
-              </AlertDialogHeader>
-              <AlertDialogFooter>
-                <AlertDialogCancel>Cancel</AlertDialogCancel>
-                <AlertDialogAction
-                  onClick={() => {
-                    startTransition(async () => {
-                      void form.trigger(["name", "description"]);
-                      va.track("Deleted Site");
-                      await deleteSite({ siteId: site.id });
-                      router.push(`/sites`);
-                    });
-                  }}
-                  disabled={isPending}
-                >
+            </div>
+          </>
+        ) : (
+          <div className="ml-auto flex space-x-2">
+            <AlertDialog>
+              <AlertDialogTrigger asChild>
+                <Button variant="destructive">
+                  {" "}
+                  {isPending && (
+                    <Icons.spinner
+                      className="mr-2 h-4 w-4 animate-spin"
+                      aria-hidden="true"
+                    />
+                  )}
                   Delete Site
-                  <span className="sr-only">Delete Site</span>
-                </AlertDialogAction>
-              </AlertDialogFooter>
-            </AlertDialogContent>
-          </AlertDialog>
-        </div>
+                </Button>
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    This action cannot be undone. This will permanently delete
+                    your site and all post from our servers.
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>Cancel</AlertDialogCancel>
+                  <AlertDialogAction
+                    onClick={() => {
+                      startTransition(async () => {
+                        void form.trigger(["name", "description"]);
+                        va.track("Deleted Site");
+                        await deleteSite({ siteId: site.id });
+                        router.push(`/sites`);
+                      });
+                    }}
+                    disabled={isPending}
+                  >
+                    Delete Site
+                    <span className="sr-only">Delete Site</span>
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
+          </div>
+        )}
       </form>
     </Form>
   );

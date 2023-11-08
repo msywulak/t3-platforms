@@ -25,7 +25,6 @@ import { authAction, siteAuthAction } from "./safe-action";
 import { z } from "zod";
 import { updateSiteSchema } from "./validations/site";
 import { postEditorSchema } from "./validations/post";
-import { type StoredFile } from "@/lib/types";
 import { utapi } from "./utapi";
 
 export const getSiteFromPostId = authAction(
@@ -88,6 +87,7 @@ export const updateSite = siteAuthAction(
       let response;
 
       if (key === "customDomain" || key === "subdomain") {
+        console.log("Updating custom domain");
         if (rawInput.customDomain!.includes("vercel.pub")) {
           throw new Error(
             "Cannot use vercel.pub subdomain as your custom domain",
@@ -144,9 +144,8 @@ export const updateSite = siteAuthAction(
           await db
             .update(sites)
             .set({
-              ...rawInput,
-              logo: rawInput.logo as StoredFile[] | null,
-              image: rawInput.image as StoredFile[] | null,
+              name: rawInput.name,
+              description: rawInput.description,
             })
             .where(eq(sites.id, rawInput.id!));
         } catch (error: any) {
@@ -257,11 +256,19 @@ export const deleteSite = siteAuthAction(
       throw new Error("Site not found");
     }
     try {
+      // TODO: handle this delete better
+      if (foundSite.image !== undefined && foundSite.image !== null) {
+        await utapi.deleteFiles([foundSite.image[0]?.id ?? ""]);
+      }
+      if (foundSite.logo !== undefined && foundSite.logo !== null) {
+        await utapi.deleteFiles([foundSite.logo[0]?.id ?? ""]);
+      }
+      // TODO: handle this delete better
+      await db.delete(posts).where(eq(posts.siteId, siteId));
+
       const response = await db
         .delete(sites)
         .where(and(eq(sites.id, siteId), eq(sites.clerkId, userId)));
-
-      await db.delete(posts).where(eq(posts.siteId, siteId));
 
       revalidateTag(
         `${foundSite.subdomain}.${env.NEXT_PUBLIC_ROOT_DOMAIN}-metadata`,
