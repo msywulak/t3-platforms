@@ -7,7 +7,7 @@ export default {
   driver: "mysql2",
   out: "./drizzle",
   dbCredentials: {
-    connectionString: env.DATABASE_URL,
+    uri: env.DATABASE_URL,
   },
   tablesFilter: ["t3-platforms_*"],
 } satisfies Config;
