@@ -4,7 +4,8 @@ import { Providers } from "./providers";
 import { type Metadata } from "next";
 import { cn } from "@/lib/utils";
 import { siteConfig } from "@/config/site";
-import { GeistSans, GeistMono } from "geist/font";
+import { GeistMono } from "geist/font/mono";
+import { GeistSans } from "geist/font/sans";
 
 export const metadata: Metadata = {
   title: siteConfig.title,
