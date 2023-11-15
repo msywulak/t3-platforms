@@ -7,12 +7,12 @@ This is a [T3 Stack](https://create.t3.gg/) project bootstrapped with `create-t3
 The primary purpose of this repo was to help me learn how the [Vercel Platform Start Kit](https://github.com/vercel/platforms) works from the ground up. While the basis isn't a direct fork I did copy a lot then rewrite using different technologies from the T3 stack, though towards the end Drizzle, PlanetScale, and Clerk are the ones that remain.
 
 This is still a work in progress with a non exhaustive and unordered list of items I'll be working towards soon.
-- [] Finish Platforms migration to "T3" style
-- [] Styling on dynamic site pages
-- [] Fix Clerk Sign-up Redirect Flow
-- [] Optionally protect dynamic site pages with Clerk Organizations
-- [] Hook up Clerk Webhook plumbing to PlanetScale User Table
-- [] See if there's anything I can do with Clerk Metadata based on this [article](https://clerk.com/blog/exploring-clerk-metadata-stripe-webhooks)
+- [ ] Finish Platforms migration to "T3" style
+- [ ] Styling on dynamic site pages
+- [ ] Fix Clerk Sign-up Redirect Flow
+- [ ] Optionally protect dynamic site pages with Clerk Organizations
+- [ ] Hook up Clerk Webhook plumbing to PlanetScale User Table
+- [ ] See if there's anything I can do with Clerk Metadata based on this [article](https://clerk.com/blog/exploring-clerk-metadata-stripe-webhooks)
 
 ## Tech Stack
 - [Next.js](https://nextjs.org/) as the React framework
