@@ -14,7 +14,6 @@ export interface SSOCallbackPageProps {
 export default function SSOCallbackPage({
   searchParams,
 }: SSOCallbackPageProps) {
-  console.log(searchParams);
   return (
     <Shell className="max-w-lg">
       <SSOCallback searchParams={searchParams} />

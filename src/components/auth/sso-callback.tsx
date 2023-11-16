@@ -8,7 +8,6 @@ import { type SSOCallbackPageProps } from "@/app/app/(auth)/sso-callback/page";
 
 export default function SSOCallback({ searchParams }: SSOCallbackPageProps) {
   const { handleRedirectCallback } = useClerk();
-  console.log(searchParams);
 
   React.useEffect(() => {
     void handleRedirectCallback(searchParams);

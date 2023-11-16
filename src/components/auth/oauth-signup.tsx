@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { isClerkAPIResponseError, useSignIn } from "@clerk/nextjs";
+import { isClerkAPIResponseError, useSignIn, useSignUp } from "@clerk/nextjs";
 import { type OAuthStrategy } from "@clerk/types";
 import { toast } from "sonner";
 
@@ -18,18 +18,19 @@ const oauthProviders = [
   strategy: OAuthStrategy;
 }[];
 
-export function OAuthSignIn() {
+export function OAuthSignUp() {
   const [isLoading, setIsLoading] = React.useState<OAuthStrategy | null>(null);
-  const { signIn, isLoaded: signInLoaded } = useSignIn();
+  const { signUp, isLoaded: signUpLoaded } = useSignUp();
 
-  async function oauthSignIn(provider: OAuthStrategy) {
-    if (!signInLoaded) return null;
+  async function oauthSignUp(provider: OAuthStrategy) {
+    if (!signUpLoaded) return null;
     try {
       setIsLoading(provider);
-      await signIn.authenticateWithRedirect({
+      await signUp.authenticateWithRedirect({
         strategy: provider,
         redirectUrl: "/sso-callback",
-        redirectUrlComplete: "/",
+        redirectUrlComplete:
+          provider === "oauth_microsoft" ? "/sign-up/verify-email" : "/",
       });
     } catch (error) {
       setIsLoading(null);
@@ -54,7 +55,7 @@ export function OAuthSignIn() {
             className={`${
               isLoading ? "cursor-not-allowed" : ""
             } group my-2 flex h-10 w-full items-center justify-center rounded-md border transition-colors duration-75`}
-            onClick={() => void oauthSignIn(provider.strategy)}
+            onClick={() => void oauthSignUp(provider.strategy)}
             disabled={isLoading !== null}
           >
             {isLoading === provider.strategy ? (
