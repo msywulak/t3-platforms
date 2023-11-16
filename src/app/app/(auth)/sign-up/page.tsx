@@ -4,7 +4,7 @@ import { currentUser } from "@clerk/nextjs";
 import { Shell } from "@/components/shells/shell";
 import { Suspense } from "react";
 import Image from "next/image";
-import { OAuthSignUp } from "@/components/auth/oauth-signup";
+import { OAuthSignIn } from "@/components/auth/oauth-signin";
 
 export const metadata: Metadata = {
   title: "Login | Platforms Starter Kit",
@@ -47,7 +47,7 @@ export default async function SignUpPage() {
               <div className="my-2 h-10 w-full rounded-md border border-stone-200 bg-stone-100 dark:border-stone-700 dark:bg-stone-800" />
             }
           >
-            <OAuthSignUp />
+            <OAuthSignIn />
           </Suspense>
         </div>
       </div>
