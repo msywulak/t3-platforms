@@ -16,21 +16,19 @@ export default async function SignUpPage() {
 
   return (
     <Shell variant={"sidebar"}>
-      <div className="mx-5 border border-stone-200 py-10 dark:border-stone-700 sm:mx-auto sm:w-full sm:max-w-md sm:rounded-lg sm:shadow-md">
+      <div className="borderpy-10 mx-5 sm:mx-auto sm:w-full sm:max-w-md sm:rounded-lg sm:shadow-md">
         <Image
           alt="Platforms Starter Kit"
           width={100}
           height={100}
-          className="relative mx-auto h-12 w-auto dark:scale-110 dark:rounded-full dark:border dark:border-stone-400"
+          className="relative mx-auto h-12 w-auto dark:scale-110 dark:rounded-full dark:border"
           src="/logo.png"
         />
-        <h1 className="font-cal mt-6 text-center text-3xl dark:text-white">
-          Platforms Starter Kit
-        </h1>
-        <p className="mt-2 text-center text-sm text-stone-600 dark:text-stone-400">
+        <h1 className="mt-6 text-center text-3xl">Platforms Starter Kit</h1>
+        <p className="mt-2 text-center text-sm">
           Build multi-tenant applications with custom domains. <br />
           <a
-            className="font-medium text-black hover:text-stone-800 dark:text-stone-300 dark:hover:text-stone-100"
+            className="font-medium"
             href="https://vercel.com/blog/platforms-starter-kit"
             rel="noreferrer"
             target="_blank"
@@ -38,14 +36,10 @@ export default async function SignUpPage() {
             Read the announcement.
           </a>
         </p>
-        <p className="mt-2 text-center text-sm text-stone-600 dark:text-stone-400">
-          Sign Up with
-        </p>
+        <p className="mt-2 text-center text-sm font-bold">Sign Up with</p>
         <div className="mx-auto mt-4 w-11/12 max-w-sm sm:w-full">
           <Suspense
-            fallback={
-              <div className="my-2 h-10 w-full rounded-md border border-stone-200 bg-stone-100 dark:border-stone-700 dark:bg-stone-800" />
-            }
+            fallback={<div className="my-2 h-10 w-full rounded-md border" />}
           >
             <OAuthSignIn />
           </Suspense>

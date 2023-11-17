@@ -97,15 +97,13 @@ export default async function SitePostPage({
     <>
       <div className="flex flex-col items-center justify-center">
         <div className="m-auto w-full text-center md:w-7/12">
-          <p className="m-auto my-5 w-10/12 text-sm font-light text-stone-500 dark:text-stone-400 md:text-base">
+          <p className="m-auto my-5 w-10/12 text-sm font-light md:text-base">
             {toDateString(data.createdAt)}
           </p>
-          <h1 className="font-title mb-10 text-3xl font-bold text-stone-800 dark:text-white md:text-6xl">
+          <h1 className="font-title mb-10 text-3xl font-bold md:text-6xl">
             {data.title}
           </h1>
-          <p className="text-md m-auto w-10/12 text-stone-600 dark:text-stone-400 md:text-lg">
-            {data.description}
-          </p>
+          <p className="text-md w-10/12md:text-lg m-auto">{data.description}</p>
         </div>
         <a
           // if you are using Github OAuth, you can get rid of the Twitter option
@@ -127,12 +125,12 @@ export default async function SitePostPage({
                   width={80}
                 />
               ) : (
-                <div className="absolute flex h-full w-full select-none items-center justify-center bg-stone-100 text-4xl text-stone-500">
+                <div className="absolute flex h-full w-full select-none items-center justify-center text-4xl">
                   ?
                 </div>
               )}
             </div>
-            <div className="text-md ml-3 inline-block align-middle dark:text-white md:text-lg">
+            <div className="text-md ml-3 inline-block align-middle md:text-lg">
               by <span className="font-semibold">{data.site?.user?.name}</span>
             </div>
           </div>
@@ -149,7 +147,6 @@ export default async function SitePostPage({
           src={data.image ?? "/placeholder.png"}
         />
       </div>
-
       <MDX source={data.mdxSource} />
 
       {data.adjacentPosts.length > 0 && (
@@ -158,12 +155,10 @@ export default async function SitePostPage({
             className="absolute inset-0 flex items-center"
             aria-hidden="true"
           >
-            <div className="w-full border-t border-stone-300 dark:border-stone-700" />
+            <div className="w-full border-t" />
           </div>
           <div className="relative flex justify-center">
-            <span className="bg-white px-2 text-sm text-stone-500 dark:bg-black dark:text-stone-400">
-              Continue Reading
-            </span>
+            <span className="px-2 text-sm">Continue Reading</span>
           </div>
         </div>
       )}

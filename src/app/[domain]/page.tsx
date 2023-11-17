@@ -63,10 +63,10 @@ export default async function SiteHomePage({
                 />
               </div>
               <div className="mx-auto mt-10 w-5/6 lg:w-full">
-                <h2 className="font-title my-10 text-4xl dark:text-white md:text-6xl">
+                <h2 className="font-title my-10 text-4xl md:text-6xl">
                   {posts[0]?.title}
                 </h2>
-                <p className="w-full text-base dark:text-white md:text-lg lg:w-2/3">
+                <p className="w-full text-base md:text-lg lg:w-2/3">
                   {posts[0]?.description}
                 </p>
                 <div className="flex w-full items-center justify-start space-x-4">
@@ -80,16 +80,16 @@ export default async function SiteHomePage({
                         src={data.user?.image}
                       />
                     ) : (
-                      <div className="absolute flex h-full w-full select-none items-center justify-center bg-stone-100 text-4xl text-stone-500">
+                      <div className="absolute flex h-full w-full select-none items-center justify-center text-4xl">
                         ?
                       </div>
                     )}
                   </div>
-                  <p className="ml-3 inline-block whitespace-nowrap align-middle text-sm font-semibold dark:text-white md:text-base">
+                  <p className="ml-3 inline-block whitespace-nowrap align-middle text-sm font-semibold md:text-base">
                     {data.user?.name}
                   </p>
-                  <div className="h-6 border-l border-stone-600 dark:border-stone-400" />
-                  <p className="m-auto my-5 w-10/12 text-sm font-light text-stone-500 dark:text-stone-400 md:text-base">
+                  <div className="h-6 border-l" />
+                  <p className="m-auto my-5 w-10/12 text-sm font-light md:text-base">
                     {toDateString(posts[0]?.createdAt ?? new Date())}
                   </p>
                 </div>
@@ -112,16 +112,14 @@ export default async function SiteHomePage({
               height={400}
               className="hidden dark:block"
             />
-            <p className="font-title text-2xl text-stone-600 dark:text-stone-400">
-              No posts yet.
-            </p>
+            <p className="font-title text-2xl">No posts yet.</p>
           </div>
         )}
       </div>
 
       {posts.length > 1 && (
         <div className="mx-5 mb-20 max-w-screen-xl lg:mx-24 2xl:mx-auto">
-          <h2 className="font-title mb-10 text-4xl dark:text-white md:text-5xl">
+          <h2 className="font-title mb-10 text-4xl md:text-5xl">
             More stories
           </h2>
           <div className="grid w-full grid-cols-1 gap-x-4 gap-y-8 md:grid-cols-2 xl:grid-cols-3">
