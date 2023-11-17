@@ -11,6 +11,7 @@ import { getSiteFromPostId } from "@/lib/actions";
 import Image from "next/image";
 import { ModeToggle } from "./theme-toggle";
 import { Icons } from "@/components/icons";
+import { Button } from "@/components/ui/button";
 
 const externalLinks = [
   {
@@ -155,7 +156,7 @@ export default function Nav({ children }: { children: ReactNode }) {
 
   return (
     <>
-      <button
+      <Button
         className={`fixed z-20 ${
           // left align for Editor, right align for other pages
           segments[0] === "post" && segments.length === 2 && !showSidebar
@@ -165,7 +166,7 @@ export default function Nav({ children }: { children: ReactNode }) {
         onClick={() => setShowSidebar(!showSidebar)}
       >
         <Icons.hamburgerMenu width={20} />
-      </button>
+      </Button>
       <div
         className={`transform ${
           showSidebar

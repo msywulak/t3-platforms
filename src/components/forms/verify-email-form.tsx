@@ -9,6 +9,7 @@ import type { z } from "zod";
 import { catchClerkError } from "@/lib/utils";
 import { verifyEmailSchema } from "@/lib/validations/auth";
 import { Icons } from "@/components/icons";
+import { Button } from "@/components/ui/button";
 
 type Inputs = z.infer<typeof verifyEmailSchema>;
 
@@ -65,7 +66,7 @@ export function VerifyEmailForm() {
         )}
       </div>
 
-      <button
+      <Button
         type="submit"
         className="btn btn-primary"
         disabled={isPending || !isLoaded}
@@ -75,7 +76,7 @@ export function VerifyEmailForm() {
         ) : (
           "Verify Email"
         )}
-      </button>
+      </Button>
     </form>
   );
 }

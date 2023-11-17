@@ -7,6 +7,7 @@ import { useFormStatus } from "react-dom";
 import { toast } from "sonner";
 import { deleteSite } from "@/lib/actions";
 import va from "@vercel/analytics";
+import { Button } from "@/components/ui/button";
 
 export default function DeleteSiteForm({ siteName }: { siteName: string }) {
   const { id } = useParams();
@@ -62,7 +63,7 @@ export default function DeleteSiteForm({ siteName }: { siteName: string }) {
 function FormButton() {
   const { pending } = useFormStatus();
   return (
-    <button
+    <Button
       className={cn(
         "flex h-8 w-32 items-center justify-center space-x-2 rounded-md border text-sm transition-all focus:outline-none sm:h-10",
         pending
@@ -72,6 +73,6 @@ function FormButton() {
       disabled={pending}
     >
       {pending ? <LoadingDots color="#808080" /> : <p>Confirm Delete</p>}
-    </button>
+    </Button>
   );
 }

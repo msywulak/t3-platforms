@@ -7,7 +7,8 @@ import { useFormStatus } from "react-dom";
 import LoadingDots from "./icons/loading-dots";
 import va from "@vercel/analytics";
 import { toast } from "sonner";
-import { Icons } from "./icons";
+import { Icons } from "@/components/icons";
+import { Button } from "@/components/ui/button";
 
 export default function ReportAbuse() {
   const [open, setOpen] = useState(false);
@@ -17,12 +18,12 @@ export default function ReportAbuse() {
 
   return (
     <div className="fixed bottom-5 right-5">
-      <button
+      <Button
         className="rounded-full bg-black p-4 text-white shadow-lg transition-all hover:-translate-y-1 hover:shadow-2xl active:translate-y-0 active:shadow-sm"
         onClick={() => setOpen(!open)}
       >
         <Icons.exclamationTriangle width={24} />
-      </button>
+      </Button>
       {open && (
         <form
           action={async (formData) => {
@@ -75,7 +76,7 @@ export default function ReportAbuse() {
 function SubmitButton() {
   const { pending } = useFormStatus();
   return (
-    <button
+    <Button
       className={cn(
         "h flex h-8 w-full items-center justify-center space-x-2 rounded-md border text-sm transition-all focus:outline-none sm:h-10",
         pending
@@ -85,6 +86,6 @@ function SubmitButton() {
       disabled={pending}
     >
       {pending ? <LoadingDots color="#808080" /> : <p>Report Abuse</p>}
-    </button>
+    </Button>
   );
 }
