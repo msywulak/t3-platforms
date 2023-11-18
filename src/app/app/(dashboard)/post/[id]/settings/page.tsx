@@ -14,7 +14,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { UpdatePostSlugForm } from "@/components/forms/post/update-post-slug-form";
+import { InputForm } from "@/components/forms/post/update-post-slug-form";
 
 export default async function PostSettings({
   params,
@@ -44,7 +44,7 @@ export default async function PostSettings({
           </CardDescription>
         </CardHeader>
         <CardContent className="flex flex-col space-y-4">
-          <UpdatePostSlugForm post={data} />
+          <InputForm post={data} />
         </CardContent>
       </Card>
       <Card className="w-full">

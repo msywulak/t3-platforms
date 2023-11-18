@@ -22,7 +22,13 @@ export const updatePostSchema = z.object({
   title: z.string().optional(),
   content: z.string().optional(),
   description: z.string().optional(),
-  slug: z.string().nullable(),
+  slug: z
+    .string()
+    .regex(
+      /^[a-z0-9 ]+(?:-[a-z0-9 ]+)*$/,
+      "Slug can only contain letters, numbers, hyphens, and spaces.",
+    )
+    .optional(),
   image: z.string().optional(),
   imageBlurhash: z.string().optional(),
   published: z.boolean().optional(),
@@ -37,6 +43,6 @@ const siteSchema = z.object({
   subdomain: z.string().nullable(),
 });
 
-export const postEditorSchema = postSchema.extend({
+export const postEditorSchema = updatePostSchema.extend({
   site: siteSchema.nullable(),
 });

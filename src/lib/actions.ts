@@ -24,7 +24,7 @@ import { generateReactHelpers } from "@uploadthing/react/hooks";
 import { authAction, siteAuthAction } from "./safe-action";
 import { z } from "zod";
 import { updateSiteSchema } from "./validations/site";
-import { postEditorSchema, postSchema } from "./validations/post";
+import { postEditorSchema } from "./validations/post";
 import { utapi } from "./utapi";
 
 export const getSiteFromPostId = authAction(
@@ -312,6 +312,9 @@ export const createPost = siteAuthAction(
 export const updatePost = authAction(
   z.object({ post: postEditorSchema }),
   async ({ post }, { userId }) => {
+    if (!post.id) {
+      throw new Error("Post not found");
+    }
     const updatedPost = await db.query.posts.findFirst({
       where: and(eq(posts.id, post.id), eq(posts.clerkId, userId)),
       with: {
