@@ -18,17 +18,19 @@ export const postSchema = z.object({
 });
 
 export const updatePostSchema = z.object({
-  id: z.number(),
+  id: z.number().optional(),
   title: z.string().optional(),
   content: z.string().optional(),
+  description: z.string().optional(),
+  slug: z.string().nullable(),
   image: z.string().optional(),
   imageBlurhash: z.string().optional(),
   published: z.boolean().optional(),
   createdAt: z.date().optional(),
   updatedAt: z.date().optional(),
   userId: z.number().optional(),
-  siteId: z.number(),
-  clerkId: z.string(),
+  siteId: z.number().optional(),
+  clerkId: z.string().optional(),
 });
 
 const siteSchema = z.object({

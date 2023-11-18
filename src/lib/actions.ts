@@ -24,7 +24,7 @@ import { generateReactHelpers } from "@uploadthing/react/hooks";
 import { authAction, siteAuthAction } from "./safe-action";
 import { z } from "zod";
 import { updateSiteSchema } from "./validations/site";
-import { postEditorSchema } from "./validations/post";
+import { postEditorSchema, postSchema } from "./validations/post";
 import { utapi } from "./utapi";
 
 export const getSiteFromPostId = authAction(
@@ -329,6 +329,7 @@ export const updatePost = authAction(
           title: post.title,
           description: post.description,
           content: post.content,
+          slug: post.slug,
         })
         .where(eq(posts.id, post.id));
 
