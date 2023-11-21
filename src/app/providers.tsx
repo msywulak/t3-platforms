@@ -1,6 +1,5 @@
 "use client";
 
-import { ModalProvider } from "@/components/modal/provider";
 import { Toaster } from "@/components/ui/toaster";
 import { ThemeProvider } from "@/components/theme-provider";
 import { NextSSRPlugin } from "@uploadthing/react/next-ssr-plugin";
@@ -25,7 +24,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
         routerConfig={extractRouterConfig(ourFileRouter)}
       />
       <Toaster />
-      <ModalProvider>{children}</ModalProvider>
+      {children}
     </ThemeProvider>
   );
 }

@@ -3,7 +3,6 @@
 import { useEffect, useState, useTransition } from "react";
 import { updatePost, updatePostMetadata } from "@/lib/actions";
 import { Editor as NovelEditor } from "novel";
-import TextareaAutosize from "react-textarea-autosize";
 import { cn } from "@/lib/utils";
 import LoadingDots from "./icons/loading-dots";
 import { toast } from "sonner";
@@ -12,6 +11,8 @@ import { type postEditorSchema } from "@/lib/validations/post";
 import { type z } from "zod";
 import { Button } from "@/components/ui/button";
 import { Icons } from "@/components/icons";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 
 type PostWithSite = z.infer<typeof postEditorSchema>;
 
@@ -42,14 +43,14 @@ export default function Editor({ post }: { post: PostWithSite }) {
   }, [data, startTransitionSaving]);
 
   return (
-    <div className="relative min-h-[500px] w-full max-w-screen-lg border-stone-200 p-12 px-8 dark:border-stone-700 sm:mb-[calc(20vh)] sm:rounded-lg sm:border sm:px-12 sm:shadow-lg">
+    <div className="relative min-h-[500px] w-full max-w-screen-lg p-12 px-8 sm:mb-[calc(20vh)] sm:rounded-lg sm:border sm:px-12 sm:shadow-lg">
       <div className="absolute right-5 top-5 mb-5 flex items-center space-x-3">
         {data.published && (
           <a
             href={url}
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center space-x-1 text-sm text-stone-400 hover:text-stone-500"
+            className="flex items-center space-x-1 text-sm"
           >
             <Icons.externalLink className="h-4 w-4" />
           </a>
@@ -95,20 +96,21 @@ export default function Editor({ post }: { post: PostWithSite }) {
           )}
         </Button>
       </div>
-      <div className="mb-5 flex flex-col space-y-3 border-b border-stone-200 pb-5 dark:border-stone-700">
-        <input
+      <div className="mb-5 flex flex-col space-y-3 border-b pb-5 pt-3">
+        <Input
           type="text"
           placeholder="Title"
           defaultValue={post?.title ?? ""}
           autoFocus
           onChange={(e) => setData({ ...data, title: e.target.value })}
-          className="dark:placeholder-text-600 font-cal border-none px-0 text-3xl placeholder:text-stone-400 focus:outline-none focus:ring-0 dark:bg-black dark:text-white"
+          className="border-none px-0 text-3xl"
         />
-        <TextareaAutosize
+        <Textarea
           placeholder="Description"
           defaultValue={post?.description ?? ""}
           onChange={(e) => setData({ ...data, description: e.target.value })}
-          className="dark:placeholder-text-600 w-full resize-none border-none px-0 placeholder:text-stone-400 focus:outline-none focus:ring-0 dark:bg-black dark:text-white"
+          className="resize-none border-none px-0"
+          rows={1}
         />
       </div>
       <NovelEditor
