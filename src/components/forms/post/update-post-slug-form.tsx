@@ -47,8 +47,9 @@ export function InputForm({ post }: UpdatePostSlugFormProps) {
             .trim()
             .replace(/[\W_]+/g, "-") ?? "";
         await updatePost({ post: { ...data, slug: data.slug, site: null } });
-        toast.success("Site Updated Successfully");
+        toast.success("Post Slug Successfully Updated");
       } catch (err) {
+        toast.error("Failed to Update Post Slug");
         catchClerkError(err);
       }
     });
