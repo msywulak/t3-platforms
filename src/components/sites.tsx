@@ -4,14 +4,7 @@ import SiteCard from "./site-card";
 import Image from "next/image";
 import SitesTable from "./sites-table";
 import { type Site } from "@/db/schema";
-import {
-  Card,
-  Tab,
-  TabGroup,
-  TabList,
-  TabPanel,
-  TabPanels,
-} from "@tremor/react";
+import { Tab, TabGroup, TabList, TabPanel, TabPanels } from "@tremor/react";
 import { Icons } from "./icons";
 
 export default function Sites({ sites }: { sites: Site[] }) {
