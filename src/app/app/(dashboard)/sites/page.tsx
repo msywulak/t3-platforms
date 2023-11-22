@@ -2,15 +2,25 @@ import { Suspense } from "react";
 import Sites from "@/components/sites";
 import PlaceholderCard from "@/components/placeholder-card";
 import { CreateSiteButton } from "@/components/create-site-button";
+import { currentUser } from "@clerk/nextjs";
+import { redirect } from "next/navigation";
+import { db } from "@/db";
+import { asc, eq } from "drizzle-orm";
+import { sites } from "@/db/schema";
 
-export default function AllSites({ params }: { params: { id: string } }) {
+export default async function AllSites() {
+  const user = await currentUser();
+  if (!user) redirect("/sign-in");
+
+  const allSites = await db.query.sites.findMany({
+    where: eq(sites.clerkId, user.id),
+    orderBy: [asc(sites.createdAt)],
+  });
   return (
     <div className="flex max-w-screen-xl flex-col space-y-12 p-8">
       <div className="flex flex-col space-y-6">
         <div className="flex items-center justify-between">
-          <h1 className="font-cal text-3xl font-bold dark:text-white">
-            All Sites
-          </h1>
+          <h1 className="text-3xl font-bold">All Sites</h1>
           <CreateSiteButton />
         </div>
         <Suspense
@@ -22,8 +32,7 @@ export default function AllSites({ params }: { params: { id: string } }) {
             </div>
           }
         >
-          {/* @ts-expect-error Server Component */}
-          <Sites siteId={decodeURIComponent(params.id)} />
+          <Sites sites={allSites} />
         </Suspense>
       </div>
     </div>
