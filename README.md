@@ -25,7 +25,7 @@ This is still a work in progress with a non exhaustive and unordered list of ite
 - [shadcn/ui](https://ui.shadcn.com/) for UI components
 - [next-safe-action](https://next-safe-action.dev/) for type safe server actions
 - [Uploadthing](https://uploadthing.com/) for image uploads
-- [Recharts](https://recharts.org/) for charts
+- [Tremor](https://www.tremor.so/) for charts and dashboards
 - [Novel](https://novel.sh/) for the WYSIWYG editor
 
 ## Running Locally

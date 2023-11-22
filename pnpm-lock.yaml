@@ -122,9 +122,6 @@ dependencies:
   react-tweet:
     specifier: ^3.1.1
     version: 3.1.1(react-dom@18.2.0)(react@18.2.0)
-  recharts:
-    specifier: ^2.10.1
-    version: 2.10.1(prop-types@15.8.1)(react-dom@18.2.0)(react@18.2.0)
   sonner:
     specifier: ^1.2.1
     version: 1.2.1(react-dom@18.2.0)(react@18.2.0)

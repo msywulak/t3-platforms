@@ -1,24 +1,113 @@
-// import { fontFamily } from "tailwindcss/defaultTheme";
-import { withUt } from "uploadthing/tw";
-
-export default withUt({
-  darkMode: ["class"],
+/** @type {import('tailwindcss').Config} */
+module.exports = {
+  darkMode: "class",
   content: [
     "./pages/**/*.{ts,tsx}",
     "./components/**/*.{ts,tsx}",
     "./app/**/*.{ts,tsx}",
     "./src/**/*.{ts,tsx}",
+    "./node_modules/@tremor/**/*.{js,ts,jsx,tsx}", // Tremor module
   ],
   theme: {
+    transparent: "transparent",
+    current: "currentColor",
     container: {
       center: true,
-      padding: "2rem",
+      padding: {
+        DEFAULT: "2rem",
+        sm: "2rem",
+        lg: "4rem",
+        xl: "5rem",
+        "2xl": "6rem",
+      },
       screens: {
         "2xl": "1400px",
       },
     },
     extend: {
+      fontSize: {
+        "2xs": ".5rem",
+        "tremor-label": ["0.75rem"],
+        "tremor-default": ["0.875rem", { lineHeight: "1.25rem" }],
+        "tremor-title": ["1.125rem", { lineHeight: "1.75rem" }],
+        "tremor-metric": ["1.875rem", { lineHeight: "2.25rem" }],
+      },
+      boxShadow: {
+        1: "0px 1px 2px 0px rgba(91, 104, 113, 0.32), 0px 0px 1px 0px rgba(26, 32, 36, 0.32)",
+        // light
+        "tremor-input": "0 1px 2px 0 rgb(0 0 0 / 0.05)",
+        "tremor-card":
+          "0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1)",
+        "tremor-dropdown":
+          "0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)",
+        // dark
+        "dark-tremor-input": "0 1px 2px 0 rgb(0 0 0 / 0.05)",
+        "dark-tremor-card":
+          "0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1)",
+        "dark-tremor-dropdown":
+          "0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)",
+      },
       colors: {
+        // light mode
+        tremor: {
+          brand: {
+            faint: "#f0fdf4", // green-50
+            muted: "#bbf7d0", // green-200
+            subtle: "#4ade80", // green-400
+            DEFAULT: "#22c55e", // green-500
+            emphasis: "#15803d", // green-700
+            inverted: "#FFFFFF", // white
+          },
+          background: {
+            muted: "#F9FAFB", // gray-50
+            subtle: "#F3F4F6", // gray-100
+            DEFAULT: "#FFFFFF", // white
+            emphasis: "#374151", // gray-700
+          },
+          border: {
+            DEFAULT: "#E5E7EB", // gray-200
+          },
+          ring: {
+            DEFAULT: "#E5E7EB", // gray-200
+          },
+          content: {
+            subtle: "#9CA3AF", // gray-400
+            DEFAULT: "#6B7280", // gray-500
+            emphasis: "#374151", // gray-700
+            strong: "#111827", // gray-900
+            inverted: "#FFFFFF", // white
+          },
+        },
+        // dark mode
+        "dark-tremor": {
+          brand: {
+            faint: "#0B1229", // custom
+            muted: "#052e16", // green-950
+            subtle: "#166534", // green-800
+            DEFAULT: "#22c55e", // green-500
+            emphasis: "#4ade80", // green-400
+            inverted: "#030712", // gray-950
+          },
+          background: {
+            muted: "hsl(var(--muted))", // custom
+            subtle: "hsl(var(--accent))", // gray-800
+            DEFAULT: "hsl(var(--background))", // gray-900
+            emphasis: "hsl(var(--foreground))", // gray-300
+          },
+          border: {
+            DEFAULT: "hsl(var(--border))", // gray-800
+          },
+          ring: {
+            DEFAULT: "hsl(var(--ring))", // gray-800
+          },
+          content: {
+            subtle: "#4B5563", // gray-600
+            DEFAULT: "hsl(var(--secondary-foreground))", // gray-500
+            emphasis: "#E5E7EB", // gray-200
+            strong: "#F9FAFB", // gray-50
+            inverted: "#000000", // black
+          },
+        },
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",
@@ -57,6 +146,9 @@ export default withUt({
         lg: "var(--radius)",
         md: "calc(var(--radius) - 2px)",
         sm: "calc(var(--radius) - 4px)",
+        "tremor-small": "0.375rem",
+        "tremor-default": "0.5rem",
+        "tremor-full": "9999px",
       },
       fontFamily: {
         sans: ["var(--font-geist-sans)"],
@@ -64,12 +156,12 @@ export default withUt({
       },
       keyframes: {
         "accordion-down": {
-          from: { height: "0" },
+          from: { height: 0 },
           to: { height: "var(--radix-accordion-content-height)" },
         },
         "accordion-up": {
           from: { height: "var(--radix-accordion-content-height)" },
-          to: { height: "0" },
+          to: { height: 0 },
         },
       },
       animation: {
@@ -78,5 +170,34 @@ export default withUt({
       },
     },
   },
-  plugins: [require("tailwindcss-animate")],
-});
+  safelist: [
+    {
+      pattern:
+        /^(bg-(?:slate|gray|zinc|neutral|stone|red|orange|amber|yellow|lime|green|emerald|teal|cyan|sky|blue|indigo|violet|purple|fuchsia|pink|rose)-(?:50|100|200|300|400|500|600|700|800|900|950))$/,
+      variants: ["hover", "ui-selected"],
+    },
+    {
+      pattern:
+        /^(text-(?:slate|gray|zinc|neutral|stone|red|orange|amber|yellow|lime|green|emerald|teal|cyan|sky|blue|indigo|violet|purple|fuchsia|pink|rose)-(?:50|100|200|300|400|500|600|700|800|900|950))$/,
+      variants: ["hover", "ui-selected"],
+    },
+    {
+      pattern:
+        /^(border-(?:slate|gray|zinc|neutral|stone|red|orange|amber|yellow|lime|green|emerald|teal|cyan|sky|blue|indigo|violet|purple|fuchsia|pink|rose)-(?:50|100|200|300|400|500|600|700|800|900|950))$/,
+      variants: ["hover", "ui-selected"],
+    },
+    {
+      pattern:
+        /^(ring-(?:slate|gray|zinc|neutral|stone|red|orange|amber|yellow|lime|green|emerald|teal|cyan|sky|blue|indigo|violet|purple|fuchsia|pink|rose)-(?:50|100|200|300|400|500|600|700|800|900|950))$/,
+    },
+    {
+      pattern:
+        /^(stroke-(?:slate|gray|zinc|neutral|stone|red|orange|amber|yellow|lime|green|emerald|teal|cyan|sky|blue|indigo|violet|purple|fuchsia|pink|rose)-(?:50|100|200|300|400|500|600|700|800|900|950))$/,
+    },
+    {
+      pattern:
+        /^(fill-(?:slate|gray|zinc|neutral|stone|red|orange|amber|yellow|lime|green|emerald|teal|cyan|sky|blue|indigo|violet|purple|fuchsia|pink|rose)-(?:50|100|200|300|400|500|600|700|800|900|950))$/,
+    },
+  ],
+  plugins: [require("tailwindcss-animate"), require("@headlessui/tailwindcss")],
+};

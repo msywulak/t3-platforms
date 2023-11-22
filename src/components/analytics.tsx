@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import {
   Card,
   Text,
@@ -10,7 +11,6 @@ import {
   Bold,
   AreaChart,
 } from "@tremor/react";
-import Image from "next/image";
 
 const chartdata = [
   {
@@ -39,15 +39,33 @@ const chartdata = [
   },
 ];
 
-const pages = [
-  { name: "/platforms-starter-kit", value: "1230" },
+type Page = {
+  name: string;
+  value: number;
+};
+
+type Referrer = {
+  name: string;
+  value: number;
+};
+
+type Country = {
+  name: string;
+  value: number;
+  code: string;
+};
+
+type DataItem = Page | Referrer | Country;
+
+const pages: Page[] = [
+  { name: "/platforms-starter-kit", value: 1230 },
   { name: "/vercel-is-now-bercel", value: 751 },
   { name: "/nextjs-conf", value: 471 },
   { name: "/150m-series-d", value: 280 },
   { name: "/about", value: 78 },
 ];
 
-const referrers = [
+const referrers: Referrer[] = [
   { name: "t.co", value: 453 },
   { name: "vercel.com", value: 351 },
   { name: "linkedin.com", value: 271 },
@@ -58,7 +76,7 @@ const referrers = [
   },
 ];
 
-const countries = [
+const countries: Country[] = [
   { name: "United States of America", value: 789, code: "US" },
   { name: "India", value: 676, code: "IN" },
   { name: "Germany", value: 564, code: "DE" },
@@ -84,17 +102,21 @@ const categories = [
   },
 ];
 
+const isCountry = (item: DataItem): item is Country => {
+  return (item as Country).code !== undefined;
+};
+
 export default function AnalyticsMockup() {
   return (
     <div className="grid gap-6">
-      <Card>
+      <Card color="">
         <Title>Visitors</Title>
         <AreaChart
           className="mt-4 h-72"
           data={chartdata}
           index="date"
           categories={["Visitors"]}
-          colors={["indigo"]}
+          colors={["green"]}
           valueFormatter={(number: number) =>
             Intl.NumberFormat("us").format(number).toString()
           }
@@ -113,29 +135,26 @@ export default function AnalyticsMockup() {
               </Text>
             </Flex>
             <BarList
-              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-              // @ts-ignore
-              data={data.map(({ name, value, code }) => ({
-                name,
-                value,
+              data={data.map((item: DataItem) => ({
+                name: item.name,
+                value: item.value,
                 icon: () => {
                   if (title === "Top Referrers") {
                     return (
                       <Image
-                        src={`https://www.google.com/s2/favicons?sz=64&domain_url=${name}`}
-                        alt={name}
+                        src={`https://www.google.com/s2/favicons?sz=64&domain_url=${item.name}`}
+                        alt={item.name}
                         className="mr-2.5"
                         width={20}
                         height={20}
                       />
                     );
-                  } else if (title === "Countries") {
+                  } else if (isCountry(item)) {
                     return (
                       <Image
-                        src={`https://flag.vercel.app/m/${code}.svg`}
+                        src={`https://flag.vercel.app/m/${item.code}.svg`}
                         className="mr-2.5"
-                        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-                        alt={code}
+                        alt={item.code}
                         width={24}
                         height={16}
                       />
