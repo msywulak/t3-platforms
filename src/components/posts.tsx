@@ -1,45 +1,44 @@
-import { redirect } from "next/navigation";
-import PostCard from "./post-card";
+"use client";
+
+import * as React from "react";
 import Image from "next/image";
-import { currentUser } from "@clerk/nextjs";
-import { db } from "@/db";
-import { posts } from "@/db/schema";
-import { eq, and, desc } from "drizzle-orm";
+import { type Site, type Post } from "@/db/schema";
+import { Tab, TabGroup, TabList, TabPanel, TabPanels } from "@tremor/react";
+import { Icons } from "./icons";
+import PostCard from "./post-card";
+import PostsTable from "./posts-table";
 
-export default async function Posts({
-  siteId,
-  limit,
-}: {
-  siteId?: number;
-  limit?: number;
-}) {
-  const user = await currentUser();
-  if (!user) {
-    redirect("/sign-in");
-  }
+// extend Post[] with a site property
+type PostWithSite = Post & { site: Site | null };
 
-  const allPosts = await db.query.posts.findMany({
-    where: and(
-      eq(posts.clerkId, user.id),
-      siteId ? eq(posts.siteId, siteId) : undefined,
-    ),
-    with: { site: true },
-    orderBy: [desc(posts.createdAt)],
-    limit,
-  });
+export default function Posts({ posts }: { posts: PostWithSite[] }) {
+  const [selectedIndex, setSelectedIndex] = React.useState(0);
 
-  return allPosts.length > 0 ? (
-    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
-      {allPosts.map((post) => (
-        <PostCard key={post.id} data={post} />
-      ))}
-    </div>
+  return posts.length > 0 ? (
+    <TabGroup index={selectedIndex} onIndexChange={setSelectedIndex}>
+      <TabList variant="solid">
+        <Tab icon={Icons.dashboard}>Cards</Tab>
+        <Tab icon={Icons.rows}>List</Tab>
+      </TabList>
+      <TabPanels>
+        <TabPanel>
+          <div className="mt-2 grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
+            {posts.map((post) => (
+              <PostCard key={post.id} data={post} />
+            ))}
+          </div>
+        </TabPanel>
+        <TabPanel>
+          <PostsTable posts={posts} />
+        </TabPanel>
+      </TabPanels>
+    </TabGroup>
   ) : (
-    <div className="flex flex-col items-center space-x-4">
-      <h1 className="font-cal text-4xl">No Posts Yet</h1>
+    <div className="mt-20 flex flex-col items-center space-x-4">
+      <h1 className="text-4xl">No Posts Yet</h1>
       <Image
         alt="missing post"
-        src="https://illustrations.popsy.co/gray/graphic-design.svg"
+        src="https://illustrations.popsy.co/gray/web-design.svg"
         width={400}
         height={400}
       />

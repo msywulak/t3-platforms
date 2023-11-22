@@ -5,8 +5,8 @@ import CreatePostButton from "@/components/create-post-button";
 import { cn } from "@/lib/utils";
 import { currentUser } from "@clerk/nextjs";
 import { db } from "@/db";
-import { sites } from "@/db/schema";
-import { and, eq } from "drizzle-orm";
+import { posts } from "@/db/schema";
+import { and, desc, eq } from "drizzle-orm";
 import { env } from "@/env.mjs";
 import { buttonVariants } from "@/components/ui/button";
 import { Icons } from "@/components/icons";
@@ -20,28 +20,35 @@ export default async function SitePosts({
   if (!user) {
     redirect("/login");
   }
-  const data = await db.query.sites.findFirst({
-    where: and(eq(sites.id, params.id), eq(sites.clerkId, user.id)),
+
+  const allPosts = await db.query.posts.findMany({
+    where: and(eq(posts.clerkId, user.id), eq(posts.siteId, params.id)),
+    with: { site: true },
+    orderBy: [desc(posts.createdAt)],
   });
 
-  if (!data) {
+  if (!allPosts[0]) {
+    notFound();
+  }
+  const site = allPosts[0].site;
+  if (!site) {
     notFound();
   }
 
-  const url = `${data.subdomain}.${env.NEXT_PUBLIC_ROOT_DOMAIN}`;
+  const url = `${site.subdomain}.${env.NEXT_PUBLIC_ROOT_DOMAIN}`;
 
   return (
     <>
       <div className="flex flex-col items-center justify-between space-y-4 sm:flex-row sm:space-y-0">
         <div className="flex flex-col items-center space-y-2 sm:flex-row sm:space-x-4 sm:space-y-0">
           <h1 className="font-cal w-60 truncate text-xl font-bold sm:w-auto sm:text-3xl">
-            All Posts for {data.name}
+            All Posts for {site.name}
           </h1>
           <Link
             href={
               process.env.NEXT_PUBLIC_VERCEL_ENV
                 ? `https://${url}`
-                : `http://${data.subdomain}.localhost:3000`
+                : `http://${site.subdomain}.localhost:3000`
             }
             target="_blank"
             rel="noreferrer"
@@ -56,7 +63,7 @@ export default async function SitePosts({
         </div>
         <CreatePostButton />
       </div>
-      <Posts siteId={params.id} />
+      <Posts posts={allPosts} />
     </>
   );
 }

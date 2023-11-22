@@ -1,15 +1,15 @@
 import { Suspense } from "react";
 import OverviewStats from "@/components/overview-stats";
-import Posts from "@/components/posts";
 import PlaceholderCard from "@/components/placeholder-card";
 import OverviewSitesCTA from "@/components/overview-sites-cta";
 import { currentUser } from "@clerk/nextjs";
 import { redirect } from "next/navigation";
 import { db } from "@/db";
-import { sites } from "@/db/schema";
-import { asc, eq } from "drizzle-orm";
+import { posts, sites } from "@/db/schema";
+import { and, asc, desc, eq } from "drizzle-orm";
 import SiteCard from "@/components/site-card";
 import Image from "next/image";
+import PostCard from "@/components/post-card";
 
 export default async function Overview() {
   const user = await currentUser();
@@ -19,6 +19,12 @@ export default async function Overview() {
     where: eq(sites.clerkId, user.id),
     orderBy: [asc(sites.createdAt)],
     limit: 4,
+  });
+  const allPosts = await db.query.posts.findMany({
+    where: and(eq(posts.clerkId, user.id)),
+    with: { site: true },
+    orderBy: [desc(posts.createdAt)],
+    limit: 8,
   });
 
   return (
@@ -84,7 +90,26 @@ export default async function Overview() {
             </div>
           }
         >
-          <Posts limit={8} />
+          {allSites.length > 0 ? (
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
+              {allPosts.map((post) => (
+                <PostCard key={post.id} data={post} />
+              ))}
+            </div>
+          ) : (
+            <div className="flex flex-col items-center space-x-4">
+              <h1 className="font-cal text-4xl">No Posts Yet</h1>
+              <Image
+                alt="missing post"
+                src="https://illustrations.popsy.co/gray/graphic-design.svg"
+                width={400}
+                height={400}
+              />
+              <p className="text-lg text-stone-500">
+                You do not have any posts yet. Create one to get started.
+              </p>
+            </div>
+          )}
         </Suspense>
       </div>
     </div>
