@@ -109,7 +109,7 @@ const isCountry = (item: DataItem): item is Country => {
 export default function AnalyticsMockup() {
   return (
     <div className="grid gap-6">
-      <Card color="">
+      <Card decoration="bottom">
         <Title>Visitors</Title>
         <AreaChart
           className="mt-4 h-72"
@@ -124,7 +124,7 @@ export default function AnalyticsMockup() {
       </Card>
       <Grid numItemsSm={2} numItemsLg={3} className="gap-6">
         {categories.map(({ title, subtitle, data }) => (
-          <Card key={title} className="max-w-lg">
+          <Card key={title} className="max-w-lg" decoration="bottom">
             <Title>{title}</Title>
             <Flex className="mt-4">
               <Text>

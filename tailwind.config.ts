@@ -91,14 +91,15 @@ module.exports = {
           background: {
             muted: "hsl(var(--muted))", // custom
             subtle: "hsl(var(--accent))", // gray-800
-            DEFAULT: "hsl(var(--background))", // gray-900
+            DEFAULT: "hsl(var(--card))", // gray-900
             emphasis: "hsl(var(--foreground))", // gray-300
           },
           border: {
             DEFAULT: "hsl(var(--border))", // gray-800
           },
           ring: {
-            DEFAULT: "hsl(var(--ring))", // gray-800
+            DEFAULT: "hsl(var(--secondary))", // gray-800
+            strong: "hsl(var(--ring))"
           },
           content: {
             subtle: "#4B5563", // gray-600

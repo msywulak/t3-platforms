@@ -4,11 +4,12 @@ import { Icons } from "@/components/icons";
 import Link from "next/link";
 import type { Site } from "@/db/schema";
 import { env } from "@/env.mjs";
+import { Card } from "@/components/ui/card";
 
 export default function SiteCard({ data }: { data: Site }) {
   const url = `${data.subdomain}.${env.NEXT_PUBLIC_ROOT_DOMAIN}`;
   return (
-    <div className="relative rounded-lg border border-stone-200 pb-10 shadow-md transition-all hover:shadow-xl dark:border-stone-700 dark:hover:border-white">
+    <Card className="relative rounded-lg pb-10 transition-all hover:shadow-xl hover:border-ring">
       <Link
         href={`/site/${data.id}`}
         className="flex flex-col overflow-hidden rounded-lg"
@@ -52,6 +53,6 @@ export default function SiteCard({ data }: { data: Site }) {
           <p>{random(10, 40)}%</p>
         </Link>
       </div>
-    </div>
+    </Card>
   );
 }
