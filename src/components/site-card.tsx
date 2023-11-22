@@ -4,12 +4,17 @@ import { Icons } from "@/components/icons";
 import Link from "next/link";
 import type { Site } from "@/db/schema";
 import { env } from "@/env.mjs";
-import { Card } from "@/components/ui/card";
+import {
+  Card,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 
 export default function SiteCard({ data }: { data: Site }) {
   const url = `${data.subdomain}.${env.NEXT_PUBLIC_ROOT_DOMAIN}`;
   return (
-    <Card className="relative rounded-lg pb-10 transition-all hover:shadow-xl hover:border-ring">
+    <Card className="relative rounded-lg pb-10 transition-all hover:border-ring hover:shadow-xl">
       <Link
         href={`/site/${data.id}`}
         className="flex flex-col overflow-hidden rounded-lg"
@@ -23,14 +28,10 @@ export default function SiteCard({ data }: { data: Site }) {
           placeholder="blur"
           blurDataURL={data.imageBlurhash ?? placeholderBlurhash}
         />
-        <div className="border-t border-stone-200 p-4 dark:border-stone-700">
-          <h3 className="font-cal my-0 truncate text-xl font-bold tracking-wide dark:text-white">
-            {data.name}
-          </h3>
-          <p className="mt-2 line-clamp-1 text-sm font-normal leading-snug text-stone-500 dark:text-stone-400">
-            {data.description}
-          </p>
-        </div>
+        <CardHeader>
+          <CardTitle>{data.name}</CardTitle>
+          <CardDescription>{data.description}</CardDescription>
+        </CardHeader>
       </Link>
       <div className="absolute bottom-4 flex w-full justify-between space-x-4 px-4">
         <a

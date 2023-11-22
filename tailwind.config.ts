@@ -99,7 +99,7 @@ module.exports = {
           },
           ring: {
             DEFAULT: "hsl(var(--secondary))", // gray-800
-            strong: "hsl(var(--ring))"
+            strong: "hsl(var(--ring))",
           },
           content: {
             subtle: "#4B5563", // gray-600
