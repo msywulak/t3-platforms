@@ -8,7 +8,6 @@ import { Icons } from "./icons";
 import PostCard from "./post-card";
 import PostsTable from "./posts-table";
 
-// extend Post[] with a site property
 type PostWithSite = Post & { site: Site | null };
 
 export default function Posts({ posts }: { posts: PostWithSite[] }) {

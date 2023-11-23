@@ -33,7 +33,7 @@ export default function PostsTable({ posts }: { posts: PostWithSite[] }) {
     <Card>
       <MultiSelect
         onValueChange={setSelectedPosts}
-        placeholder="Select Site..."
+        placeholder="Select Post..."
         className="max-w-xs"
       >
         {posts.map((post) => (
