@@ -27,7 +27,7 @@ interface UpdatePostSlugFormProps {
 
 type Inputs = z.infer<typeof updatePostSchema>;
 
-export function InputForm({ post }: UpdatePostSlugFormProps) {
+export function UpdatePostSlugForm({ post }: UpdatePostSlugFormProps) {
   const [isPending, startTransition] = React.useTransition();
 
   const form = useForm<Inputs>({

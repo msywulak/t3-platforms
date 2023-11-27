@@ -3,7 +3,7 @@ import { db } from "@/db";
 import { notFound, redirect } from "next/navigation";
 import Form from "@/components/forms";
 import { updatePostMetadata } from "@/lib/actions";
-import DeletePostForm from "@/components/forms/delete-post-form";
+import { DeletePostForm } from "@/components/forms/post/delete-post-form";
 import { posts } from "@/db/schema";
 import { eq } from "drizzle-orm";
 import {
@@ -14,7 +14,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { InputForm } from "@/components/forms/post/update-post-slug-form";
+import { UpdatePostSlugForm } from "@/components/forms/post/update-post-slug-form";
 
 export default async function PostSettings({
   params,
@@ -44,7 +44,7 @@ export default async function PostSettings({
           </CardDescription>
         </CardHeader>
         <CardContent className="flex flex-col space-y-4">
-          <InputForm post={data} />
+          <UpdatePostSlugForm post={data} />
         </CardContent>
       </Card>
       <Card className="w-full">
@@ -57,6 +57,14 @@ export default async function PostSettings({
         </CardHeader>
         <CardContent className="flex flex-col space-y-4">Content</CardContent>
         <CardFooter>Max file size 50MB. Recommended size 1200x630.</CardFooter>
+      </Card>
+      <Card className="w-full">
+        <CardHeader>
+          <CardTitle>Delete Post</CardTitle>
+        </CardHeader>
+        <CardContent className="flex flex-col space-y-4">
+          <DeletePostForm post={data} />
+        </CardContent>
       </Card>
 
       <div className="flex max-w-screen-xl flex-col space-y-12 p-6">
@@ -75,8 +83,7 @@ export default async function PostSettings({
             }}
             handleSubmit={updatePostMetadata}
           />
-
-          <DeletePostForm postName={data?.title ?? ""} />
+          {/* <DeletePostForm post={posts}/> */}
         </div>
       </div>
     </>

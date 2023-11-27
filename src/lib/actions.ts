@@ -486,22 +486,46 @@ export const updatePostMetadataA = withPostAuth(
   },
 );
 
-//TODO: move this to next-safe-action
-export const deletePost = withPostAuth(async (_: FormData, post: Post) => {
-  try {
-    const deletedPost = await db
-      .select()
-      .from(posts)
-      .where(eq(posts.id, post.id));
-    await db.delete(posts).where(eq(posts.id, post.id));
+export const deletePost = authAction(
+  z.object({ post: postEditorSchema }),
+  async ({ post }, { userId }) => {
+    if (!post.id) {
+      throw new Error("Post not found");
+    }
+    const deletedPost = await db.query.posts.findFirst({
+      where: and(eq(posts.id, post.id), eq(posts.clerkId, userId)),
+      with: {
+        site: true,
+      },
+    });
 
-    return deletedPost;
-  } catch (error: any) {
-    return {
-      error: error.message,
-    };
-  }
-});
+    if (!deletedPost) {
+      throw new Error("Post not found");
+    }
+
+    try {
+      await db.delete(posts).where(eq(posts.id, post.id));
+
+      revalidateTag(
+        `${deletedPost.site?.subdomain}.${env.NEXT_PUBLIC_ROOT_DOMAIN}-posts`,
+      );
+      revalidateTag(
+        `${deletedPost.site?.subdomain}.${env.NEXT_PUBLIC_ROOT_DOMAIN}-${deletedPost.slug}`,
+      );
+
+      // if the site has a custom domain, we need to revalidate those tags too
+      deletedPost.site?.customDomain &&
+        (revalidateTag(`${deletedPost.site?.customDomain}-posts`),
+        revalidateTag(`${deletedPost.site?.customDomain}-${deletedPost.slug}`));
+
+      return deletedPost;
+    } catch (error: any) {
+      return {
+        error: error.message,
+      };
+    }
+  },
+);
 
 //TODO: move this to next-safe-action
 export const editUser = async (
