@@ -5,12 +5,10 @@
 "use server";
 
 import { db } from "@/db";
-import { type Site, posts, sites, users, type Post } from "@/db/schema";
+import { posts, sites } from "@/db/schema";
 import { env } from "@/env.mjs";
-import { currentUser } from "@clerk/nextjs";
 import { and, eq, or, sql } from "drizzle-orm";
 import { revalidateTag } from "next/cache";
-import { withPostAuth } from "./auth";
 import {
   addDomainToVercel,
   getApexDomain,
@@ -18,9 +16,6 @@ import {
   removeDomainFromVercelTeam,
   validDomainRegex,
 } from "./domains";
-import { getBlurDataURL } from "./utils";
-import { type OurFileRouter } from "@/app/api/uploadthing/core";
-import { generateReactHelpers } from "@uploadthing/react/hooks";
 import { authAction, siteAuthAction } from "./safe-action";
 import { z } from "zod";
 import { updateSiteSchema } from "./validations/site";
@@ -406,86 +401,6 @@ export const updatePostMetadata = authAction(
   },
 );
 
-export const updatePostMetadataA = withPostAuth(
-  async (
-    formData: FormData,
-    post: Post & {
-      site: Site;
-    },
-    key: string,
-  ) => {
-    const value = formData.get(key) as string;
-
-    try {
-      let response;
-      if (key === "image") {
-        // const file = formData.get(key) as File;
-        const files: File[] = [];
-        formData.forEach((value, _key) => {
-          if (value instanceof File) {
-            files.push(value);
-          }
-        });
-        // const filename = `${nanoid()}.${file.type.split("/")[1]}`;
-        const { useUploadThing } = generateReactHelpers<OurFileRouter>();
-        const upload = await useUploadThing("image").startUpload(files);
-        const formattedImages = upload?.map((image) => ({
-          id: image.key,
-          name: image.key.split("_")[1] ?? image.key,
-          url: image.url,
-        }));
-        if (!formattedImages) {
-          return {
-            error: "Something went wrong with the upload",
-          };
-        }
-        const url = formattedImages?.[0]?.url;
-
-        const blurhash = await getBlurDataURL(url ?? "");
-
-        response = await db
-          .update(posts)
-          .set({
-            image: url,
-            imageBlurhash: blurhash,
-          })
-          .where(eq(posts.id, post.id));
-      } else {
-        response = await db
-          .update(posts)
-          .set({
-            [key]: key === "published" ? value === "true" : value,
-          })
-          .where(eq(posts.id, post.id));
-      }
-
-      revalidateTag(
-        `${post.site?.subdomain}.${env.NEXT_PUBLIC_ROOT_DOMAIN}-posts`,
-      );
-      revalidateTag(
-        `${post.site?.subdomain}.${env.NEXT_PUBLIC_ROOT_DOMAIN}-${post.slug}`,
-      );
-
-      // if the site has a custom domain, we need to revalidate those tags too
-      post.site?.customDomain &&
-        (revalidateTag(`${post.site?.customDomain}-posts`),
-        revalidateTag(`${post.site?.customDomain}-${post.slug}`));
-
-      return response;
-    } catch (error: any) {
-      if (error.code === "P2002") {
-        return {
-          error: `This slug is already in use`,
-        };
-      } else {
-        return {
-          error: error.message,
-        };
-      }
-    }
-  },
-);
-
 export const deletePost = authAction(
   z.object({ post: postEditorSchema }),
   async ({ post }, { userId }) => {
@@ -526,38 +441,3 @@ export const deletePost = authAction(
     }
   },
 );
-
-//TODO: move this to next-safe-action
-export const editUser = async (
-  formData: FormData,
-  _id: unknown,
-  key: string,
-) => {
-  const user = await currentUser();
-  if (!user) {
-    return {
-      error: "Not authenticated",
-    };
-  }
-  const value = formData.get(key) as string;
-
-  try {
-    const response = await db
-      .update(users)
-      .set({
-        [key]: value,
-      })
-      .where(eq(users.clerkId, user.id));
-    return response.insertId;
-  } catch (error: any) {
-    if (error.code === "P2002") {
-      return {
-        error: `This ${key} is already in use`,
-      };
-    } else {
-      return {
-        error: error.message,
-      };
-    }
-  }
-};
