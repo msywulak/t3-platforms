@@ -3,7 +3,6 @@ import { type ReactNode } from "react";
 export default function SiteAnalyticsLayout({
   children,
 }: {
-  params: { id: string };
   children: ReactNode;
 }) {
   return (

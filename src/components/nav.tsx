@@ -210,7 +210,7 @@ export default function Nav({ children }: { children: ReactNode }) {
           </div>
           <div className="grid gap-1">
             {tabs.map(({ name, href, isActive, icon }) => (
-              <Link
+              <a
                 key={name}
                 href={href}
                 className={`flex items-center space-x-3 ${
@@ -219,7 +219,7 @@ export default function Nav({ children }: { children: ReactNode }) {
               >
                 {icon}
                 <span className="text-sm font-medium">{name}</span>
-              </Link>
+              </a>
             ))}
           </div>
         </div>
