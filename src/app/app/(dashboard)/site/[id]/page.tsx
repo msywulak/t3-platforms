@@ -20,6 +20,10 @@ export default async function SitePosts({
   if (!user) {
     redirect("/login");
   }
+  const siteId = Number(params.id);
+  const site = await db.query.sites.findFirst({
+    where: eq(posts.id, siteId),
+  });
 
   const allPosts = await db.query.posts.findMany({
     where: and(eq(posts.clerkId, user.id), eq(posts.siteId, params.id)),
@@ -27,10 +31,6 @@ export default async function SitePosts({
     orderBy: [desc(posts.createdAt)],
   });
 
-  if (!allPosts[0]) {
-    notFound();
-  }
-  const site = allPosts[0].site;
   if (!site) {
     notFound();
   }

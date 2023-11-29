@@ -13,6 +13,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { UpdatePostSlugForm } from "@/components/forms/post/update-post-slug-form";
+import { UpdatePostImageForm } from "@/components/forms/post/update-post-image-form";
 
 export default async function PostSettings({
   params,
@@ -53,8 +54,9 @@ export default async function PostSettings({
             .jpeg
           </CardDescription>
         </CardHeader>
-        <CardContent className="flex flex-col space-y-4">Content</CardContent>
-        <CardFooter>Max file size 50MB. Recommended size 1200x630.</CardFooter>
+        <CardContent className="flex flex-col space-y-4">
+          <UpdatePostImageForm post={data} />
+        </CardContent>
       </Card>
       <Card className="w-full">
         <CardHeader>

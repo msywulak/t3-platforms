@@ -1,5 +1,5 @@
 import * as React from "react";
-import { type Site } from "@/db/schema";
+import { type Site, type Post } from "@/db/schema";
 import Image from "next/image";
 
 import { cn } from "@/lib/utils";
@@ -8,12 +8,14 @@ import { Card, CardHeader } from "@/components/ui/card";
 import { Icons } from "@/components/icons";
 
 interface AppearanceCardProps extends React.HTMLAttributes<HTMLDivElement> {
-  site: Pick<Site, "id" | "name" | "image" | "logo">;
+  site?: Pick<Site, "id" | "name" | "image" | "logo">;
+  post?: Pick<Post, "id" | "title" | "image">;
   type: "logo" | "image";
 }
 
 export function AppearanceCard({
   site,
+  post,
   type,
   className,
   ...props
@@ -26,7 +28,16 @@ export function AppearanceCard({
       {type === "image" ? (
         <CardHeader className="border-b p-0">
           <AspectRatio ratio={40 / 21}>
-            {site?.image?.length ? (
+            {post?.image?.length ? (
+              <Image
+                src={post.image[0]?.url ?? "/placeholder.png"}
+                alt={post.image[0]?.name ?? post.title ?? "Placeholder"}
+                className="object-cover"
+                sizes="100%"
+                fill
+                loading="lazy"
+              />
+            ) : site?.image?.length ? (
               <Image
                 src={site.image[0]?.url ?? "/placeholder.png"}
                 alt={site.image[0]?.name ?? site.name ?? "Placeholder"}

@@ -30,7 +30,16 @@ export const updatePostSchema = z.object({
     )
     .optional()
     .nullable(),
-  image: z.string().optional().nullable(),
+  image: z
+    .unknown()
+    .refine((val) => {
+      if (!Array.isArray(val)) return false;
+      if (val.some((file) => !(file instanceof File))) return false;
+      return true;
+    }, "Must be an array of File")
+    .nullable()
+    .optional()
+    .default(null),
   imageBlurhash: z.string().optional().nullable(),
   published: z.boolean().optional().nullable(),
   createdAt: z.date().optional().nullable(),
