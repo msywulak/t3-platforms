@@ -10,9 +10,7 @@ import { type FileWithPreview } from "@/lib/types";
 import {
   Form,
   FormControl,
-  FormDescription,
   FormItem,
-  FormLabel,
   UncontrolledFormMessage,
 } from "@/components/ui/form";
 import { Icons } from "@/components/icons";
@@ -24,6 +22,7 @@ import { useUploadThing } from "@/lib/uploadthing";
 import { type Post } from "@/db/schema";
 import { AppearanceCard } from "@/components/appearance-card";
 import { updatePostSchema } from "@/lib/validations/post";
+import { updatePostImage } from "@/lib/actions";
 
 interface UpdatePostImageFormProps
   extends React.HTMLAttributes<HTMLDivElement> {
@@ -45,7 +44,43 @@ export function UpdatePostImageForm({ post }: UpdatePostImageFormProps) {
   });
 
   function onSubmit(data: Inputs) {
-    console.log(data, "data");
+    console.log("data");
+    startTransition(() => {
+      try {
+        console.log(data);
+        if (isArrayOfFile(data.image)) {
+          toast.promise(
+            startUpload(data.image)
+              .then((res) => {
+                const formattedImage = res?.map((im) => ({
+                  id: im.key,
+                  name: im.name,
+                  url: im.url,
+                }));
+                return formattedImage ?? null;
+              })
+              .then((image) => {
+                console.log(image);
+                const upload = updatePostImage({
+                  input: { postId: post.id, image },
+                });
+                return upload;
+              }),
+            {
+              loading: "Uploading Image...",
+              success: "Image Uploaded!",
+              error: "Error Uploading Image",
+            },
+          );
+        } else {
+          console.log("not an array");
+        }
+        form.reset();
+        setImage(null);
+      } catch (error) {
+        console.error(error);
+      }
+    });
   }
 
   return (
@@ -56,6 +91,21 @@ export function UpdatePostImageForm({ post }: UpdatePostImageFormProps) {
       >
         <FormItem className="flex w-full flex-col gap-1.5">
           <AppearanceCard post={post} type="image" />
+          {image?.length ? (
+            <div className="flex items-center gap-2">
+              {image.map((file, i) => (
+                <Zoom key={i}>
+                  <Image
+                    src={file.preview}
+                    alt={file.name}
+                    className="shrink-0 rounded-md object-cover object-center"
+                    width={160}
+                    height={100}
+                  />
+                </Zoom>
+              ))}
+            </div>
+          ) : null}
           <FormControl>
             <FileDialog
               setValue={form.setValue}

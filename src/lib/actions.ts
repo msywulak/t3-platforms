@@ -401,6 +401,70 @@ export const updatePostMetadata = authAction(
   },
 );
 
+const extendedPostSchema = z.object({
+  postId: z.number(),
+  image: z
+    .array(z.object({ id: z.string(), name: z.string(), url: z.string() }))
+    .nullable()
+    .optional(),
+});
+
+type ExtendedPostSchemaType = z.infer<typeof extendedPostSchema>;
+
+export const updatePostImage = authAction(
+  z.object({
+    input: extendedPostSchema,
+  }),
+  async ({ input }, { userId }) => {
+    try {
+      const post = await db.query.posts.findFirst({
+        where: and(eq(posts.id, input.postId), eq(posts.clerkId, userId)),
+        with: {
+          site: true,
+        },
+      });
+
+      if (!post) {
+        throw new Error("Post not found");
+      }
+
+      const updateData: Partial<ExtendedPostSchemaType> = {
+        ...(input.image !== undefined && { image: input.image }),
+      };
+
+      // Make sure updateData is not empty
+      if (Object.keys(updateData).length === 0) {
+        throw new Error("No update data provided");
+      }
+
+      const response = await db
+        .update(posts)
+        .set(updateData)
+        .where(eq(posts.id, input.postId));
+
+      if (post.image !== undefined && post.image !== null) {
+        await utapi.deleteFiles([post.image[0]?.id ?? ""]);
+      }
+
+      revalidateTag(
+        `${post.site?.subdomain}.${env.NEXT_PUBLIC_ROOT_DOMAIN}-posts`,
+      );
+      revalidateTag(
+        `${post.site?.subdomain}.${env.NEXT_PUBLIC_ROOT_DOMAIN}-${post.slug}`,
+      );
+
+      // if the site has a custom domain, we need to revalidate those tags too
+      post.site?.customDomain &&
+        (revalidateTag(`${post.site?.customDomain}-posts`),
+        revalidateTag(`${post.site?.customDomain}-${post.slug}`));
+
+      return response;
+    } catch (error: any) {
+      throw new Error(error.message);
+    }
+  },
+);
+
 export const deletePost = authAction(
   z.object({ post: postEditorSchema }),
   async ({ post }, { userId }) => {

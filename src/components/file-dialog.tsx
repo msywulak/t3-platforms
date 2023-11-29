@@ -257,7 +257,7 @@ function FileCard({ i, file, files, setFiles }: FileCardProps) {
         <Image
           src={cropData ? cropData : file.preview}
           alt={file.name}
-          className="h-10 w-10 shrink-0 rounded-md"
+          className="shrink-0 rounded-md"
           width={40}
           height={40}
           loading="lazy"
@@ -292,9 +292,9 @@ function FileCard({ i, file, files, setFiles }: FileCardProps) {
               <div className="mt-8 grid place-items-center space-y-5">
                 <Cropper
                   ref={cropperRef}
-                  className="h-[450px] w-[450px] object-cover"
-                  zoomTo={0.5}
-                  initialAspectRatio={1 / 1}
+                  className="h-auto w-auto object-cover"
+                  // zoomTo={0.5}
+                  initialAspectRatio={16 / 10}
                   preview=".img-preview"
                   src={file.preview}
                   viewMode={1}

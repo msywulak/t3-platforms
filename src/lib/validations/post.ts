@@ -3,22 +3,22 @@ import * as z from "zod";
 
 export const postSchema = z.object({
   id: z.number(),
-  title: z.string().nullable(),
-  description: z.string().nullable(),
-  content: z.string().nullable(),
-  slug: z.string().nullable(),
-  image: z.string().nullable(),
-  imageBlurhash: z.string().nullable(),
-  published: z.boolean().nullable(),
-  createdAt: z.date().nullable(),
-  updatedAt: z.date().nullable(),
-  userId: z.number().nullable(),
-  siteId: z.number().nullable(),
-  clerkId: z.string().nullable(),
+  title: z.string().optional(),
+  description: z.string().optional(),
+  content: z.string().optional(),
+  slug: z.string().optional(),
+  image: z.string().optional(),
+  imageBlurhash: z.string().optional(),
+  published: z.boolean().optional(),
+  createdAt: z.date().optional(),
+  updatedAt: z.date().optional(),
+  userId: z.number().optional(),
+  siteId: z.number().optional(),
+  clerkId: z.string().optional(),
 });
 
 export const updatePostSchema = z.object({
-  id: z.number(),
+  id: z.number().optional(),
   title: z.string().optional().nullable(),
   content: z.string().optional().nullable(),
   description: z.string().optional().nullable(),
@@ -37,9 +37,9 @@ export const updatePostSchema = z.object({
       if (val.some((file) => !(file instanceof File))) return false;
       return true;
     }, "Must be an array of File")
-    .nullable()
     .optional()
-    .default(null),
+    .default(null)
+    .nullable(),
   imageBlurhash: z.string().optional().nullable(),
   published: z.boolean().optional().nullable(),
   createdAt: z.date().optional().nullable(),

@@ -69,7 +69,7 @@ export default function Editor({ post }: { post: PostWithSite }) {
             formData.append("published", String(!data.published));
             startTransitionPublishing(async () => {
               await updatePostMetadata({
-                postId: data.id,
+                postId: data.id!,
                 siteId: data.siteId!,
                 formData,
                 key: "published",
