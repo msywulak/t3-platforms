@@ -8,11 +8,7 @@ The primary purpose of this repo was to help me learn how the [Vercel Platform S
 
 This is still a work in progress with a non exhaustive and unordered list of items I'll be working towards soon.
 
-- [ ] Finish Platforms migration to "T3" style
-- [x] Styling on dynamic site pages
-- [x] Fix Clerk Sign-up Redirect Flow
 - [ ] Optionally protect dynamic site pages with Clerk Organizations
-- [ ] Hook up Clerk Webhook plumbing to PlanetScale User Table
 - [ ] See if there's anything I can do with Clerk Metadata based on this [article](https://clerk.com/blog/exploring-clerk-metadata-stripe-webhooks)
 
 ## Tech Stack
