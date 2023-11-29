@@ -46,6 +46,8 @@ function Examples({ data }: { data: string }) {
 }
 
 function ExamplesCard({ data }: { data: ExampleCardProps }) {
+  const image = data.image?.[0]?.url ? data.image[0].url : "/placeholder.png";
+
   return (
     <a href={`https://${data.url}`} target="_blank" rel="noreferrer">
       <div className="ease hidden rounded-2xl border-2 border-gray-100 bg-white shadow-md transition-all duration-200 hover:-translate-y-1 hover:shadow-xl lg:block">
@@ -55,7 +57,7 @@ function ExamplesCard({ data }: { data: ExampleCardProps }) {
             width={500}
             height={400}
             className="h-64 w-full object-cover"
-            src={data.image ?? "/placeholder.png"}
+            src={image}
             placeholder="blur"
             blurDataURL={data.imageBlurhash ?? undefined}
           />
@@ -76,7 +78,7 @@ function ExamplesCard({ data }: { data: ExampleCardProps }) {
             width={500}
             height={400}
             className="h-full object-cover"
-            src={`/examples/${data.image}`}
+            src={`/examples/${image}`}
             placeholder="blur"
             blurDataURL={data.imageBlurhash ?? undefined}
           />

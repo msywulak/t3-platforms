@@ -12,11 +12,13 @@ interface BlogCardProps {
 }
 
 export default function BlogCard({ data }: BlogCardProps) {
+  const image = data.image?.[0]?.url ? data.image[0].url : "/placeholder.png";
+
   return (
     <Link href={`/${data.slug}`}>
       <div className="ease overflow-hidden rounded-2xl border-2  shadow-md transition-all duration-200 hover:-translate-y-1 hover:shadow-xl">
         <BlurImage
-          src={data.image!}
+          src={image}
           alt={data.title ?? "Blog Post"}
           width={500}
           height={400}

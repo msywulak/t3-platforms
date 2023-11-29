@@ -10,6 +10,7 @@ export default function PostCard({
   data: Post & { site: Site | null };
 }) {
   const url = `${data.site?.subdomain}.${env.NEXT_PUBLIC_ROOT_DOMAIN}/${data.slug}`;
+  const image = data.image?.[0]?.url ? data.image[0].url : "/placeholder.png";
 
   return (
     <div className="relative rounded-lg border border-stone-200 pb-10 shadow-md transition-all hover:shadow-xl dark:border-stone-700 dark:hover:border-white">
@@ -23,7 +24,7 @@ export default function PostCard({
             width={500}
             height={400}
             className="h-full object-cover"
-            src={data.image ?? "/placeholder.png"}
+            src={image}
             placeholder="blur"
             blurDataURL={data.imageBlurhash ?? placeholderBlurhash}
           />

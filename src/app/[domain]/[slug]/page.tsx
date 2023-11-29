@@ -88,6 +88,7 @@ export default async function SitePostPage({
   const domain = decodeURIComponent(params.domain);
   const slug = decodeURIComponent(params.slug);
   const data = await getPostData(domain, slug);
+  const image = data?.image?.[0]?.url ?? "/placeholder.png";
 
   if (!data) {
     notFound();
@@ -144,7 +145,7 @@ export default async function SitePostPage({
           className="h-full w-full object-cover"
           placeholder="blur"
           blurDataURL={data.imageBlurhash ?? placeholderBlurhash}
-          src={data.image ?? "/placeholder.png"}
+          src={image}
         />
       </div>
       <MDX source={data.mdxSource} />

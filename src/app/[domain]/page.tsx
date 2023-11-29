@@ -40,6 +40,7 @@ export default async function SiteHomePage({
     getSiteData(domain),
     getPostsForSite(domain),
   ]);
+  const postImage = posts[0]?.image?.[0]?.url ?? "/placeholder.png";
 
   if (!data) {
     notFound();
@@ -59,7 +60,7 @@ export default async function SiteHomePage({
                   width={1300}
                   height={630}
                   placeholder="blur"
-                  src={posts[0]?.image ?? "/placeholder.png"}
+                  src={postImage}
                 />
               </div>
               <div className="mx-auto mt-10 w-5/6 lg:w-full">
