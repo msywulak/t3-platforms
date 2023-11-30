@@ -90,7 +90,6 @@ export async function getPostData(domain: string, slug: string) {
       if (!data) return null;
 
       const clerkUser = await clerkClient.users.getUser(data.clerkId);
-      console.log(clerkUser);
 
       const [mdxSource, adjacentPosts] = await Promise.all([
         getMdxSource(data.content!),
