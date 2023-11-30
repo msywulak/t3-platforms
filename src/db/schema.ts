@@ -88,7 +88,7 @@ export const posts = mysqlTable(
     published: boolean("published").default(false),
     siteId: bigint("site_id", { mode: "number" }),
     userId: bigint("user_id", { mode: "number" }),
-    clerkId: varchar("clerk_id", { length: 256 }),
+    clerkId: varchar("clerk_id", { length: 256 }).notNull(),
   },
   (post) => ({
     siteIdIdx: index("site_id_idx").on(post.siteId),

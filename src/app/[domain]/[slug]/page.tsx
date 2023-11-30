@@ -118,11 +118,11 @@ export default async function SitePostPage({
         >
           <div className="my-8">
             <div className="relative inline-block h-8 w-8 overflow-hidden rounded-full align-middle md:h-12 md:w-12">
-              {data.site?.user?.image ? (
+              {data.user.clerkUser.imageUrl ? (
                 <BlurImage
-                  alt={data.site?.user?.name ?? "User Avatar"}
+                  alt={data.user.clerkUser.firstName ?? "User Avatar"}
                   height={80}
-                  src={data.site.user.image}
+                  src={data.user.clerkUser.imageUrl}
                   width={80}
                 />
               ) : (
@@ -132,7 +132,10 @@ export default async function SitePostPage({
               )}
             </div>
             <div className="text-md ml-3 inline-block align-middle md:text-lg">
-              by <span className="font-semibold">{data.site?.user?.name}</span>
+              by{" "}
+              <span className="font-semibold">
+                {data.user.clerkUser.firstName} {data.user.clerkUser.lastName}
+              </span>
             </div>
           </div>
         </a>

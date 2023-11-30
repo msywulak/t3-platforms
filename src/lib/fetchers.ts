@@ -6,6 +6,7 @@ import { and, desc, eq } from "drizzle-orm";
 import { posts, sites } from "@/db/schema";
 import { serialize } from "next-mdx-remote/serialize";
 import { replaceTweets } from "@/lib/remark-plugins";
+import { clerkClient } from "@clerk/nextjs";
 
 export async function getSiteData(domain: string) {
   const subdomain = domain.endsWith(`.${env.NEXT_PUBLIC_ROOT_DOMAIN}`)
@@ -88,6 +89,9 @@ export async function getPostData(domain: string, slug: string) {
       });
       if (!data) return null;
 
+      const clerkUser = await clerkClient.users.getUser(data.clerkId);
+      console.log(clerkUser);
+
       const [mdxSource, adjacentPosts] = await Promise.all([
         getMdxSource(data.content!),
         db.query.posts.findMany({
@@ -104,6 +108,9 @@ export async function getPostData(domain: string, slug: string) {
       ]);
       return {
         ...data,
+        user: {
+          clerkUser,
+        },
         mdxSource,
         adjacentPosts,
       };
