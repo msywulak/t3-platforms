@@ -46,6 +46,7 @@ interface FileDialogProps<
   setFiles: React.Dispatch<React.SetStateAction<FileWithPreview[] | null>>;
   isUploading?: boolean;
   disabled?: boolean;
+  initialAspectRatio?: number;
 }
 
 export function FileDialog<TFieldValues extends FieldValues>({
@@ -60,6 +61,7 @@ export function FileDialog<TFieldValues extends FieldValues>({
   setFiles,
   isUploading = false,
   disabled = false,
+  initialAspectRatio,
   className,
   ...props
 }: FileDialogProps<TFieldValues>) {
@@ -178,6 +180,7 @@ export function FileDialog<TFieldValues extends FieldValues>({
                 files={files}
                 setFiles={setFiles}
                 file={file}
+                initialAspectRatio={initialAspectRatio}
               />
             ))}
           </div>
@@ -205,9 +208,16 @@ interface FileCardProps {
   file: FileWithPreview;
   files: FileWithPreview[] | null;
   setFiles: React.Dispatch<React.SetStateAction<FileWithPreview[] | null>>;
+  initialAspectRatio?: number;
 }
 
-function FileCard({ i, file, files, setFiles }: FileCardProps) {
+function FileCard({
+  i,
+  file,
+  files,
+  setFiles,
+  initialAspectRatio,
+}: FileCardProps) {
   const [isOpen, setIsOpen] = React.useState(false);
   const [cropData, setCropData] = React.useState<string | null>(null);
   const cropperRef = React.useRef<ReactCropperElement>(null);
@@ -294,7 +304,7 @@ function FileCard({ i, file, files, setFiles }: FileCardProps) {
                   ref={cropperRef}
                   className="h-auto w-auto object-cover"
                   // zoomTo={0.5}
-                  initialAspectRatio={16 / 10}
+                  initialAspectRatio={initialAspectRatio ?? 16 / 10}
                   preview=".img-preview"
                   src={file.preview}
                   viewMode={1}

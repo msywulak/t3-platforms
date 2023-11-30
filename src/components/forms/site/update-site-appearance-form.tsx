@@ -159,6 +159,7 @@ export function UpdateSiteAppearanceForm({
                 setFiles={setImage}
                 isUploading={isUploading}
                 disabled={isPending}
+                initialAspectRatio={16 / 10}
               />
             </FormControl>
             <UncontrolledFormMessage
@@ -198,6 +199,7 @@ export function UpdateSiteAppearanceForm({
                 setFiles={setLogo}
                 isUploading={isUploading}
                 disabled={isPending}
+                initialAspectRatio={1}
               />
             </FormControl>
             <UncontrolledFormMessage

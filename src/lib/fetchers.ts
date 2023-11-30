@@ -107,9 +107,7 @@ export async function getPostData(domain: string, slug: string) {
       ]);
       return {
         ...data,
-        user: {
-          clerkUser,
-        },
+        clerkUser,
         mdxSource,
         adjacentPosts,
       };
