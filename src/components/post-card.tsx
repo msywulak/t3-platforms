@@ -3,6 +3,12 @@ import { placeholderBlurhash } from "@/lib/utils";
 import type { Post, Site } from "@/db/schema";
 import Link from "next/link";
 import { env } from "@/env.mjs";
+import {
+  Card,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 
 export default function PostCard({
   data,
@@ -13,7 +19,7 @@ export default function PostCard({
   const image = data.image?.[0]?.url ? data.image[0].url : "/placeholder.png";
 
   return (
-    <div className="relative rounded-lg border border-stone-200 pb-10 shadow-md transition-all hover:shadow-xl dark:border-stone-700 dark:hover:border-white">
+    <Card className="relative rounded-lg pb-10 transition-all hover:border-ring hover:shadow-xl">
       <Link
         href={`/post/${data.id}`}
         className="flex flex-col overflow-hidden rounded-lg"
@@ -34,14 +40,10 @@ export default function PostCard({
             </span>
           )}
         </div>
-        <div className="border-t border-stone-200 p-4 dark:border-stone-700">
-          <h3 className="font-cal my-0 truncate text-xl font-bold tracking-wide dark:text-white">
-            {data.title}
-          </h3>
-          <p className="mt-2 line-clamp-1 text-sm font-normal leading-snug text-stone-500 dark:text-stone-400">
-            {data.description}
-          </p>
-        </div>
+        <CardHeader>
+          <CardTitle>{data.title}</CardTitle>
+          <CardDescription>{data.description}</CardDescription>
+        </CardHeader>
       </Link>
       <div className="absolute bottom-4 flex w-full px-4">
         <a
@@ -57,6 +59,6 @@ export default function PostCard({
           {url} ↗
         </a>
       </div>
-    </div>
+    </Card>
   );
 }
