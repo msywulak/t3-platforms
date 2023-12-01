@@ -1,5 +1,5 @@
 import * as React from "react";
-import type { FileWithPreview } from "@/lib/types";
+import type { FileWithPreview } from "@/types";
 import Cropper, { type ReactCropperElement } from "react-cropper";
 import {
   useDropzone,

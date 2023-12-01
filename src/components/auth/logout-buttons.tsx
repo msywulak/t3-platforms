@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { SignOutButton } from "@clerk/nextjs";
 
 import { cn } from "@/lib/utils";
-import { useMounted } from "@/lib/hooks/use-mounted";
+import { useMounted } from "@/hooks/use-mounted";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Icons } from "@/components/icons";

@@ -6,7 +6,7 @@ import { type z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
-import { type FileWithPreview } from "@/lib/types";
+import { type FileWithPreview } from "@/types";
 import {
   Form,
   FormControl,

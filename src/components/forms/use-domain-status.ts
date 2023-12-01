@@ -3,7 +3,7 @@ import { fetcher } from "@/lib/utils";
 import {
   type DomainResponse,
   type DomainVerificationStatusProps,
-} from "@/lib/types";
+} from "@/types";
 
 export function useDomainStatus({ domain }: { domain: string }) {
   const { data, isValidating } = useSWR<{
