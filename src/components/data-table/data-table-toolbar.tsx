@@ -19,7 +19,7 @@ interface DataTableToolbarProps<TData> {
   table: Table<TData>;
   filterableColumns?: DataTableFilterableColumn<TData>[];
   searchableColumns?: DataTableSearchableColumn<TData>[];
-  newRowLink?: string;
+  newRowAction?: React.MouseEventHandler<HTMLButtonElement>;
   deleteRowsAction?: React.MouseEventHandler<HTMLButtonElement>;
 }
 
@@ -27,7 +27,7 @@ export function DataTableToolbar<TData>({
   table,
   filterableColumns = [],
   searchableColumns = [],
-  newRowLink,
+  newRowAction,
   deleteRowsAction,
 }: DataTableToolbarProps<TData>) {
   const isFiltered = table.getState().columnFilters.length > 0;
@@ -99,21 +99,23 @@ export function DataTableToolbar<TData>({
             <TrashIcon className="mr-2 h-4 w-4" aria-hidden="true" />
             Delete
           </Button>
-        ) : newRowLink ? (
-          <Link aria-label="Create new row" href={newRowLink}>
-            <div
-              className={cn(
-                buttonVariants({
-                  variant: "outline",
-                  size: "sm",
-                  className: "h-8",
-                }),
-              )}
-            >
-              <PlusCircledIcon className="mr-2 h-4 w-4" aria-hidden="true" />
-              New
-            </div>
-          </Link>
+        ) : newRowAction ? (
+          <Button
+            aria-label="Create new row"
+            variant="outline"
+            size="sm"
+            className="h-8"
+            onClick={(event) => {
+              startTransition(() => {
+                table.toggleAllPageRowsSelected(false);
+                newRowAction(event);
+              });
+            }}
+            disabled={isPending}
+          >
+            <PlusCircledIcon className="mr-2 h-4 w-4" aria-hidden="true" />
+            New
+          </Button>
         ) : null}
         <DataTableViewOptions table={table} />
       </div>

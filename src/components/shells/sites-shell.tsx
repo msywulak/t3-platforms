@@ -6,6 +6,7 @@ import { type ColumnDef } from "@tanstack/react-table";
 import { toast } from "sonner";
 import Image from "next/image";
 import { Tab, TabGroup, TabList, TabPanel, TabPanels } from "@tremor/react";
+import Link from "next/link";
 
 import { type Site } from "@/db/schema";
 import { catchError, formatDate } from "@/lib/utils";
@@ -128,7 +129,7 @@ export function SitesShell({ transaction, limit }: SitesTableShellProps) {
                   toast(`Edit ${row.original.name}`);
                 }}
               >
-                Edit
+                <Link href={`/site/${row.original.id}/settings`}>Edit</Link>
               </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem
@@ -197,7 +198,7 @@ export function SitesShell({ transaction, limit }: SitesTableShellProps) {
                 title: "names",
               },
             ]}
-            newRowLink={`/dashboard/stores/1/products/new`}
+            newRowAction={() => void toast("New row")}
             deleteRowsAction={() => void deleteSelectedRows()}
           />
         </TabPanel>
