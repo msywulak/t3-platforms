@@ -1,21 +1,21 @@
 import { UserProfile, currentUser } from "@clerk/nextjs";
 import { redirect } from "next/navigation";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { UpdateClerkProfileForm } from "@/components/forms/clerk-profile";
-import { type User } from "@clerk/nextjs/dist/types/server";
+// import {
+//   Card,
+//   CardContent,
+//   CardDescription,
+//   CardHeader,
+//   CardTitle,
+// } from "@/components/ui/card";
+// import { UpdateClerkProfileForm } from "@/components/forms/clerk-profile";
+// import { type User } from "@clerk/nextjs/dist/types/server";
 
 export default async function SettingsPage() {
   const user = await currentUser();
   if (!user) {
     redirect("/login");
   }
-  const parsedUser = JSON.parse(JSON.stringify(user)) as User;
+  // const parsedUser = JSON.parse(JSON.stringify(user)) as User;
   return (
     <>
       <UserProfile />

@@ -14,6 +14,30 @@ export function toSentenceCase(str: string) {
     .replace(/^./, (str) => str.toUpperCase());
 }
 
+export function formatPrice(
+  price: number | string,
+  options: {
+    currency?: "USD" | "EUR" | "GBP" | "BDT";
+    notation?: Intl.NumberFormatOptions["notation"];
+  } = {},
+) {
+  const { currency = "USD", notation = "compact" } = options;
+
+  return new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency,
+    notation,
+  }).format(Number(price));
+}
+
+export function formatDate(date: Date | string | number) {
+  return new Intl.DateTimeFormat("en-US", {
+    month: "long",
+    day: "numeric",
+    year: "numeric",
+  }).format(new Date(date));
+}
+
 export function formatBytes(
   bytes: number,
   decimals = 0,
