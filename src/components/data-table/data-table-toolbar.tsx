@@ -1,7 +1,6 @@
 "use client";
 
 import * as React from "react";
-import Link from "next/link";
 import type {
   DataTableFilterableColumn,
   DataTableSearchableColumn,
@@ -9,8 +8,7 @@ import type {
 import { Cross2Icon, PlusCircledIcon, TrashIcon } from "@radix-ui/react-icons";
 import type { Table } from "@tanstack/react-table";
 
-import { cn } from "@/lib/utils";
-import { Button, buttonVariants } from "@/components/ui/button";
+import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { DataTableFacetedFilter } from "@/components/data-table/data-table-faceted-filter";
 import { DataTableViewOptions } from "@/components/data-table/data-table-view-options";

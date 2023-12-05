@@ -24,12 +24,6 @@ import { DataTableColumnHeader } from "@/components/data-table/data-table-column
 import { Icons } from "@/components/icons";
 import SiteCard from "@/components/site-card";
 
-// // TODO: potentially use this instead of Site[] in the future
-// type AwaitedSite = Pick<
-//   Site,
-//   "id" | "name" | "description" | "subdomain" | "customDomain" | "createdAt"
-// >;
-
 interface SitesTableShellProps {
   transaction: Promise<{
     items: Site[];
@@ -42,7 +36,7 @@ export function SitesShell({ transaction, limit }: SitesTableShellProps) {
   const { items: data, count } = React.use(transaction);
   const pageCount = Math.ceil(count / limit);
 
-  const [isPending, startTransition] = React.useTransition();
+  const [isPending] = React.useTransition();
   const [selectedRowIds, setSelectedRowIds] = React.useState<number[]>([]);
   const [selectedIndex, setSelectedIndex] = React.useState(0);
 
@@ -124,13 +118,9 @@ export function SitesShell({ transaction, limit }: SitesTableShellProps) {
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-              <DropdownMenuItem
-                onSelect={() => {
-                  toast(`Edit ${row.original.name}`);
-                }}
-              >
-                <Link href={`/site/${row.original.id}/settings`}>Edit</Link>
-              </DropdownMenuItem>
+              <Link href={`/site/${row.original.id}/settings`}>
+                <DropdownMenuItem>Edit</DropdownMenuItem>
+              </Link>
               <DropdownMenuSeparator />
               <DropdownMenuItem
                 onSelect={() => {
@@ -198,7 +188,6 @@ export function SitesShell({ transaction, limit }: SitesTableShellProps) {
                 title: "names",
               },
             ]}
-            newRowAction={() => void toast("New row")}
             deleteRowsAction={() => void deleteSelectedRows()}
           />
         </TabPanel>
