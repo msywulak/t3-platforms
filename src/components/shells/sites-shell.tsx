@@ -40,7 +40,7 @@ export function SitesShell({ transaction, limit }: SitesTableShellProps) {
   const [selectedRowIds, setSelectedRowIds] = React.useState<number[]>([]);
   const [selectedIndex, setSelectedIndex] = React.useState(() => {
     if (typeof window !== "undefined") {
-      return parseInt(localStorage.getItem("selectedTabIndex") ?? "0", 10);
+      return parseInt(localStorage.getItem("selectedSiteTabIndex") ?? "0", 10);
     } else {
       return 0;
     }
@@ -48,7 +48,7 @@ export function SitesShell({ transaction, limit }: SitesTableShellProps) {
 
   React.useEffect(() => {
     if (typeof window !== "undefined") {
-      localStorage.setItem("selectedTabIndex", selectedIndex.toString());
+      localStorage.setItem("selectedSiteTabIndex", selectedIndex.toString());
     }
   }, [selectedIndex]);
 

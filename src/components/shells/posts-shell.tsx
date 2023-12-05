@@ -23,23 +23,36 @@ import { DataTable } from "@/components/data-table/data-table";
 import { DataTableColumnHeader } from "@/components/data-table/data-table-column-header";
 import { Icons } from "@/components/icons";
 import { Badge } from "../ui/badge";
+import PostCard from "../post-card";
 
 interface PostsTableShellProps {
   transaction: Promise<{
     items: Post[];
     count: number;
-    site: Site | undefined;
+    site: Site;
   }>;
   limit: number;
 }
 
 export function PostsShell({ transaction, limit }: PostsTableShellProps) {
-  const { items: data, count } = React.use(transaction);
+  const { items: data, count, site } = React.use(transaction);
   const pageCount = Math.ceil(count / limit);
 
   const [isPending] = React.useTransition();
   const [selectedRowIds, setSelectedRowIds] = React.useState<number[]>([]);
-  const [selectedIndex, setSelectedIndex] = React.useState(0);
+  const [selectedIndex, setSelectedIndex] = React.useState(() => {
+    if (typeof window !== "undefined") {
+      return parseInt(localStorage.getItem("selectedPostTabIndex") ?? "0", 10);
+    } else {
+      return 0;
+    }
+  });
+
+  React.useEffect(() => {
+    if (typeof window !== "undefined") {
+      localStorage.setItem("selectedPostTabIndex", selectedIndex.toString());
+    }
+  }, [selectedIndex]);
 
   const columns = React.useMemo<ColumnDef<Post, unknown>[]>(
     () => [
@@ -182,11 +195,11 @@ export function PostsShell({ transaction, limit }: PostsTableShellProps) {
       </TabList>
       <TabPanels>
         <TabPanel>
-          {/* <div className="mt-2 grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
+          <div className="mt-2 grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
             {data.map((post) => (
-              <PostCard key={post.id} data={post} />
+              <PostCard key={post.id} data={{ ...post, site }} />
             ))}
-          </div> */}
+          </div>
         </TabPanel>
         <TabPanel>
           <DataTable
