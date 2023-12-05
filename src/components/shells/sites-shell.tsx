@@ -38,7 +38,19 @@ export function SitesShell({ transaction, limit }: SitesTableShellProps) {
 
   const [isPending] = React.useTransition();
   const [selectedRowIds, setSelectedRowIds] = React.useState<number[]>([]);
-  const [selectedIndex, setSelectedIndex] = React.useState(0);
+  const [selectedIndex, setSelectedIndex] = React.useState(() => {
+    if (typeof window !== "undefined") {
+      return parseInt(localStorage.getItem("selectedTabIndex") ?? "0", 10);
+    } else {
+      return 0;
+    }
+  });
+
+  React.useEffect(() => {
+    if (typeof window !== "undefined") {
+      localStorage.setItem("selectedTabIndex", selectedIndex.toString());
+    }
+  }, [selectedIndex]);
 
   const columns = React.useMemo<ColumnDef<Site, unknown>[]>(
     () => [
