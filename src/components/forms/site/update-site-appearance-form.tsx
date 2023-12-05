@@ -31,12 +31,14 @@ import { AppearanceCard } from "@/components/appearance-card";
 interface UpdateSiteAppearanceFormProps
   extends React.HTMLAttributes<HTMLDivElement> {
   site: Pick<Site, "id" | "name" | "image" | "logo">;
+  type: "image" | "logo";
 }
 
 type Inputs = z.infer<typeof updateSiteSchema>;
 
 export function UpdateSiteAppearanceForm({
   site,
+  type,
 }: UpdateSiteAppearanceFormProps) {
   const [logo, setLogo] = React.useState<FileWithPreview[] | null>(null);
   const [image, setImage] = React.useState<FileWithPreview[] | null>(null);
@@ -45,20 +47,17 @@ export function UpdateSiteAppearanceForm({
 
   const form = useForm<Inputs>({
     resolver: zodResolver(updateSiteSchema),
-    defaultValues: {
-      logo: [],
-      image: [],
-    },
   });
 
-  function onSubmit(data: Inputs) {
+  const onSubmit = (type: "image" | "logo") => (data: Inputs) => {
     console.log("data");
+    const imageToUpload = type === "image" ? data.image : data.logo;
     startTransition(() => {
       try {
         console.log(data);
-        if (isArrayOfFile(data.image)) {
+        if (isArrayOfFile(imageToUpload)) {
           toast.promise(
-            startUpload(data.image)
+            startUpload(imageToUpload)
               .then((res) => {
                 const formattedImage = res?.map((im) => ({
                   id: im.key,
@@ -70,62 +69,36 @@ export function UpdateSiteAppearanceForm({
               .then((image) => {
                 console.log(image);
                 const upload = updateSiteImages({
-                  input: { ...data, image, logo: undefined, siteId: site.id },
+                  input: {
+                    ...data,
+                    image: type === "image" ? image : undefined,
+                    logo: type === "logo" ? image : undefined,
+                    siteId: site.id,
+                  },
                 });
                 return upload;
               }),
             {
-              loading: "Uploading Image...",
-              success: "Image Uploaded!",
-              error: "Error Uploading Image",
-            },
-          );
-        } else {
-          console.log("not an array");
-        }
-        if (isArrayOfFile(data.logo)) {
-          toast.promise(
-            startUpload(data.logo)
-              .then((res) => {
-                const formattedLogo = res?.map((im) => ({
-                  id: im.key,
-                  name: im.name,
-                  url: im.url,
-                }));
-                return formattedLogo ?? null;
-              })
-              .then((logo) => {
-                console.log(logo);
-                const upload = updateSiteImages({
-                  input: { ...data, image: undefined, logo, siteId: site.id },
-                });
-                return upload;
-              }),
-            {
-              loading: "Uploading Logo...",
-              success: "Logo Uploaded!",
-              error: "Error Uploading Logo",
+              loading: `Uploading ${type === "image" ? "image" : "logo"}...`,
+              success: `${type === "image" ? "Image" : "Logo"} Uploaded!`,
+              error: `Error Uploading ${type === "image" ? "image" : "logo"}`,
             },
           );
         } else {
           console.log("not an array");
         }
         form.reset();
-        setLogo(null);
-        setImage(null);
+        type === "image" ? setLogo(null) : setImage(null);
       } catch (error) {
         console.error(error);
       }
     });
-  }
+  };
 
-  return (
-    <>
-      <Form {...form}>
-        <form
-          className="grid w-full max-w-2xl gap-5"
-          onSubmit={form.handleSubmit(onSubmit)}
-        >
+  function renderComponentBasedOnType(type: "image" | "logo") {
+    switch (type) {
+      case "image":
+        return (
           <FormItem className="flex w-full flex-col gap-1.5">
             <FormLabel>Thumbnail Image</FormLabel>
             <FormDescription>
@@ -166,6 +139,9 @@ export function UpdateSiteAppearanceForm({
               message={form.formState.errors.image?.message}
             />
           </FormItem>
+        );
+      case "logo":
+        return (
           <FormItem className="flex w-full flex-col gap-1.5">
             <FormLabel>Logo</FormLabel>
             <FormDescription>
@@ -206,6 +182,20 @@ export function UpdateSiteAppearanceForm({
               message={form.formState.errors.logo?.message}
             />
           </FormItem>
+        );
+      default:
+        return null;
+    }
+  }
+
+  return (
+    <>
+      <Form {...form}>
+        <form
+          className="grid w-full max-w-2xl gap-5"
+          onSubmit={form.handleSubmit(onSubmit(type))}
+        >
+          {renderComponentBasedOnType(type)}
           <Button className="w-fit" disabled={isPending}>
             {isPending && (
               <Icons.spinner

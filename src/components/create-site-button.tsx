@@ -26,12 +26,13 @@ import { Textarea } from "@/components/ui/textarea";
 import { createSite } from "@/lib/actions";
 import { createSiteSchema } from "@/lib/validations/site";
 import { catchError } from "@/lib/utils";
+import LoadingDots from "@/components/icons/loading-dots";
 
 type Inputs = z.infer<typeof createSiteSchema>;
 
 export function CreateSiteButton() {
   const router = useRouter();
-  const [, startTransition] = React.useTransition();
+  const [isPending, startTransition] = React.useTransition();
   const [open, setOpen] = useState(false);
   const [data, setData] = useState({
     name: "",
@@ -62,7 +63,6 @@ export function CreateSiteButton() {
   }, [data.name, form]);
 
   function onSubmit(data: Inputs) {
-    console.log(data);
     startTransition(async () => {
       try {
         const res = await createSite({
@@ -162,7 +162,13 @@ export function CreateSiteButton() {
               </div>
             </div>
             <DialogFooter>
-              <Button type="submit">Save changes</Button>
+              <Button type="submit" disabled={isPending}>
+                {isPending ? (
+                  <LoadingDots color="#808080" />
+                ) : (
+                  <p>Create Site</p>
+                )}
+              </Button>
             </DialogFooter>
           </form>
         </Form>

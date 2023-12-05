@@ -21,6 +21,7 @@ import { z } from "zod";
 import { updateSiteSchema } from "./validations/site";
 import { postEditorSchema } from "./validations/post";
 import { utapi } from "./utapi";
+import { getBlurDataURL } from "./utils";
 
 export const getSiteFromPostId = authAction(
   z.object({ postId: z.number() }),
@@ -58,7 +59,6 @@ export const createSite = authAction(
       revalidateTag(`${subdomain}.${env.NEXT_PUBLIC_ROOT_DOMAIN}-metadata`);
       return response.insertId;
     } catch (error: any) {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
       console.log("This is the error!");
       throw new Error(error.message);
     }
@@ -212,6 +212,16 @@ export const updateSiteImages = siteAuthAction(
         .update(sites)
         .set(updateData)
         .where(eq(sites.id, input.siteId));
+
+      if (updateData.image !== undefined && updateData.image !== null) {
+        const blurhash = updateData.image[0]?.url
+          ? await getBlurDataURL(updateData.image[0].url)
+          : null;
+        await db
+          .update(sites)
+          .set({ imageBlurhash: blurhash })
+          .where(eq(sites.id, input.siteId));
+      }
 
       // TODO: handle this delete better
       if (input.image !== undefined && foundSite.image !== null) {

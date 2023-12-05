@@ -33,16 +33,25 @@ export default async function SiteSettingsAppearance({
   }
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Appearance</CardTitle>
-        <CardDescription>
-          Customize your site&apos;s appearance.
-        </CardDescription>
-      </CardHeader>
-      <CardContent>
-        <UpdateSiteAppearanceForm site={site} />
-      </CardContent>
-    </Card>
+    <>
+      <Card>
+        <CardHeader>
+          <CardTitle>Site Image</CardTitle>
+          <CardDescription>Customize your site&apos;s image.</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <UpdateSiteAppearanceForm site={site} type="image" />
+        </CardContent>
+      </Card>
+      <Card>
+        <CardHeader>
+          <CardTitle>Site Logo</CardTitle>
+          <CardDescription>Customize your site&apos;s logo.</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <UpdateSiteAppearanceForm site={site} type="logo" />
+        </CardContent>
+      </Card>
+    </>
   );
 }
