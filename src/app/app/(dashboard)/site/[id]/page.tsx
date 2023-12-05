@@ -57,14 +57,13 @@ export default async function SitePosts({
   const fromDay = from ? new Date(from) : undefined;
   const toDay = to ? new Date(to) : undefined;
 
-  const site = await db.query.sites.findFirst({
-    where: eq(posts.id, siteId),
-  });
+  // const site = await db.query.sites.findFirst({
+  //   where: eq(posts.id, siteId),
+  // });
 
-  if (!site) {
-    notFound();
-  }
-  const url = `${site.subdomain}.${env.NEXT_PUBLIC_ROOT_DOMAIN}`;
+  // if (!site) {
+  //   notFound();
+  // }
 
   // Transaction is used to ensure both queries are executed in a single transaction
   noStore();
@@ -105,7 +104,13 @@ export default async function SitePosts({
       )
       .then((res) => res[0]?.count ?? 0);
     const site = await tx.select().from(sites).where(eq(sites.id, siteId));
-    return { items, count, site: site[0] };
+    if (!site[0]) {
+      notFound();
+    }
+
+    const url = `${site[0].subdomain}.${env.NEXT_PUBLIC_ROOT_DOMAIN}`;
+
+    return { items, count, site: site[0], url };
   });
 
   return (
@@ -113,13 +118,13 @@ export default async function SitePosts({
       <div className="flex flex-col items-center justify-between space-y-4 sm:flex-row sm:space-y-0">
         <div className="flex flex-col items-center space-y-2 sm:flex-row sm:space-x-4 sm:space-y-0">
           <h1 className="font-cal w-60 truncate text-xl font-bold sm:w-auto sm:text-3xl">
-            All Posts for {site.name}
+            All Posts for {(await transaction).site.name}
           </h1>
           <Link
             href={
               process.env.NEXT_PUBLIC_VERCEL_ENV
-                ? `https://${url}`
-                : `http://${site.subdomain}.localhost:3000`
+                ? `https://${(await transaction).url}`
+                : `http://${(await transaction).site.subdomain}.localhost:3000`
             }
             target="_blank"
             rel="noreferrer"
@@ -128,7 +133,7 @@ export default async function SitePosts({
               "flex h-7 w-auto items-center justify-center space-x-2 rounded-lg text-sm transition-all focus:outline-none",
             )}
           >
-            {url}
+            {(await transaction).url}
             <Icons.link1 width={18} className="ml-1" />
           </Link>
         </div>
