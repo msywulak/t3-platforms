@@ -1,41 +1,112 @@
-import Link from "next/link";
+import * as React from "react";
+import { type Metadata } from "next";
+import { unstable_noStore as noStore } from "next/cache";
+import { currentUser } from "@clerk/nextjs";
 import { notFound, redirect } from "next/navigation";
-import Posts from "@/components/posts";
+import { and, asc, desc, eq, gte, like, lte, sql } from "drizzle-orm";
+
+import Link from "next/link";
+import { sites, type Post } from "@/db/schema";
 import CreatePostButton from "@/components/create-post-button";
 import { cn } from "@/lib/utils";
-import { currentUser } from "@clerk/nextjs";
 import { db } from "@/db";
 import { posts } from "@/db/schema";
-import { and, desc, eq } from "drizzle-orm";
 import { env } from "@/env.mjs";
 import { buttonVariants } from "@/components/ui/button";
 import { Icons } from "@/components/icons";
+import { PostsShell } from "@/components/shells/posts-shell";
+import { sitesSearchParamsSchema } from "@/lib/validations/params";
+
+export const metadata: Metadata = {
+  metadataBase: new URL(env.NEXT_PUBLIC_APP_URL),
+  title: "Posts",
+  description: "Manage your posts",
+};
+
+interface PostsPageProps {
+  params: { id: number };
+  searchParams: Record<string, string | string[] | undefined>;
+}
 
 export default async function SitePosts({
   params,
-}: {
-  params: { id: number };
-}) {
-  const user = await currentUser();
-  if (!user) {
-    redirect("/login");
-  }
+  searchParams,
+}: PostsPageProps) {
   const siteId = Number(params.id);
+  const user = await currentUser();
+  if (!user) redirect("/sign-in");
+
+  const { page, per_page, sort, name, from, to } =
+    sitesSearchParamsSchema.parse(sitesSearchParamsSchema.parse(searchParams));
+
+  // Fallback page for invalid page numbers
+  const pageAsNumber = Number(page);
+  const fallbackPage =
+    isNaN(pageAsNumber) || pageAsNumber < 1 ? 1 : pageAsNumber;
+  // Number of items per page
+  const perPageAsNumber = Number(per_page);
+  const limit = isNaN(perPageAsNumber) ? 10 : perPageAsNumber;
+  // Number of items to skip
+  const offset = fallbackPage > 0 ? (fallbackPage - 1) * limit : 0;
+  // Column and order to sort by
+  const [column, order] = (sort?.split(".") as [
+    keyof Post | undefined,
+    "asc" | "desc" | undefined,
+  ]) ?? ["createdAt", "desc"];
+
+  const fromDay = from ? new Date(from) : undefined;
+  const toDay = to ? new Date(to) : undefined;
+
   const site = await db.query.sites.findFirst({
     where: eq(posts.id, siteId),
-  });
-
-  const allPosts = await db.query.posts.findMany({
-    where: and(eq(posts.clerkId, user.id), eq(posts.siteId, params.id)),
-    with: { site: true },
-    orderBy: [desc(posts.createdAt)],
   });
 
   if (!site) {
     notFound();
   }
-
   const url = `${site.subdomain}.${env.NEXT_PUBLIC_ROOT_DOMAIN}`;
+
+  // Transaction is used to ensure both queries are executed in a single transaction
+  noStore();
+
+  const transaction = db.transaction(async (tx) => {
+    const items = await tx
+      .select()
+      .from(posts)
+      .limit(limit)
+      .offset(offset)
+      .where(
+        and(
+          eq(posts.siteId, siteId),
+          name ? like(posts.title, `%${name}%`) : undefined,
+          fromDay && toDay
+            ? and(gte(posts.createdAt, fromDay), lte(posts.createdAt, toDay))
+            : undefined,
+        ),
+      )
+      .orderBy(
+        column && column in posts
+          ? order === "asc"
+            ? asc(posts[column])
+            : desc(posts[column])
+          : desc(posts.createdAt),
+      );
+    const count = await tx
+      .select({ count: sql<number>`count(${posts.id})` })
+      .from(posts)
+      .where(
+        and(
+          eq(posts.siteId, siteId),
+          name ? like(posts.title, `%${name}%`) : undefined,
+          fromDay && toDay
+            ? and(gte(posts.createdAt, fromDay), lte(posts.createdAt, toDay))
+            : undefined,
+        ),
+      )
+      .then((res) => res[0]?.count ?? 0);
+    const site = await tx.select().from(sites).where(eq(sites.id, siteId));
+    return { items, count, site: site[0] };
+  });
 
   return (
     <>
@@ -63,7 +134,7 @@ export default async function SitePosts({
         </div>
         <CreatePostButton />
       </div>
-      <Posts posts={allPosts} />
+      <PostsShell transaction={transaction} limit={limit} />
     </>
   );
 }

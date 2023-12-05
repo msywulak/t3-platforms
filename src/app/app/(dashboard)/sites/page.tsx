@@ -4,11 +4,11 @@ import { type Metadata } from "next";
 import { unstable_noStore as noStore } from "next/cache";
 import { currentUser } from "@clerk/nextjs";
 import { redirect } from "next/navigation";
+import { and, asc, desc, eq, gte, like, lte, sql } from "drizzle-orm";
 
 import { db } from "@/db";
 import PlaceholderCard from "@/components/placeholder-card";
 import { CreateSiteButton } from "@/components/create-site-button";
-import { and, asc, desc, eq, gte, like, lte, sql } from "drizzle-orm";
 import { type Site, sites } from "@/db/schema";
 import { sitesSearchParamsSchema } from "@/lib/validations/params";
 import { env } from "@/env.mjs";
