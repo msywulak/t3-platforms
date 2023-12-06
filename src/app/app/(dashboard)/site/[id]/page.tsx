@@ -15,7 +15,7 @@ import { env } from "@/env.mjs";
 import { buttonVariants } from "@/components/ui/button";
 import { Icons } from "@/components/icons";
 import { PostsShell } from "@/components/shells/posts-shell";
-import { sitesSearchParamsSchema } from "@/lib/validations/params";
+import { postsSearchParamsSchema } from "@/lib/validations/params";
 
 export const metadata: Metadata = {
   metadataBase: new URL(env.NEXT_PUBLIC_APP_URL),
@@ -36,8 +36,8 @@ export default async function SitePosts({
   const user = await currentUser();
   if (!user) redirect("/sign-in");
 
-  const { page, per_page, sort, name, from, to } =
-    sitesSearchParamsSchema.parse(sitesSearchParamsSchema.parse(searchParams));
+  const { page, per_page, sort, name, from, to, published } =
+    postsSearchParamsSchema.parse(postsSearchParamsSchema.parse(searchParams));
 
   // Fallback page for invalid page numbers
   const pageAsNumber = Number(page);
@@ -57,14 +57,6 @@ export default async function SitePosts({
   const fromDay = from ? new Date(from) : undefined;
   const toDay = to ? new Date(to) : undefined;
 
-  // const site = await db.query.sites.findFirst({
-  //   where: eq(posts.id, siteId),
-  // });
-
-  // if (!site) {
-  //   notFound();
-  // }
-
   // Transaction is used to ensure both queries are executed in a single transaction
   noStore();
 
@@ -78,6 +70,9 @@ export default async function SitePosts({
         and(
           eq(posts.siteId, siteId),
           name ? like(posts.title, `%${name}%`) : undefined,
+          published !== undefined
+            ? eq(posts.published, Boolean(published))
+            : undefined,
           fromDay && toDay
             ? and(gte(posts.createdAt, fromDay), lte(posts.createdAt, toDay))
             : undefined,

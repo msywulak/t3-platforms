@@ -177,7 +177,7 @@ export function PostsShell({ transaction, limit }: PostsTableShellProps) {
         loading: "Deleting...",
         success: () => {
           setSelectedRowIds([]);
-          return "Products deleted successfully.";
+          return "Post deleted successfully.";
         },
         error: (err: unknown) => {
           setSelectedRowIds([]);
@@ -206,7 +206,16 @@ export function PostsShell({ transaction, limit }: PostsTableShellProps) {
             columns={columns}
             data={data}
             pageCount={pageCount}
-            filterableColumns={[]}
+            filterableColumns={[
+              {
+                id: "published",
+                title: "Published",
+                options: [
+                  { label: "Yes", value: "true" },
+                  { label: "No", value: "false" },
+                ],
+              },
+            ]}
             searchableColumns={[
               {
                 id: "title",

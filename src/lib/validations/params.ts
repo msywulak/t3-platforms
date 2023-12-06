@@ -24,6 +24,11 @@ export const sitesSearchParamsSchema = searchParamsSchema.extend({
   name: z.string().optional(),
 });
 
+export const postsSearchParamsSchema = searchParamsSchema.extend({
+  name: z.string().optional(),
+  published: z.string().optional(),
+});
+
 export const storesSearchParamsSchema = searchParamsSchema
   .omit({ sort: true, from: true, to: true })
   .extend({
