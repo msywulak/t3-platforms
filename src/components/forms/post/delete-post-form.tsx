@@ -23,7 +23,6 @@ import {
 } from "@/components/ui/alert-dialog";
 import { updatePostSchema } from "@/lib/validations/post";
 import { deletePost } from "@/lib/actions";
-import { catchClerkError } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Icons } from "@/components/icons";
 
@@ -88,8 +87,8 @@ export function DeletePostForm({ post }: UpdatePostSlugFormProps) {
                   }}
                   disabled={isPending}
                 >
-                  Delete Site
-                  <span className="sr-only">Delete Site</span>
+                  Delete Post
+                  <span className="sr-only">Delete Post</span>
                 </AlertDialogAction>
               </AlertDialogFooter>
             </AlertDialogContent>

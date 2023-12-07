@@ -223,14 +223,16 @@ export const updateSiteImages = siteAuthAction(
           .where(eq(sites.id, input.siteId));
       }
 
-      // TODO: handle this delete better
       if (input.image !== undefined && foundSite.image !== null) {
-        await utapi.deleteFiles([foundSite.image[0]?.id ?? ""]);
+        await deleteImagesFromUploadThing({
+          imageIds: [foundSite.image[0]?.id ?? ""],
+        });
       }
       if (input.logo !== undefined && foundSite.logo !== null) {
-        await utapi.deleteFiles([foundSite.logo[0]?.id ?? ""]);
+        await deleteImagesFromUploadThing({
+          imageIds: [foundSite.logo[0]?.id ?? ""],
+        });
       }
-      // TODO: handle this delete better
 
       revalidateTag(
         `${foundSite.subdomain}.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}-metadata`,
@@ -261,14 +263,16 @@ export const deleteSite = siteAuthAction(
       throw new Error("Site not found");
     }
     try {
-      // TODO: handle this delete better
       if (foundSite.image !== undefined && foundSite.image !== null) {
-        await utapi.deleteFiles([foundSite.image[0]?.id ?? ""]);
+        await deleteImagesFromUploadThing({
+          imageIds: [foundSite.image[0]?.id ?? ""],
+        });
       }
       if (foundSite.logo !== undefined && foundSite.logo !== null) {
-        await utapi.deleteFiles([foundSite.logo[0]?.id ?? ""]);
+        await deleteImagesFromUploadThing({
+          imageIds: [foundSite.logo[0]?.id ?? ""],
+        });
       }
-      // TODO: handle this delete better
       await db.delete(posts).where(eq(posts.siteId, siteId));
 
       const response = await db
@@ -494,6 +498,9 @@ export const deletePost = authAction(
 
     try {
       await db.delete(posts).where(eq(posts.id, postId));
+      await deleteImagesFromUploadThing({
+        imageIds: [deletedPost?.image?.[0]?.id ?? ""],
+      });
 
       revalidateTag(
         `${deletedPost.site?.subdomain}.${env.NEXT_PUBLIC_ROOT_DOMAIN}-posts`,
@@ -508,6 +515,18 @@ export const deletePost = authAction(
         revalidateTag(`${deletedPost.site?.customDomain}-${deletedPost.slug}`));
 
       return deletedPost;
+    } catch (error: any) {
+      throw new Error(error.message);
+    }
+  },
+);
+
+export const deleteImagesFromUploadThing = authAction(
+  z.object({ imageIds: z.array(z.string()) }),
+  async ({ imageIds }) => {
+    try {
+      await utapi.deleteFiles(imageIds);
+      return true;
     } catch (error: any) {
       throw new Error(error.message);
     }
