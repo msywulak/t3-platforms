@@ -8,7 +8,6 @@ import {
   bigint,
   boolean,
   index,
-  int,
   json,
   mysqlTableCreator,
   text,
@@ -23,21 +22,6 @@ import {
  * @see https://orm.drizzle.team/docs/goodies#multi-project-schema
  */
 export const mysqlTable = mysqlTableCreator((name) => `t3-platforms_${name}`);
-
-export const postsExample = mysqlTable(
-  "post_example",
-  {
-    id: bigint("id", { mode: "number" }).primaryKey().autoincrement(),
-    name: varchar("name", { length: 256 }),
-    createdAt: timestamp("created_at")
-      .default(sql`CURRENT_TIMESTAMP`)
-      .notNull(),
-    updatedAt: timestamp("updatedAt").onUpdateNow(),
-  },
-  (example) => ({
-    nameIndex: index("name_idx").on(example.name),
-  }),
-);
 
 export const users = mysqlTable(
   "users",
@@ -133,11 +117,13 @@ export const sites = mysqlTable(
       .notNull(),
     updatedAt: timestamp("updatedAt").onUpdateNow(),
     userId: bigint("user_id", { mode: "number" }),
-    clerkId: varchar("clerk_id", { length: 256 }),
+    clerkId: varchar("clerk_id", { length: 256 }).notNull(),
+    clerkOrgId: varchar("clerk_org_id", { length: 256 }).notNull(),
   },
   (site) => ({
     userIdIdx: index("user_id_idx").on(site.userId),
     clerkIdIdx: index("clerk_id_idx").on(site.clerkId),
+    clerkOrgIdIdx: index("clerk_org_id_idx").on(site.clerkOrgId),
   }),
 );
 
@@ -151,20 +137,3 @@ export const siteRelations = relations(sites, ({ one, many }) => ({
   }),
   posts: many(posts),
 }));
-
-export const examples = mysqlTable("examples", {
-  id: bigint("id", { mode: "number" }).primaryKey().autoincrement(),
-  name: varchar("name", { length: 256 }),
-  description: text("description"),
-  domainCount: int("domain_count"),
-  url: varchar("url", { length: 256 }),
-  image: text("image"),
-  imageBlurhash: text("image_blurhash"),
-  createdAt: timestamp("created_at")
-    .default(sql`CURRENT_TIMESTAMP`)
-    .notNull(),
-  updatedAt: timestamp("updatedAt").onUpdateNow(),
-});
-
-export type Example = typeof examples.$inferSelect;
-export type NewExample = typeof examples.$inferInsert;

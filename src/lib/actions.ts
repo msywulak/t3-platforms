@@ -9,6 +9,7 @@ import { posts, sites } from "@/db/schema";
 import { env } from "@/env.mjs";
 import { and, eq, or, sql } from "drizzle-orm";
 import { revalidateTag } from "next/cache";
+import { clerkClient } from "@clerk/nextjs";
 import {
   addDomainToVercel,
   getApexDomain,
@@ -20,7 +21,7 @@ import { authAction, siteAuthAction } from "./safe-action";
 import { z } from "zod";
 import { updateSiteSchema } from "./validations/site";
 import { postEditorSchema } from "./validations/post";
-import { utapi } from "./utapi";
+import { UTApi } from "uploadthing/server";
 import { getBlurDataURL } from "./utils";
 
 export const getSiteFromPostId = authAction(
@@ -50,11 +51,16 @@ export const createSite = authAction(
       if (exists) {
         throw new Error("This subdomain is already in use");
       }
+      const organization = await clerkClient.organizations.createOrganization({
+        name: subdomain,
+        createdBy: userId,
+      });
       const response = await db.insert(sites).values({
         name,
         description,
         subdomain,
         clerkId: userId,
+        clerkOrgId: organization.id,
       });
       revalidateTag(`${subdomain}.${env.NEXT_PUBLIC_ROOT_DOMAIN}-metadata`);
       return response.insertId;
@@ -274,7 +280,11 @@ export const deleteSite = siteAuthAction(
         });
       }
       await db.delete(posts).where(eq(posts.siteId, siteId));
-
+      if (foundSite.clerkOrgId) {
+        await clerkClient.organizations.deleteOrganization(
+          foundSite.clerkOrgId,
+        );
+      }
       const response = await db
         .delete(sites)
         .where(and(eq(sites.id, siteId), eq(sites.clerkId, userId)));
@@ -457,7 +467,9 @@ export const updatePostImage = authAction(
         .where(eq(posts.id, input.postId));
 
       if (post.image !== undefined && post.image !== null) {
-        await utapi.deleteFiles([post.image[0]?.id ?? ""]);
+        await deleteImagesFromUploadThing({
+          imageIds: [post.image[0]?.id ?? ""],
+        });
       }
 
       revalidateTag(
@@ -524,6 +536,7 @@ export const deletePost = authAction(
 export const deleteImagesFromUploadThing = authAction(
   z.object({ imageIds: z.array(z.string()) }),
   async ({ imageIds }) => {
+    const utapi = new UTApi();
     try {
       await utapi.deleteFiles(imageIds);
       return true;
