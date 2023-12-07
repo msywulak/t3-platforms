@@ -24,6 +24,8 @@ import { postEditorSchema } from "./validations/post";
 import { UTApi } from "uploadthing/server";
 import { getBlurDataURL } from "./utils";
 
+const DISALLOWED_SUBDOMAINS = env.DISALLOWED_SUBDOMAINS;
+
 export const getSiteFromPostId = authAction(
   z.object({ postId: z.number() }),
   async (input, { userId }) => {
@@ -45,6 +47,9 @@ export const createSite = authAction(
   }),
   async ({ name, description, subdomain }, { userId }) => {
     try {
+      if (DISALLOWED_SUBDOMAINS.includes(subdomain)) {
+        throw new Error("This subdomain is not allowed");
+      }
       const exists = await db.query.sites.findFirst({
         where: eq(sites.subdomain, subdomain),
       });

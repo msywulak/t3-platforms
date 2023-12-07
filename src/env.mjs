@@ -24,6 +24,7 @@ export const env = createEnv({
     UPLOADTHING_SECRET: z.string(),
     UPLOADTHING_APP_ID: z.string(),
     REDIRECT_TO_CUSTOM_DOMAIN_IF_EXISTS: z.string(),
+    DISALLOWED_SUBDOMAINS: z.string(),
   },
 
   /**
@@ -51,6 +52,7 @@ export const env = createEnv({
     NODE_ENV: process.env.NODE_ENV,
     NEXT_PUBLIC_APP_URL: process.env.NEXT_PUBLIC_APP_URL,
     CLERK_SECRET_KEY: process.env.CLERK_SECRET_KEY,
+    DISALLOWED_SUBDOMAINS: process.env.DISALLOWED_SUBDOMAINS,
     NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY:
       process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY,
     NEXT_PUBLIC_ROOT_DOMAIN: process.env.NEXT_PUBLIC_ROOT_DOMAIN,
