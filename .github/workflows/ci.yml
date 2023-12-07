@@ -6,22 +6,6 @@ on:
   push:
     branches: ["*"]
 
-env:
-  DATABASE_URL: "https://fake.com"
-  CLERK_SECRET_KEY: "fake"
-  NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: "fake"
-  NEXT_PUBLIC_CLERK_SIGN_IN_URL: "fake"
-  NEXT_PUBLIC_CLERK_SIGN_UP_URL: "fake"
-  NEXT_PUBLIC_CLERK_AFTER_SIGN_IN_URL: "fake"
-  NEXT_PUBLIC_CLERK_AFTER_SIGN_UP_URL: "fake"
-  NEXT_PUBLIC_ROOT_DOMAIN: "fake.com"
-  REDIRECT_TO_CUSTOM_DOMAIN_IF_EXISTS: "fake"
-  AUTH_BEARER_TOKEN: "fake"
-  PROJECT_ID_VERCEL: "fake"
-  TEAM_ID_VERCEL: "fake"
-  UPLOADTHING_SECRET: "fake"
-  UPLOADTHING_APP_ID: "fake"
-
 jobs:
   typecheck-lint:
     runs-on: ubuntu-latest
