@@ -58,7 +58,8 @@ export const createSite = authAction(
       const response = await db.insert(sites).values({
         name,
         description,
-        subdomain,
+        subdomain:
+          env.NODE_ENV === "development" ? `${subdomain}-dev` : subdomain,
         clerkId: userId,
         clerkOrgId: organization.id,
       });
