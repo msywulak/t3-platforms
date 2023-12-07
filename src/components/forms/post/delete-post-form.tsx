@@ -77,9 +77,11 @@ export function DeletePostForm({ post }: UpdatePostSlugFormProps) {
                     startTransition(async () => {
                       void form.trigger(["slug", "id"]);
                       va.track("Deleted Post");
-                      await deletePost({
-                        post: { id: post.id, site: null },
-                      }).catch(catchClerkError);
+                      const res = await deletePost({ postId: post.id });
+                      if ("serverError" in res) {
+                        toast.error(res.serverError);
+                        return;
+                      }
                       toast.success("Post deleted");
                       router.push(`/site/${post.siteId}`);
                     });

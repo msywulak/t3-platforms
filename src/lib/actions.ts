@@ -476,13 +476,13 @@ export const updatePostImage = authAction(
 );
 
 export const deletePost = authAction(
-  z.object({ post: postEditorSchema }),
-  async ({ post }, { userId }) => {
-    if (!post.id) {
+  z.object({ postId: z.number() }),
+  async ({ postId }, { userId }) => {
+    if (!postId) {
       throw new Error("Post not found");
     }
     const deletedPost = await db.query.posts.findFirst({
-      where: and(eq(posts.id, post.id), eq(posts.clerkId, userId)),
+      where: and(eq(posts.id, postId), eq(posts.clerkId, userId)),
       with: {
         site: true,
       },
@@ -493,7 +493,7 @@ export const deletePost = authAction(
     }
 
     try {
-      await db.delete(posts).where(eq(posts.id, post.id));
+      await db.delete(posts).where(eq(posts.id, postId));
 
       revalidateTag(
         `${deletedPost.site?.subdomain}.${env.NEXT_PUBLIC_ROOT_DOMAIN}-posts`,
@@ -509,9 +509,7 @@ export const deletePost = authAction(
 
       return deletedPost;
     } catch (error: any) {
-      return {
-        error: error.message,
-      };
+      throw new Error(error.message);
     }
   },
 );
