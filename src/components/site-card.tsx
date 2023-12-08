@@ -1,3 +1,4 @@
+import * as React from "react";
 import BlurImage from "@/components/blur-image";
 import { placeholderBlurhash, random } from "@/lib/utils";
 import { Icons } from "@/components/icons";
@@ -12,6 +13,12 @@ import {
 } from "@/components/ui/card";
 
 export default function SiteCard({ data }: { data: Site }) {
+  const [randomNumber, setRandomNumber] = React.useState<number>(0);
+
+  React.useEffect(() => {
+    setRandomNumber(random(10, 40));
+  }, []);
+
   const url = `${data.subdomain}.${env.NEXT_PUBLIC_ROOT_DOMAIN}`;
   return (
     <Card className="relative rounded-lg pb-10 transition-all hover:border-ring hover:shadow-xl">
@@ -51,7 +58,7 @@ export default function SiteCard({ data }: { data: Site }) {
           className="flex items-center rounded-md bg-green-100 px-2 py-1 text-sm font-medium text-green-600 transition-colors hover:bg-green-200 dark:bg-green-900 dark:bg-opacity-50 dark:text-green-400 dark:hover:bg-green-800 dark:hover:bg-opacity-50"
         >
           <Icons.barChart height={16} />
-          <p>{random(10, 40)}%</p>
+          {randomNumber}%
         </Link>
       </div>
     </Card>
