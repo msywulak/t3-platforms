@@ -15,7 +15,7 @@ export const authAction = createSafeActionClient({
     return { userId: user.id };
   },
   handleReturnedServerError(e) {
-    return { serverError: e.message };
+    return { serverError: e.message, serverErrorOptions: e.cause };
   },
 });
 
@@ -34,6 +34,6 @@ export const siteAuthAction = createSafeActionClient({
     return { userId: user.id, allSites };
   },
   handleReturnedServerError(e) {
-    return { serverError: e.message };
+    return { serverError: e.message, serverErrorOptions: e.cause };
   },
 });

@@ -72,7 +72,7 @@ export const createSite = authAction(
       return response.insertId;
     } catch (error: any) {
       console.log("This is the error!");
-      throw new Error(error.message);
+      throw new Error("Create site error", { cause: error.message });
     }
   },
 );

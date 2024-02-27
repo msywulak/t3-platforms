@@ -1,3 +1,5 @@
+"use client";
+
 import * as React from "react";
 import BlurImage from "@/components/blur-image";
 import { placeholderBlurhash, random } from "@/lib/utils";
